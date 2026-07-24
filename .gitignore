@@ -1,0 +1,19 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor/tooling
+.vscode/
+.claude/settings.local.json
+
+# Python (if analysis/model code gets added under 02 Methodology & Work/)
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Temp/scratch
+*.tmp
+~$*
