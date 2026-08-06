@@ -1,0 +1,265 @@
+<!-- ============ 9 ============ -->
+<h1>ทบทวนวรรณกรรมที่เกี่ยวข้อง</h1>
+
+<h2>งานหลักที่ตรงกับโจทย์ที่สุด</h2>
+
+<p><b>Tian et al. (2022), "Bridge Crack Inspection Efficiency of an Unmanned Aerial Vehicle System with a Laser Ranging Module", <i>Sensors</i> 22(12), 4469</b> — เป็นงานที่ตอบโจทย์ "รู้ระยะเพื่อวัดรอยแตก" ตรงที่สุดและควรเป็นงานอ้างอิงหลักของโปรเจกต์</p>
+
+<table class="tight">
+<thead><tr><th style="width:26%">องค์ประกอบ</th><th>สเปก</th></tr></thead>
+<tbody>
+<tr><td>อากาศยาน</td><td>multicopter ประกอบเอง wheelbase 63 cm (เล็กเพื่อเข้าซอกสะพาน)</td></tr>
+<tr><td>กล้องตรวจสอบ</td><td>SONY DSC-RX0 · 4800×3200 px · เซนเซอร์ 1″ · f = 9.346 mm · pixel pitch 0.00275 mm</td></tr>
+<tr><td><b>ระบบวัดระยะ</b></td><td><b>Lidar-100 จำนวน 4 ตัว</b> ติดที่มุมทั้งสี่ของกล้อง ความแม่น ±2 mm ผ่าน UART</td></tr>
+<tr><td>ประมวลผลบนอากาศ</td><td>Raspberry Pi 4</td></tr>
+<tr><td>กล้องนำร่อง</td><td>fisheye แยกอีกตัว — <b>ใช้กล้องคนละตัวสำหรับบินกับสำหรับถ่ายงาน</b></td></tr>
+</tbody>
+</table>
+
+<div class="box box--key">
+<span class="box__t">แก่นของงานนี้: ทำไมต้องเลเซอร์ 4 จุด ไม่ใช่จุดเดียว</span>
+ระยะทั้ง 4 ค่าถูกนำไป fit <b>สมการระนาบของผิววัตถุ</b> (<code>Ax + By + Cz + 1 = 0</code>) แล้วรวมกับผลการ calibrate กล้อง ใช้ collinearity equation แปลง pixel เป็นหน่วยจริง <b>พร้อมชดเชยกรณีกล้องไม่ตั้งฉากกับผิว</b><br><br>
+<b>เลเซอร์ 1 จุดบอกได้แค่ระยะ — เลเซอร์ 4 จุดบอกได้ทั้งระยะและมุมเอียง</b><br>
+นี่คือหลักการเดียวกันกับที่ marker 4 มุมทำได้ในบทที่ 5 ต่างกันแค่ marker ไม่ต้องมีฮาร์ดแวร์เลย
+</div>
+
+<h3>ผลการทดสอบและความคลาดเคลื่อน</h3>
+
+<table class="tight">
+<thead><tr><th>การทดสอบ</th><th class="num">ระยะ</th><th class="num">ความคลาดเคลื่อน</th></tr></thead>
+<tbody>
+<tr><td>ในร่ม — control points บนผนัง</td><td class="num">3 m</td><td class="num">สูงสุด 6 mm · สัมพัทธ์ <b>0.8%</b></td></tr>
+<tr><td>ในร่ม — เป้า 1.0 × 1.0 m</td><td class="num">3 m</td><td class="num">สูงสุด 7 mm · สัมพัทธ์ 0.7%</td></tr>
+<tr><td>ในร่ม — เป้า 2.0 × 2.0 m</td><td class="num">3 m</td><td class="num">สูงสุด 19 mm · สัมพัทธ์ 1.0%</td></tr>
+<tr><td>สนาม Case 1</td><td class="num">4.6 m</td><td class="num"><b>6.1%</b> (รอยแตกกว้าง 3.9 mm ยาว 0.412 m)</td></tr>
+<tr><td>สนาม Case 2</td><td class="num">2.9 m</td><td class="num">3.0% / 1.8%</td></tr>
+<tr><td>สนาม Case 3</td><td class="num">2.5 m</td><td class="num">0.8% / 0.0%</td></tr>
+</tbody>
+<caption>สังเกตว่าความคลาดเคลื่อนโตขึ้นอย่างชัดเจนเมื่อระยะเกิน 3 m — ผู้เขียนระบุข้อจำกัดเองว่า <b>ระยะวัดไม่ควรเกิน 3 m และเป้าไม่ควรใหญ่เกิน 1.0 × 1.0 m</b></caption>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">ช่องว่างที่โปรเจกต์นี้เสียบเข้าไปได้ตรง ๆ — และผู้เขียนงานนั้นเขียนไว้เอง</span>
+ผู้เขียนระบุข้อจำกัดของตัวเองว่า <b>"ไม่ได้ทำ visual test ด้วย UAV จริง"</b> — การตรวจสอบความถูกต้องทั้งหมดใช้ control point ภาคพื้น และผู้เขียน<b>แนะนำให้ผู้ที่ทำต่อ "สร้างรอยแตกจำลองบนผนังเอง" เพื่อเปรียบเทียบการวัดด้วย UAV กับการวัดด้วยมือ</b><br><br>
+นั่นคือสิ่งที่โปรเจกต์นี้ทำได้พอดี และเป็น contribution ที่ชัดเจนพอจะเขียนเป็นวัตถุประสงค์ของงานได้<br><br>
+<b>ข้อจำกัดอีกข้อที่ควรระวัง:</b> วิธีเลเซอร์ 4 จุดสมมติว่าผิวเป็น<b>ระนาบ</b> — <b>เสาตอม่อทรงกลมละเมิดสมมติฐานนี้</b> ซึ่งเป็นอีกช่องว่างที่งานนี้ต้องจัดการ (และเป็นเหตุผลที่ marker ซึ่งวางบนผิวโค้งได้ในบริเวณเล็ก ๆ อาจได้เปรียบ)
+</div>
+
+<h2>เกณฑ์มาตรฐาน → ย้อนกลับกำหนด GSD ที่ต้องการ</h2>
+
+<p>นี่คือส่วนที่สำคัญที่สุดสำหรับการวางแผน เพราะเป็นการเชื่อมจาก<b>เกณฑ์วิศวกรรมที่ต้องตัดสิน</b> กลับไปสู่<b>ความละเอียดภาพที่ต้องมี</b></p>
+
+<table>
+<thead><tr><th>ระบบ</th><th>ขอบเขตที่ต้องตัดสิน</th><th class="num">ความกว้าง</th><th class="num">GSD ที่ 4 px<br><span class="muted">(ขั้นต่ำ)</span></th><th class="num">GSD ที่ 8 px<br><span class="muted">(แนะนำ)</span></th></tr></thead>
+<tbody>
+<tr><td rowspan="3"><b>BMMS</b> กรมทางหลวง<br><span class="small muted">(เกณฑ์เสาตอม่อ)</span></td><td><b>ระดับ 4 ↔ 3</b> — ขอบเขตที่ตัดสินบ่อยที่สุด</td><td class="num">1.6 mm</td><td class="num"><b>0.40</b></td><td class="num"><b>0.20</b></td></tr>
+<tr><td>ระดับ 3 ↔ 2</td><td class="num">3.2 mm</td><td class="num">0.80</td><td class="num">0.40</td></tr>
+<tr><td>ระดับ 2 ↔ 1</td><td class="num">4.8 mm</td><td class="num">1.20</td><td class="num">0.60</td></tr>
+<tr><td rowspan="2"><b>AASHTO MBEI</b></td><td>RC · CS1 ↔ CS2</td><td class="num">0.3 mm</td><td class="num"><b>0.075</b></td><td class="num">0.038</td></tr>
+<tr><td>RC · CS2 ↔ CS3</td><td class="num">1.3 mm</td><td class="num">0.33</td><td class="num">0.16</td></tr>
+<tr><td><b>BMMS</b> พื้นสะพาน (PC)</td><td>ระดับ 4 ↔ 3</td><td class="num">0.10 mm</td><td class="num">0.025</td><td class="num">0.013</td></tr>
+</tbody>
+<caption>หน่วยของ GSD ทุกช่องคือ mm/pixel — "4 px" คือจำนวนพิกเซลขั้นต่ำที่รอยแตกต้องกินเพื่อวัดความกว้างได้อย่างมีความหมาย</caption>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">ต้องตัดสินใจตั้งแต่ต้นว่าจะยึดเกณฑ์ไหน เพราะต่างกันถึง 5 เท่า</span>
+<b>ถ้ายึด BMMS (เกณฑ์ไทย):</b> เป้าหมาย GSD <b>0.20–0.40 mm/px</b> ซึ่งทำได้ด้วยเลนส์เทเลที่ระยะ 8–16 m — ปลอดภัย ทำได้จริงวันนี้<br>
+<b>ถ้ายึด AASHTO CS1↔CS2 (0.3 mm):</b> ต้องการ GSD <b>0.075 mm/px</b> ซึ่งเลนส์เทเลต้องเข้าไปที่ 3 m และเลนส์ wide ต้องเข้าไปที่ 0.27 m ซึ่ง<b>เป็นไปไม่ได้</b><br><br>
+<b>เอกสาร T-BHI ของโปรเจกต์เองระบุว่ารอยร้าวแคบกว่า 1 mm ให้ทำเครื่องหมายเป็น <i>Medium Confidence</i></b> ซึ่งเป็นการยอมรับข้อจำกัดนี้ไว้แล้วในตัวเกณฑ์<br>
+<b>ข้อเสนอ: ยึด BMMS เป็นเกณฑ์หลัก และรายงาน AASHTO เป็นข้อมูลประกอบพร้อมระบุข้อจำกัดอย่างชัดเจน</b> — ซึ่งเป็นจุดยืนที่ป้องกันได้ในการสอบ
+</div>
+
+<h2>ข้อจำกัดเชิงกายภาพที่อัลกอริทึมแก้ไม่ได้</h2>
+
+<p>งานวิจัยหนึ่งรายงานค่าความคลาดเคลื่อนเฉลี่ย 0.09 mm ซึ่งฟังดูดีมาก แต่เมื่อแยกตามช่วงความกว้างพบว่า</p>
+
+<table class="tight">
+<thead><tr><th class="num">ช่วงความกว้างรอยแตก</th><th class="num">ความคลาดเคลื่อนสัมพัทธ์</th></tr></thead>
+<tbody>
+<tr><td class="num">0.29–0.58 mm</td><td class="num"><b>30–34%</b></td></tr>
+<tr><td class="num">0.5–1.5 mm</td><td class="num">1.5–5%</td></tr>
+</tbody>
+</table>
+
+<p>ที่ GSD ที่งานนั้นใช้ รอยแตก 0.3 mm กว้างเพียง ~4 พิกเซล ความผิดพลาดของการหาขอบ ±1 pixel ต่อข้างจึงกลายเป็น ±50% ทันที <b>นี่เป็นข้อจำกัดเชิงกายภาพ ไม่ใช่บั๊กของอัลกอริทึม</b> — ไม่มีโมเดล deep learning ตัวไหนแก้ได้ ต้องแก้ที่การเก็บภาพเท่านั้น</p>
+
+<h2>MLLM กับการประเมินความเสียหาย</h2>
+
+<div class="box box--bad">
+<span class="box__t">ไม่มีงานใดเลยที่ MLLM วัดความกว้างรอยแตกเป็นมิลลิเมตรได้</span>
+MLLM ไม่มี metric scale ในตัว — มันไม่มีทางรู้ว่ารอยแตกที่เห็นคือ 1.6 mm หรือ 3.2 mm ถ้าไม่มีใครป้อนค่าที่วัดมาแล้วให้<br><br>
+<b>สถาปัตยกรรมที่วรรณกรรมชี้ว่าถูกต้อง:</b><br>
+วัดด้วย computer vision → <b>ป้อนตัวเลขเป็นมิลลิเมตรเข้า MLLM</b> → ให้ MLLM ทำ reasoning เทียบเกณฑ์ BMMS/AASHTO → ออก condition state พร้อมเหตุผล<br><br>
+นี่คือจุดที่กรอบ T-BHI ของโปรเจกต์เสียบเข้าได้พอดี และเป็นเหตุผลว่าทำไม<b>งานเรื่องมาตราส่วน (บทที่ 5) จึงเป็นรากฐานที่ขาดไม่ได้ ไม่ใช่รายละเอียดปลีกย่อย</b>
+</div>
+
+<h2>ชุดข้อมูลสาธารณะ</h2>
+
+<table class="tight">
+<thead><tr><th>ชุดข้อมูล</th><th class="num">ขนาด</th><th>ใช้ได้กับอะไร</th></tr></thead>
+<tbody>
+<tr><td><b>OmniCrack30k</b></td><td class="num">30,000 ภาพ</td><td>ครอบคลุม asphalt/ceramic/concrete/masonry/steel — nnU-Net บนชุดนี้ได้ mean clIoU₄ₚₓ = <b>64%</b> ใช้เป็นเกณฑ์เปรียบเทียบตั้งต้นได้ดี</td></tr>
+<tr><td>CrackSeg9k</td><td class="num">9,255 ภาพ</td><td>ขนาด 400×400 เหมาะกับการทำ prototype เร็ว ๆ</td></tr>
+<tr><td>SDNET2018</td><td class="num">—</td><td>ครอบคลุมรอยแตก 0.06–25 mm <b>แต่ไม่มี label ความกว้างเป็นมิลลิเมตร</b> จึงใช้ฝึกการวัดขนาดไม่ได้ ใช้ได้แค่ตรวจจับ</td></tr>
+</tbody>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">contribution ที่ตีพิมพ์ได้จริง แม้ข้อมูลจะไม่มาก</span>
+ชุดข้อมูลภาพเสาตอม่อจาก UAV ที่<b>ทุกภาพมีครบสี่อย่าง</b>: (ก) ระยะกล้อง–วัตถุ (ข) GSD ที่คำนวณและตรวจสอบแล้ว (ค) ความกว้างรอยแตกจริงจาก crack comparator/microscope (ง) ระดับความเสียหาย BMMS 0–5 ที่ผู้ตรวจสอบให้<br><br>
+<b>ต่อให้มีแค่ 200–500 ภาพก็เป็นของใหม่</b> เพราะชุดข้อมูลสาธารณะทุกชุดขาดข้อ (ก)–(ค) — และนี่คือเหตุผลที่ควรวางแผนบันทึกข้อมูลเหล่านี้ตั้งแต่เที่ยวบินแรก ไม่ใช่มาคิดทีหลัง
+</div>
+
+<!-- ============ 10 ============ -->
+<h1>สถาปัตยกรรมระบบและแผนดำเนินงานที่แนะนำ</h1>
+
+<h2>ภาพรวม pipeline</h2>
+
+<figure>
+<svg viewBox="0 0 620 250" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+  <defs><marker id="p1" markerWidth="7" markerHeight="7" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 z" fill="#8b939c"/></marker></defs>
+  <g font-size="9">
+  <text x="8" y="20" font-size="9" font-weight="700" fill="#9a5b00">ภาคสนาม</text>
+  <rect x="8" y="26" width="96" height="40" rx="4" fill="#fdf4e3" stroke="#ecd6a8"/>
+  <text x="56" y="43" text-anchor="middle" font-weight="600">วางแผนบิน</text>
+  <text x="56" y="56" text-anchor="middle" fill="#4a5058">GSD → ระยะ → overlap</text>
+  <rect x="122" y="26" width="96" height="40" rx="4" fill="#fdf4e3" stroke="#ecd6a8"/>
+  <text x="170" y="43" text-anchor="middle" font-weight="600">ติด marker</text>
+  <text x="170" y="56" text-anchor="middle" fill="#4a5058">วัดขนาดจริงด้วยเวอร์เนีย</text>
+  <rect x="236" y="26" width="96" height="40" rx="4" fill="#fdf4e3" stroke="#ecd6a8"/>
+  <text x="284" y="43" text-anchor="middle" font-weight="600">เก็บภาพ</text>
+  <text x="284" y="56" text-anchor="middle" fill="#4a5058">hover + tele, ชัตเตอร์เร็ว</text>
+  <line x1="104" y1="46" x2="120" y2="46" stroke="#8b939c" marker-end="url(#p1)"/>
+  <line x1="218" y1="46" x2="234" y2="46" stroke="#8b939c" marker-end="url(#p1)"/>
+  <line x1="332" y1="46" x2="348" y2="46" stroke="#8b939c" marker-end="url(#p1)"/>
+  <text x="352" y="20" font-size="9" font-weight="700" fill="#14508c">ประมวลผล</text>
+  <rect x="350" y="26" width="96" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="398" y="43" text-anchor="middle" font-weight="600">QC คัดภาพ</text>
+  <text x="398" y="56" text-anchor="middle" fill="#4a5058">Laplacian variance</text>
+  <rect x="464" y="26" width="140" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="534" y="43" text-anchor="middle" font-weight="600">หา scale + rectify</text>
+  <text x="534" y="56" text-anchor="middle" fill="#4a5058">ArUco → mm/px, homography</text>
+  <line x1="446" y1="46" x2="462" y2="46" stroke="#8b939c" marker-end="url(#p1)"/>
+  <path d="M534,66 L534,84 L56,84 L56,102" stroke="#8b939c" fill="none" marker-end="url(#p1)"/>
+  <rect x="8" y="104" width="120" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="68" y="121" text-anchor="middle" font-weight="600">crack segmentation</text>
+  <text x="68" y="134" text-anchor="middle" fill="#4a5058">U-Net / DeepLabV3+</text>
+  <rect x="146" y="104" width="120" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="206" y="121" text-anchor="middle" font-weight="600">วัดความกว้าง/ยาว</text>
+  <text x="206" y="134" text-anchor="middle" fill="#4a5058">skeleton + distance transform</text>
+  <rect x="284" y="104" width="120" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="344" y="121" text-anchor="middle" font-weight="600">map ตำแหน่ง</text>
+  <text x="344" y="134" text-anchor="middle" fill="#4a5058">Element ID + SfM</text>
+  <rect x="422" y="104" width="182" height="40" rx="4" fill="#ecf7f0" stroke="#bfe0cd"/>
+  <text x="513" y="121" text-anchor="middle" font-weight="600">Layer 0 → BMMS → T-BHI</text>
+  <text x="513" y="134" text-anchor="middle" fill="#4a5058">primitive metrics ก่อน แล้วค่อย map</text>
+  <line x1="128" y1="124" x2="144" y2="124" stroke="#8b939c" marker-end="url(#p1)"/>
+  <line x1="266" y1="124" x2="282" y2="124" stroke="#8b939c" marker-end="url(#p1)"/>
+  <line x1="404" y1="124" x2="420" y2="124" stroke="#8b939c" marker-end="url(#p1)"/>
+  <rect x="8" y="168" width="596" height="48" rx="4" fill="#fceded" stroke="#e8bcbc" stroke-dasharray="4 3"/>
+  <text x="20" y="186" font-weight="700" fill="#a02929">ตรวจสอบความถูกต้อง (ห้ามข้าม)</text>
+  <text x="20" y="201" fill="#4a5058">วัดรอยแตกเดียวกันด้วย crack comparator card / feeler gauge บนพื้นดิน → เทียบกับค่าที่ระบบให้</text>
+  <text x="20" y="212" fill="#4a5058">→ รายงาน MAE, RMSE, Bland–Altman แยกตามช่วงความกว้าง</text>
+  <path d="M206,144 L206,166" stroke="#a02929" fill="none" marker-end="url(#p1)" stroke-dasharray="3 3"/>
+  <text x="8" y="238" fill="#4a5058">สีเหลือง = ทำที่หน้างาน · สีฟ้า = ทำในคอมพิวเตอร์ · สีเขียว = ผลลัพธ์ที่ส่งมอบ · เส้นประแดง = ขั้นตอนตรวจสอบ</text>
+  </g>
+</svg>
+<figcaption><b>รูปที่ 5</b> — pipeline ตั้งแต่วางแผนบินจนถึง condition rating จุดที่มักถูกข้ามคือแถบสีแดง — ถ้าไม่มีค่าจริงมาเทียบ ตัวเลขความกว้างรอยแตกที่ได้ก็เป็นแค่ตัวเลข</figcaption>
+</figure>
+
+<h2>ข้อควรระวังในการออกแบบ 3 ข้อ</h2>
+
+<div class="box box--key">
+<span class="box__t">1. Layer 0 ต้องเป็น primitive metrics ตามที่เอกสาร T-BHI ของโปรเจกต์เขียนไว้เอง</span>
+ให้ AI วัดค่าดิบ (mm, m², %) โดยไม่ผูกกับมาตรฐาน แล้วค่อย map เป็นระดับ BMMS 0–5 ในชั้นถัดไป<br>
+<b>ข้อดี:</b> ถ้ากรมทางหลวงแก้เกณฑ์ ไม่ต้องเทรนโมเดลใหม่ และตรวจย้อนกลับได้ว่าทำไม AI ให้ระดับนั้น (audit trail)<br>
+<b>ข้อเสียของการทำนายเลข T-BHI ตรง ๆ:</b> ไม่มีทางอธิบายได้ว่ามาจากไหน ซึ่งจะถูกถามแน่นอนในการสอบ
+</div>
+
+<div class="box box--key">
+<span class="box__t">2. Multi-Path Distress — ต้องคืนค่าเป็นสัดส่วน ไม่ใช่ระดับเดียว</span>
+ถ้าใน element เดียวพบความเสียหายหลายชนิดที่ระดับต่างกัน ให้ใช้<b>ระดับที่แย่ที่สุด</b> และบันทึก<b>สัดส่วน</b>ของแต่ละระดับด้วย เพราะสูตร EHI ต้องการ distribution ไม่ใช่ค่าเดียว<br>
+→ pipeline ต้องคืน "พื้นที่กี่ % อยู่ระดับ 5/4/3/2/1/0" ไม่ใช่ "ระดับ = 3"
+</div>
+
+<div class="box box--key">
+<span class="box__t">3. แยกโหมดวัดกับโหมดสร้างโมเดลออกจากกัน</span>
+ดูรายละเอียดในบทที่ 6 — จำนวนภาพต่างกัน ~5 เท่า การทำรอบเดียวให้ได้ทั้งสองอย่างจะได้ผลแย่ทั้งคู่
+</div>
+
+<h2>เครื่องมือที่แนะนำ</h2>
+
+<table class="tight">
+<thead><tr><th style="width:20%">ขั้นตอน</th><th style="width:26%">เครื่องมือ</th><th class="c" style="width:12%">License</th><th>เหตุผล</th></tr></thead>
+<tbody>
+<tr><td>ตรวจความเบลอ</td><td><code>cv2.Laplacian(img).var()</code></td><td class="c">Apache-2.0</td><td>3 บรรทัด รันหน้างานบนโน้ตบุ๊กได้ ตั้งเกณฑ์จากการทดสอบใน Phase 0</td></tr>
+<tr><td>มาตราส่วน</td><td><code>cv2.aruco</code> + homography</td><td class="c">Apache-2.0</td><td>ให้ทั้ง scale, pose และการแก้ perspective จากของชิ้นเดียว</td></tr>
+<tr><td><b>Crack segmentation</b></td><td><b>segmentation-models-pytorch</b> (U-Net / DeepLabV3+)</td><td class="c"><b>MIT</b></td><td>ดูกล่องคำเตือนด้านล่าง</td></tr>
+<tr><td>Baseline เปรียบเทียบ</td><td>adaptive threshold + morphology + <code>skimage.skeletonize</code></td><td class="c">BSD</td><td><b>ต้องมี</b> — อาจารย์จะถามแน่นอนว่า deep learning ดีกว่าวิธีดั้งเดิมจริงไหม</td></tr>
+<tr><td>วัดความกว้าง</td><td><code>skimage.morphology.medial_axis</code> + distance transform</td><td class="c">BSD</td><td>อยู่ในไลบรารีมาตรฐาน มีงานวิจัยรองรับ</td></tr>
+<tr><td>SfM</td><td>COLMAP</td><td class="c">BSD</td><td>คุณภาพระดับงานวิจัย เขียนสคริปต์ได้ — ต้องเขียน post-scaling เอง</td></tr>
+<tr><td>รายงาน</td><td>Python + Jinja2 + WeasyPrint</td><td class="c">BSD/LGPL</td><td>ออก PDF ภาษาไทยได้</td></tr>
+</tbody>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">ข้อควรระวังเรื่องสัญญาอนุญาต — เรื่องนี้กระทบการต่อยอดจริง</span>
+<b>Ultralytics YOLO เป็น AGPL-3.0</b> ซึ่งบังคับว่าถ้าใช้โค้ด โมเดล หรือน้ำหนักที่ fine-tune แล้ว <b>ต้องเปิดซอร์สทั้งงาน</b> รวมถึงสคริปต์และไฟล์คอนฟิก<br><br>
+สำหรับวิทยานิพนธ์ที่จะเผยแพร่แบบ open-source อยู่แล้วไม่มีปัญหา <b>แต่ถ้ามหาวิทยาลัยหรือ วช. อยากต่อยอดเป็นผลิตภัณฑ์ จะติดทันที</b><br>
+<b>segmentation-models-pytorch เป็น MIT</b> จึงปลอดภัยกว่า และเหมาะกับ semantic segmentation ซึ่งคือสิ่งที่งานรอยแตกต้องการอยู่แล้ว มากกว่า instance segmentation
+</div>
+
+<h2>แผนงานเป็นเฟส</h2>
+
+<table>
+<thead><tr><th class="c" style="width:12%">เฟส</th><th style="width:30%">ทำอะไร</th><th>เกณฑ์ผ่านที่วัดได้</th></tr></thead>
+<tbody>
+<tr>
+<td class="c"><b>Phase 0</b><br><span class="small muted">ในห้อง / ผนังทดสอบ</span></td>
+<td>วาดหรือสร้างรอยแตกจำลองที่รู้ความกว้างจริงบนผนัง ถ่ายด้วยกล้องมือถือหรือโดรนที่ระยะต่าง ๆ ทดสอบ pipeline มาตราส่วนเต็มรูปแบบ</td>
+<td>วัดความกว้างรอยแตกที่รู้ค่าจริงได้คลาดเคลื่อน <b>&lt; 5%</b> ในช่วง 1–5 mm · หา threshold ของ Laplacian variance ที่แยกภาพเบลอออกได้ · ยืนยันว่ามาตราส่วนจาก marker ตรงกับที่คำนวณจาก GSD ภายใน ±5%</td>
+</tr>
+<tr>
+<td class="c"><b>Phase 1</b><br><span class="small muted">เสาเดี่ยวที่เข้าถึงได้</span></td>
+<td>เสาจริงหนึ่งต้นที่เดินเข้าถึงโคนได้ ติด marker ได้ บินได้ในที่โล่ง เก็บภาพครบ 4 หน้า วัดรอยแตกจริงด้วยมือเทียบ</td>
+<td>ตรวจพบรอยแตกที่ผู้ตรวจสอบเห็นด้วยตาได้ครบ (recall) · ความคลาดเคลื่อนของความกว้าง <b>MAE &lt; 0.3 mm</b> ในช่วง &gt;1.6 mm · จำแนกระดับ BMMS ตรงกับผู้ตรวจสอบ <b>≥80%</b></td>
+</tr>
+<tr>
+<td class="c"><b>Phase 2</b><br><span class="small muted">สะพานจริง</span></td>
+<td>ขออนุญาตครบ บินตามแผน เก็บข้อมูลหลายเสา ทดสอบ pipeline เต็มรูปแบบจนถึง T-BHI</td>
+<td>ทำงานได้ครบทุกขั้นโดยไม่ต้องแก้มือ · รายงานผลพร้อม confidence flag · ระบุข้อจำกัดที่พบจริงหน้างานได้ครบ</td>
+</tr>
+</tbody>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">อย่าข้าม Phase 0 ไปสะพานจริงเลย</span>
+ที่สะพานจริงจะเจอปัญหาหลายอย่างพร้อมกัน — GPS หาย แสงไม่พอ ลมแรง marker หลุด ภาพเบลอ โมเดลไม่แม่น — และจะ<b>แยกไม่ออกว่าอะไรทำให้ผลเสีย</b><br>
+Phase 0 ใช้เวลาไม่กี่วันและใช้แค่ผนังกับกล้อง แต่ทำให้รู้ว่าตัว pipeline เองถูกต้องแล้ว ทำให้ทุกปัญหาที่เจอในเฟสถัดไปเป็นปัญหาของ<b>สภาพแวดล้อม</b> ไม่ใช่ของ<b>วิธีการ</b>
+</div>
+
+<h2>การตรวจสอบความถูกต้อง</h2>
+
+<table class="tight">
+<thead><tr><th style="width:24%">หัวข้อ</th><th>รายละเอียด</th></tr></thead>
+<tbody>
+<tr><td>ค่าจริงอ้างอิง</td><td>crack width comparator card (ราคาหลักร้อย) สำหรับงานภาคสนาม · feeler gauge หรือกล้องจุลทรรศน์แบบพกพาสำหรับความละเอียดสูงใน Phase 0</td></tr>
+<tr><td>จำนวนตัวอย่าง</td><td>อย่างน้อย 30 รอยแตกต่อช่วงความกว้าง เพื่อให้สถิติมีความหมาย และต้องกระจายครอบคลุมทุกขอบเขต BMMS ที่จะตัดสิน</td></tr>
+<tr><td>สถิติที่ต้องรายงาน</td><td><b>MAE, RMSE แยกตามช่วงความกว้าง</b> (ไม่ใช่ค่าเฉลี่ยรวม ซึ่งซ่อนปัญหาที่ช่วงรอยแตกเล็กไว้) · <b>Bland–Altman plot</b> เพื่อดู systematic bias · confusion matrix ของระดับ BMMS</td></tr>
+<tr><td>สิ่งที่ห้ามลืม</td><td>รายงานความคลาดเคลื่อน<b>แยกตามช่วง</b> เพราะจากวรรณกรรม ค่าเฉลี่ยรวม 0.09 mm อาจซ่อนความคลาดเคลื่อน 34% ที่ช่วง 0.3 mm ไว้</td></tr>
+</tbody>
+</table>
+
+<h2>ความเสี่ยงและแผนสำรอง</h2>
+
+<table class="tight">
+<thead><tr><th style="width:26%">ความเสี่ยง</th><th>แผนสำรอง</th></tr></thead>
+<tbody>
+<tr><td>ไม่ได้โดรนตามที่หวัง / ไม่มีเลนส์เทเล</td><td>Phase 0 ทำด้วยกล้อง DSLR หรือมือถือบนขาตั้งได้ทั้งหมด — pipeline เหมือนกันทุกประการ เพราะวิธี marker ไม่สนใจว่าภาพมาจากกล้องอะไร</td></tr>
+<tr><td>เข้าไซต์สะพานจริงไม่ได้ / ขออนุญาตไม่ทัน</td><td>ใช้เสาอาคารในมหาวิทยาลัยหรือโครงสร้างคอนกรีตที่เข้าถึงได้ ขอบเขตงานยังสมบูรณ์ เพียงเปลี่ยนกรณีศึกษา</td></tr>
+<tr><td>ฝนตก / ฤดูฝน</td><td>วางแผนเก็บข้อมูลภาคสนามให้จบก่อนฤดูฝน และเผื่อวันสำรองอย่างน้อยเท่าตัว</td></tr>
+<tr><td>โมเดลไม่แม่นพอ</td><td>มี baseline แบบ classical CV ไว้เปรียบเทียบเสมอ — ถ้า deep learning ไม่ดีกว่า นั่นก็เป็นผลการวิจัยที่รายงานได้ ไม่ใช่ความล้มเหลว</td></tr>
+<tr><td>marker หลุดกลางเที่ยวบิน</td><td>ติดหลายตัว ใช้ id ต่างกัน และ<b>ตรวจ QC ภาพก่อนออกจากไซต์</b></td></tr>
+</tbody>
+</table>

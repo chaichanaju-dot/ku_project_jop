@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>อธิบายง่าย ๆ 1 หน้า — ทำไมต้องแปะไม้บรรทัดไว้บนเสา</title>
+<style>
+@page { size: A4; margin: 11mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: 'Leelawadee UI', Tahoma, sans-serif;
+  color: #1b1f24; margin: 0; line-height: 1.38;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.title { font-size: 18.5pt; font-weight: 700; line-height: 1.22; margin: 0 0 1.5mm; }
+.rule { height: 3px; background: #1667c9; width: 30mm; margin: 0 0 1.5mm; }
+.sub { font-size: 9.4pt; color: #5a626b; margin: 0 0 2.8mm; }
+
+.step { display: grid; grid-template-columns: 7.5mm 1fr; gap: 0 2.6mm; margin-bottom: 2.6mm; }
+.num {
+  width: 7.5mm; height: 7.5mm; border-radius: 50%; background: #1667c9; color: #fff;
+  font-weight: 700; font-size: 12pt; display: flex; align-items: center;
+  justify-content: center; line-height: 1;
+}
+.step--win .num { background: #16803c; }
+.step--bad .num { background: #c02626; }
+.step h2 { font-size: 12.2pt; margin: 0.3mm 0 0.8mm; line-height: 1.25; }
+.step p { font-size: 10.1pt; margin: 0 0 1mm; }
+.body { min-width: 0; }
+b.hi { background: #fff2a8; padding: 0 1mm; border-radius: 2px; }
+.win { color: #16803c; }
+.bad { color: #c02626; }
+svg { display: block; max-width: 100%; height: auto; margin: 1.2mm 0 0; }
+
+.answer { border: 2.5px solid #16803c; background: #f0f9f3; border-radius: 5px; padding: 2.2mm 3mm; margin: 1.8mm 0 0; }
+.answer .math {
+  font-family: 'Cascadia Mono', Consolas, monospace; font-size: 11.2pt;
+  text-align: center; margin: 0 0 1mm; line-height: 1.65;
+}
+.foot { margin-top: 2.6mm; padding-top: 2mm; border-top: 1px solid #d9dde2; font-size: 9pt; color: #5a626b; }
+</style>
+</head>
+<body>
+
+<div class="title">ทำไมต้องแปะ “ไม้บรรทัด” ไว้บนเสา ก่อนให้โดรนถ่ายรูปรอยแตก</div>
+<div class="rule"></div>
+<div class="sub">อธิบายแบบง่ายที่สุด 1 หน้า · โครงการตรวจสภาพสะพานด้วย AI</div>
+
+<!-- 1 -->
+<div class="step">
+  <div class="num">1</div>
+  <div class="body">
+    <h2>รูปถ่ายนับได้แค่ “กี่จุด” ไม่ได้บอก “กี่มิลลิเมตร”</h2>
+    <p>รูปทุกรูปทำจากจุดสี่เหลี่ยมเล็ก ๆ เรียงกัน เรียกว่า <b>pixel</b> เหมือนตัวต่อเลโก้ —
+    คอมพิวเตอร์นับได้ว่ารอยแตกกว้าง <b class="hi">8 จุด</b> แต่มันไม่รู้ว่า 8 จุดนี้เท่ากับกี่มิลลิเมตร</p>
+    <svg viewBox="0 0 500 78" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+      <defs><marker id="ar" markerWidth="7" markerHeight="7" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 z" fill="#1667c9"/></marker></defs>
+      <rect x="8" y="6" width="150" height="60" fill="#eceff2" stroke="#b6bdc5"/>
+      <path d="M34,66 C52,44 48,30 68,6" stroke="#5a626b" stroke-width="5" fill="none"/>
+      <text x="80" y="40" font-size="11" fill="#5a626b">รอยแตกบนเสา</text>
+      <line x1="172" y1="36" x2="196" y2="36" stroke="#1667c9" stroke-width="2" marker-end="url(#ar)"/>
+      <rect x="212" y="6" width="180" height="60" fill="#fff" stroke="#b6bdc5"/>
+      <g stroke="#e3e7eb" stroke-width="1">
+        <path d="M224,6v60M236,6v60M248,6v60M260,6v60M272,6v60M284,6v60M296,6v60M308,6v60M320,6v60M332,6v60M344,6v60M356,6v60M368,6v60M380,6v60"/>
+        <path d="M212,18h180M212,30h180M212,42h180M212,54h180"/>
+      </g>
+      <g fill="#7d858e">
+        <rect x="236" y="54" width="12" height="12"/><rect x="248" y="54" width="12" height="12"/>
+        <rect x="248" y="42" width="12" height="12"/><rect x="260" y="42" width="12" height="12"/>
+        <rect x="260" y="30" width="12" height="12"/><rect x="272" y="30" width="12" height="12"/>
+        <rect x="272" y="18" width="12" height="12"/><rect x="284" y="18" width="12" height="12"/>
+        <rect x="284" y="6" width="12" height="12"/><rect x="296" y="6" width="12" height="12"/>
+      </g>
+      <line x1="248" y1="72" x2="272" y2="72" stroke="#c02626" stroke-width="2.5"/>
+      <text x="280" y="76" font-size="10.5" fill="#c02626" font-weight="700">กว้าง 8 จุด — แต่กี่มิลลิเมตร?</text>
+    </svg>
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="step step--bad">
+  <div class="num">2</div>
+  <div class="body">
+    <h2>เพราะบินใกล้กับบินไกล นับจุดได้ไม่เท่ากัน</h2>
+    <p>รอยแตก<b>อันเดียวกันเป๊ะ</b> บินเข้าไปใกล้จะนับได้หลายจุด ถอยออกมาจะนับได้น้อยจุด →
+    <b class="bad">“จำนวนจุด” อย่างเดียวบอกขนาดจริงไม่ได้เลย</b></p>
+    <svg viewBox="0 0 500 92" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+      <defs><marker id="a2" markerWidth="7" markerHeight="7" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 z" fill="#9aa2ab"/></marker></defs>
+      <!-- แถวบน: ใกล้ -->
+      <rect x="8" y="6" width="10" height="34" fill="#c9ced4" stroke="#a9b0b8"/>
+      <line x1="18" y1="23" x2="42" y2="23" stroke="#c02626" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <rect x="44" y="18" width="20" height="9" rx="3" fill="#c02626"/>
+      <text x="42" y="40" font-size="9.5" fill="#c02626" font-weight="700">ใกล้ 2 ม.</text>
+      <line x1="100" y1="23" x2="152" y2="23" stroke="#9aa2ab" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="158" y="6" width="120" height="34" fill="#fff" stroke="#b6bdc5"/>
+      <rect x="206" y="6" width="24" height="34" fill="#7d858e"/>
+      <text x="290" y="27" font-size="11.5" fill="#c02626" font-weight="700">นับได้ 24 จุด</text>
+      <!-- แถวล่าง: ไกล -->
+      <rect x="8" y="52" width="10" height="34" fill="#c9ced4" stroke="#a9b0b8"/>
+      <line x1="18" y1="69" x2="98" y2="69" stroke="#1667c9" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <rect x="100" y="64" width="20" height="9" rx="3" fill="#1667c9"/>
+      <text x="96" y="86" font-size="9.5" fill="#1667c9" font-weight="700">ไกล 6 ม.</text>
+      <line x1="126" y1="69" x2="152" y2="69" stroke="#9aa2ab" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="158" y="52" width="120" height="34" fill="#fff" stroke="#b6bdc5"/>
+      <rect x="214" y="52" width="8" height="34" fill="#7d858e"/>
+      <text x="290" y="73" font-size="11.5" fill="#1667c9" font-weight="700">นับได้ 8 จุด</text>
+      <text x="392" y="50" font-size="10" fill="#5a626b">รอยแตกเดียวกัน</text>
+      <text x="392" y="64" font-size="10" fill="#5a626b" font-weight="700">แต่ได้คนละคำตอบ</text>
+    </svg>
+  </div>
+</div>
+
+<!-- 3 -->
+<div class="step step--bad">
+  <div class="num">3</div>
+  <div class="body">
+    <h2>วิธีที่คนมักคิดถึงก่อน: ให้โดรนยิงเลเซอร์วัดระยะ</h2>
+    <p>ถ้ารู้ว่าห่าง 3 เมตร ก็คำนวณย้อนกลับได้ — ฟังดูดี แต่<b>เครื่องวัดของโดรนไม่แม่นพอ</b>
+    มันบอก “3.0 เมตร” ทั้งที่จริงอาจเป็น 2.8 หรือ 3.2 เมตร
+    <span class="bad">→ ผิดราว 7% และยิ่งบินใกล้ยิ่งผิดมาก (ที่ 2 เมตร ผิดได้ถึง 15%)</span></p>
+  </div>
+</div>
+
+<!-- 4 -->
+<div class="step step--win">
+  <div class="num">4</div>
+  <div class="body">
+    <h2>วิธีที่ง่ายกว่าและแม่นกว่า: เอาของที่รู้ขนาดไปวางข้าง ๆ</h2>
+    <p>เหมือนถ่ายรูปปลาที่จับได้ — วาง<b>ไม้บรรทัดไว้ข้างตัวปลา</b>แล้วถ่ายพร้อมกัน ก็รู้ว่าปลายาวเท่าไหร่
+    โดย<b class="hi">ไม่ต้องรู้เลยว่ายืนถ่ายห่างแค่ไหน</b></p>
+    <svg viewBox="0 0 500 102" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+      <rect x="8" y="4" width="304" height="94" rx="3" fill="#fff" stroke="#16803c" stroke-width="2"/>
+      <text x="16" y="19" font-size="10.5" fill="#16803c" font-weight="700">รูปถ่ายใบเดียว มีทั้งสองอย่างอยู่ด้วยกัน</text>
+      <rect x="24" y="28" width="52" height="52" fill="#1b1f24"/>
+      <rect x="35" y="39" width="30" height="30" fill="#fff"/>
+      <rect x="44" y="48" width="12" height="12" fill="#1b1f24"/>
+      <line x1="24" y1="85" x2="76" y2="85" stroke="#16803c" stroke-width="2"/>
+      <text x="20" y="95" font-size="9.8" fill="#16803c" font-weight="700">140 มม. = 900 จุด</text>
+      <text x="88" y="50" font-size="10" fill="#16803c">แผ่นที่เรา</text>
+      <text x="88" y="63" font-size="10" fill="#16803c" font-weight="700">รู้ขนาดแน่นอน</text>
+      <path d="M214,82 C228,58 222,42 240,22" stroke="#7d858e" stroke-width="5" fill="none"/>
+      <text x="250" y="50" font-size="10" fill="#5a626b">รอยแตก</text>
+      <text x="250" y="63" font-size="11" fill="#5a626b" font-weight="700">8 จุด</text>
+      <text x="326" y="46" font-size="20" fill="#16803c">→</text>
+      <text x="356" y="46" font-size="11" fill="#16803c" font-weight="700">เทียบบัญญัติไตรยางศ์</text>
+      <text x="356" y="60" font-size="11" fill="#5a626b">ก็ได้คำตอบทันที</text>
+    </svg>
+    <div class="answer">
+      <div class="math">
+        1 จุด = 140 มม. ÷ 900 จุด = <b>0.155 มม.</b><br>
+        รอยแตก = 8 จุด × 0.155 = <b class="win" style="font-size:13pt">1.24 มิลลิเมตร</b>
+      </div>
+      <p style="margin:0;font-size:10pt;text-align:center">
+        ไม่ต้องรู้ระยะ · ไม่ต้องรู้ว่าซูมเท่าไหร่ · ไม่ต้องตั้งค่าอะไรเลย —
+        <b class="win">ผิดพลาดเหลือไม่ถึง 1% แทนที่จะเป็น 7–15%</b>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- 5 -->
+<div class="step step--win">
+  <div class="num">5</div>
+  <div class="body">
+    <h2>ของแถม: ถอยออกมาแล้วซูม ดีกว่าบินเข้าไปใกล้</h2>
+    <p>อยากเห็นชัดขึ้น คนมักคิดว่าต้องบินเข้าไปใกล้ ๆ — แต่<b>ซูมเอาก็ได้ภาพชัดเท่ากันเป๊ะ</b>
+    แถมโดรนไม่เสี่ยงชนเสา และเครื่องวัดระยะก็แม่นขึ้นด้วย</p>
+    <svg viewBox="0 0 500 54" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+      <rect x="8" y="4" width="10" height="46" fill="#c9ced4" stroke="#a9b0b8"/>
+      <line x1="18" y1="14" x2="40" y2="14" stroke="#c02626" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <rect x="42" y="9" width="20" height="9" rx="3" fill="#c02626"/>
+      <text x="72" y="18" font-size="10" fill="#c02626"><tspan font-weight="700">บินชิด 1.1 ม.</tspan> — เกือบชน ระบบกันชนไม่ทำงาน</text>
+      <text x="24" y="36" font-size="10" fill="#16803c"><tspan font-weight="700">ซูมจาก 7.9 ม.</tspan> — ปลอดภัย และได้ภาพชัดเท่ากันเป๊ะ</text>
+      <line x1="18" y1="46" x2="404" y2="46" stroke="#16803c" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <rect x="406" y="41" width="20" height="9" rx="3" fill="#16803c"/>
+    </svg>
+  </div>
+</div>
+
+<div class="foot">
+<b>สรุปประโยคเดียว:</b> อย่าให้โดรนเดา — เอาของที่เรารู้ขนาดแน่นอนไปแปะไว้ในรูปด้วยเสมอ ·
+รายละเอียดทั้งหมดอยู่ใน <b>UAV_platform_and_ranging_study.pdf</b>
+</div>
+
+</body>
+</html>

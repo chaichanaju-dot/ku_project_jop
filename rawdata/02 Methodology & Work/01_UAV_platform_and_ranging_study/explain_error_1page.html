@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>อธิบายง่าย ๆ 1 หน้า — วัดรอยแตกแล้วจะผิดพลาดกี่ %</title>
+<style>
+@page { size: A4; margin: 11mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: 'Leelawadee UI', Tahoma, sans-serif;
+  color: #1b1f24; margin: 0; line-height: 1.38;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.title { font-size: 17.5pt; font-weight: 700; line-height: 1.22; margin: 0 0 1.5mm; }
+.rule { height: 3px; background: #1667c9; width: 30mm; margin: 0 0 1.5mm; }
+.sub { font-size: 9.2pt; color: #5a626b; margin: 0 0 2.2mm; }
+
+.hero {
+  border: 2.5px solid #1667c9; background: #eef5fd; border-radius: 5px;
+  padding: 1.8mm 3.5mm; margin: 0 0 2.8mm; text-align: center;
+}
+.hero .n { font-size: 17pt; font-weight: 700; color: #1667c9; line-height: 1.15; }
+.hero .t { font-size: 10pt; margin-top: 0.6mm; }
+
+.step { display: grid; grid-template-columns: 7.5mm 1fr; gap: 0 2.6mm; margin-bottom: 1.8mm; }
+.num {
+  width: 7.5mm; height: 7.5mm; border-radius: 50%; background: #1667c9; color: #fff;
+  font-weight: 700; font-size: 12pt; display: flex; align-items: center;
+  justify-content: center; line-height: 1;
+}
+.step--win .num { background: #16803c; }
+.step--bad .num { background: #c02626; }
+.step h2 { font-size: 11.6pt; margin: 0.2mm 0 0.6mm; line-height: 1.25; }
+.step p { font-size: 9.8pt; margin: 0 0 1mm; }
+.body { min-width: 0; }
+b.hi { background: #fff2a8; padding: 0 1mm; border-radius: 2px; }
+.win { color: #16803c; } .bad { color: #c02626; }
+svg { display: block; max-width: 100%; height: auto; margin: 1mm 0 0; }
+
+table { width: 100%; border-collapse: collapse; font-size: 9.1pt; margin: 1.2mm 0 0; }
+th { background: #1667c9; color: #fff; font-weight: 600; padding: 1mm 2mm; text-align: left; font-size: 9.2pt; }
+td { padding: 0.7mm 2mm; border: 1px solid #dbe0e5; }
+tr:nth-child(even) td { background: #f8f9fb; }
+td.n { text-align: right; font-variant-numeric: tabular-nums; }
+
+.foot { margin-top: 2mm; padding-top: 1.6mm; border-top: 1px solid #d9dde2; font-size: 8.6pt; color: #5a626b; }
+</style>
+</head>
+<body>
+
+<div class="title">วัดรอยแตกจากรูปถ่ายโดรน จะผิดพลาดกี่เปอร์เซ็นต์</div>
+<div class="rule"></div>
+<div class="sub">อธิบายแบบง่ายที่สุด 1 หน้า · คิดจากกริด 5 เมตร ÷ 4 ช่อง = 1 ภาพต่อ 1.25 เมตร</div>
+
+<div class="hero">
+  <div class="n">ผิดประมาณ 2% ถึง 20%</div>
+  <div class="t">และตัวที่ตัดสินไม่ใช่ “วัดระยะแม่นแค่ไหน” — แต่คือ <b>รอยแตกบางแค่ไหน</b></div>
+</div>
+
+<!-- 1 -->
+<div class="step">
+  <div class="num">1</div>
+  <div class="body">
+    <h2>ทำไมรอยแตกบางถึงผิดเยอะกว่า</h2>
+    <p>ขอบรอยแตกในรูปไม่คมเป๊ะ มันฟุ้ง ๆ — คอมพิวเตอร์เลย<b>เดาขอบผิดไปข้างละ 1 จุดเสมอ</b>
+    ผิด 2 จุดเท่ากันทั้งคู่ แต่พอเทียบเป็นเปอร์เซ็นต์แล้วต่างกันลิบ</p>
+
+    <svg viewBox="0 0 500 96" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+      <!-- รอยแตกบาง -->
+      <text x="8" y="14" font-size="10" fill="#5a626b" font-weight="700">รอยแตกบาง 1.6 มม. = 10 จุด</text>
+      <rect x="34" y="22" width="40" height="34" fill="#7d858e"/>
+      <rect x="26" y="22" width="8" height="34" fill="#c02626" opacity=".55"/>
+      <rect x="74" y="22" width="8" height="34" fill="#c02626" opacity=".55"/>
+      <line x1="26" y1="64" x2="34" y2="64" stroke="#c02626" stroke-width="2.5"/>
+      <line x1="74" y1="64" x2="82" y2="64" stroke="#c02626" stroke-width="2.5"/>
+      <text x="8" y="80" font-size="9.6" fill="#c02626" font-weight="700">เดาผิดข้างละ 1 จุด</text>
+      <text x="8" y="92" font-size="11" fill="#c02626" font-weight="700">2 ÷ 10 = ผิด 20%</text>
+
+      <!-- รอยแตกหนา -->
+      <text x="200" y="14" font-size="10" fill="#5a626b" font-weight="700">รอยแตกหนา 10 มม. = 65 จุด</text>
+      <rect x="226" y="22" width="260" height="34" fill="#7d858e"/>
+      <rect x="218" y="22" width="8" height="34" fill="#16803c" opacity=".55"/>
+      <rect x="486" y="22" width="8" height="34" fill="#16803c" opacity=".55"/>
+      <line x1="218" y1="64" x2="226" y2="64" stroke="#16803c" stroke-width="2.5"/>
+      <line x1="486" y1="64" x2="494" y2="64" stroke="#16803c" stroke-width="2.5"/>
+      <text x="200" y="80" font-size="9.6" fill="#16803c" font-weight="700">เดาผิดข้างละ 1 จุด (เท่ากันเป๊ะ)</text>
+      <text x="200" y="92" font-size="11" fill="#16803c" font-weight="700">2 ÷ 65 = ผิดแค่ 3%</text>
+    </svg>
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="step">
+  <div class="num">2</div>
+  <div class="body">
+    <h2>ตัวเลขจริง — ยิ่งรอยแตกบาง แท่งยิ่งยาว</h2>
+    <svg viewBox="0 0 500 105" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+      <text x="78" y="10" font-size="9" fill="#5a626b">วิธีธรรมดา</text>
+      <rect x="60" y="4" width="14" height="7" fill="#c02626" opacity=".75"/>
+      <text x="182" y="10" font-size="9" fill="#5a626b">ใช้เทคนิค sub-pixel</text>
+      <rect x="164" y="4" width="14" height="7" fill="#16803c" opacity=".8"/>
+      <g font-size="9.6">
+        <!-- 1.6 -->
+        <text x="8" y="29" fill="#1b1f24" font-weight="700">1.6 มม.</text>
+        <rect x="62" y="17" width="349" height="9" fill="#c02626" opacity=".75"/><text x="416" y="25" fill="#c02626" font-weight="700">19.4%</text>
+        <rect x="62" y="28" width="175" height="9" fill="#16803c" opacity=".8"/><text x="242" y="36" fill="#16803c" font-weight="700">9.7%</text>
+        <!-- 3.2 -->
+        <text x="8" y="52" fill="#1b1f24" font-weight="700">3.2 มม.</text>
+        <rect x="62" y="40" width="175" height="9" fill="#c02626" opacity=".75"/><text x="242" y="48" fill="#c02626" font-weight="700">9.7%</text>
+        <rect x="62" y="51" width="88" height="9" fill="#16803c" opacity=".8"/><text x="155" y="59" fill="#16803c" font-weight="700">4.9%</text>
+        <!-- 4.8 -->
+        <text x="8" y="75" fill="#1b1f24" font-weight="700">4.8 มม.</text>
+        <rect x="62" y="63" width="117" height="9" fill="#c02626" opacity=".75"/><text x="184" y="71" fill="#c02626" font-weight="700">6.5%</text>
+        <rect x="62" y="74" width="59" height="9" fill="#16803c" opacity=".8"/><text x="126" y="82" fill="#16803c" font-weight="700">3.3%</text>
+        <!-- 10 -->
+        <text x="8" y="98" fill="#1b1f24" font-weight="700">10 มม.</text>
+        <rect x="62" y="86" width="58" height="9" fill="#c02626" opacity=".75"/><text x="125" y="94" fill="#c02626" font-weight="700">3.2%</text>
+        <rect x="62" y="97" width="31" height="9" fill="#16803c" opacity=".8"/><text x="98" y="105" fill="#16803c" font-weight="700">1.7%</text>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<!-- 3 -->
+<div class="step step--bad">
+  <div class="num">3</div>
+  <div class="body">
+    <h2>เรื่องที่คนคาดไม่ถึง: แก้เรื่องวัดระยะให้ดีขึ้น แทบไม่ช่วยเลย</h2>
+    <p>ความผิดพลาดมาจาก 2 ที่ — <b>(ก) มาตราส่วน</b> (1 จุด = กี่ มม.) และ <b>(ข) การเดาขอบ</b><br>
+    ที่รอยแตก 1.6 มม. ถึงจะทำมาตราส่วนให้ดีขึ้น <b>14 เท่า</b> (จาก 8.7% เหลือ 0.6%)
+    ความผิดพลาดรวมก็ลดแค่ <b class="bad">21.2% → 19.4%</b> เพราะการเดาขอบกินไปเกือบหมดแล้ว</p>
+    <svg viewBox="0 0 500 30" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+      <text x="8" y="10" font-size="9.4" fill="#5a626b" font-weight="700">ความผิดพลาดที่รอยแตก 1.6 มม. แบ่งเป็น</text>
+      <rect x="8" y="15" width="12" height="13" fill="#1667c9"/>
+      <rect x="20" y="15" width="296" height="13" fill="#c02626" opacity=".72"/>
+      <text x="26" y="25" font-size="9.4" fill="#fff" font-weight="700">เดาขอบผิด 19.4%</text>
+      <text x="324" y="25" font-size="9.2" fill="#1667c9" font-weight="700">แถบน้ำเงิน = มาตราส่วน 0.6%</text>
+    </svg>
+  </div>
+</div>
+
+<!-- 4 -->
+<div class="step step--win">
+  <div class="num">4</div>
+  <div class="body">
+    <h2>อยากแม่นขึ้น ต้องแบ่งกริดให้ถี่ขึ้น ไม่ใช่หาเครื่องวัดระยะที่ดีกว่า</h2>
+    <p>ช่องเล็กลง = 1 ภาพครอบคลุมพื้นที่น้อยลง = รอยแตกกินพิกเซลมากขึ้น = เดาขอบผิดน้อยลง</p>
+    <table>
+      <tr><th>อยากให้ผิดไม่เกิน<br><span style="font-weight:400">(ที่รอยแตก 1.6 มม.)</span></th><th>แบ่งผนัง 5 ม. เป็น</th><th>1 ช่องกว้าง</th><th>ยืนถ่ายด้วยเลนส์เทเล 168 มม.</th></tr>
+      <tr><td class="n">15%</td><td class="n">3 ช่อง</td><td class="n">1.93 ม.</td><td class="n">9.4 ม.</td></tr>
+      <tr><td class="n"><b>10%</b></td><td class="n"><b>4 ช่อง</b> ← กริดที่คุณวาดมาพอดี</td><td class="n"><b>1.25 ม.</b></td><td class="n"><b>6.1 ม.</b></td></tr>
+      <tr><td class="n">7%</td><td class="n">6 ช่อง</td><td class="n">0.90 ม.</td><td class="n">4.4 ม.</td></tr>
+      <tr><td class="n">5%</td><td class="n">8 ช่อง</td><td class="n">0.64 ม.</td><td class="n">3.1 ม.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- 5 -->
+<div class="step step--bad">
+  <div class="num">5</div>
+  <div class="body">
+    <h2>แล้วมันพอไหม — ดูที่ “โซนอันตราย” ของการตัดเกรด</h2>
+    <p>เกณฑ์ BMMS ตัดที่ 1.6 / 3.2 / 4.8 มม. ถ้ารอยแตกจริงตกใกล้เส้นแบ่งพอดี ก็มีโอกาสให้เกรดผิด</p>
+    <table>
+      <tr><th>เส้นแบ่งเกรด</th><th>ไม่ใช้ marker (GNSS)</th><th>ใช้ marker + sub-pixel</th></tr>
+      <tr><td>ระดับ 4 ↔ 3 (1.6 มม.)</td><td class="n">1.26 – 1.94 มม.</td><td class="n"><b class="win">1.44 – 1.76 มม.</b></td></tr>
+      <tr><td>ระดับ 3 ↔ 2 (3.2 มม.)</td><td class="n">2.78 – 3.62 มม.</td><td class="n"><b class="win">3.04 – 3.36 มม.</b></td></tr>
+      <tr><td>ระดับ 2 ↔ 1 (4.8 มม.)</td><td class="n">4.28 – 5.32 มม.</td><td class="n"><b class="win">4.64 – 4.96 มม.</b></td></tr>
+    </table>
+    <p style="margin-top:1mm">โซนอันตราย<b class="win">แคบลงเกือบ 3 เท่า</b>เมื่อใช้ marker — <b>นี่คือจุดที่ marker คุ้มจริง</b></p>
+  </div>
+</div>
+
+<div class="foot">
+<b>ข้อควรระวัง:</b> ตัวเลขทั้งหมดเป็นการ<b>คำนวณจากสเปก ยังไม่ได้วัดจริง</b> — ต้องยืนยันด้วยแผ่นรอยแตกที่รู้ความกว้างจริงใน Phase 0 ·
+สามอย่างที่ทำให้ตัวเลขนี้ใช้ไม่ได้เลย: ภาพเบลอเพราะไม่หยุดถ่าย · marker ไม่แนบผิว · ไม่ได้วัดขนาด marker ที่พิมพ์จริง
+</div>
+
+</body>
+</html>

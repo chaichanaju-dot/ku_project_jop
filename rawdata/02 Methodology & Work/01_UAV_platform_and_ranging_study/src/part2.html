@@ -1,0 +1,299 @@
+<!-- ============ 2 ============ -->
+<h1>DJI SDK — เขียนโปรแกรมอะไรได้ อะไรไม่ได้</h1>
+
+<h2>ภาพรวม: เขียนได้ 2 ที่เท่านั้น</h2>
+
+<p>คำถามตั้งต้นคือ "ลง software แยกลงโดรน DJI ได้ไหม เช่น software บังคับการบิน การวัดระยะ" คำตอบขึ้นกับว่า "ลง software ลงโดรน" หมายถึงอะไร</p>
+
+<table>
+<thead><tr><th style="width:26%">สิ่งที่อยากทำ</th><th class="c" style="width:12%">ทำได้ไหม</th><th>ทำอย่างไร / ทำไมไม่ได้</th></tr></thead>
+<tbody>
+<tr><td>แอปควบคุมการบินของตัวเอง (แทน DJI Pilot 2)</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>เขียนแอป <b>Android</b> ด้วย Mobile SDK V5 — แอปรันบนแท็บเล็ต/มือถือที่ต่อกับรีโมต ไม่ได้รันบนตัวโดรน</td></tr>
+<tr><td>ต่ออุปกรณ์ของตัวเอง (เซนเซอร์ กล้อง คอมพิวเตอร์) เข้ากับโดรน</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>เขียนโปรแกรมฝั่ง payload ด้วย Payload SDK V3 ผ่านพอร์ต E-Port / SkyPort — โปรแกรมรันบนคอมพิวเตอร์ที่<i>คุณแขวนไว้กับโดรน</i></td></tr>
+<tr><td>บินอัตโนมัติตามเส้นทางที่กำหนดเอง</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>สร้างไฟล์ KMZ/WPML เองแล้วส่งเข้า flight controller ผ่าน MSDK (<code>IWPMZManager</code> + <code>IWaypointMissionManager</code>)</td></tr>
+<tr><td>ส่งคำสั่งบังคับแบบเรียลไทม์จากโค้ด</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>Virtual Stick — ส่งคำสั่งที่ความถี่ 5–25 Hz แต่มีข้อจำกัดมาก (ดู 2.2)</td></tr>
+<tr><td>อ่านค่าระยะจากเซนเซอร์กันชน</td><td class="c"><span class="badge badge--ok">ได้</span></td><td><code>IPerceptionManager.addObstacleDataListener()</code> คืนระยะเป็นมิลลิเมตร (แต่ไม่มีสเปกความแม่นยำ — ดูบทที่ 3)</td></tr>
+<tr><td>อ่านค่าจาก laser rangefinder</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>ผ่าน <code>KeyLaserMeasureInformation</code> ใน KeyManager (MSDK 5.1.0 ขึ้นไป)</td></tr>
+<tr><td>เขียนโค้ดรันบน flight controller / แก้ firmware</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>flight controller เป็นระบบปิดสนิท ไม่มี SDK ระดับนั้น และการ reverse engineer ผิดเงื่อนไข EULA</td></tr>
+<tr><td>ปิด geofence / บินในเขตห้าม</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>ระบบ GEO บังคับที่ firmware — SDK ให้แค่<i>อ่าน</i>ข้อมูลเขต ไม่ให้แก้</td></tr>
+<tr><td>เปลี่ยน EKF / อัลกอริทึม positioning</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>ปิดสนิท — ถ้าต้องการระดับนี้ต้องไปทาง PX4/ArduPilot (ดูบทที่ 7)</td></tr>
+</tbody>
+</table>
+
+<div class="box box--key">
+<span class="box__t">สรุปเป็นประโยคเดียว</span>
+DJI ให้คุณเขียนโปรแกรมได้ <b>รอบ ๆ</b> ตัวโดรน (บนรีโมต และบน payload) แต่ไม่ให้เข้าไป <b>ใน</b> ตัวโดรน —
+เพียงพออย่างยิ่งสำหรับโปรเจกต์นี้ เพราะสิ่งที่ต้องการคือการวางแผนบิน ถ่ายภาพ และอ่านค่าเซนเซอร์ ไม่ใช่การเปลี่ยนวิธีที่โดรนรักษาสมดุล
+</div>
+
+<h2>Mobile SDK V5</h2>
+
+<table class="tight">
+<thead><tr><th style="width:24%">หัวข้อ</th><th>รายละเอียด</th></tr></thead>
+<tbody>
+<tr><td>เวอร์ชันล่าสุด</td><td><b>5.18.0</b> (release notes ลงวันที่ 22 พ.ค. 2569)</td></tr>
+<tr><td>แพลตฟอร์ม</td><td><b>Android เท่านั้น</b></td></tr>
+<tr><td>iOS</td><td><b>ยุติแล้ว</b> — DJI ประกาศหยุดอัปเดต iOS Mobile SDK มีผล 29 พ.ย. 2566 และเลิกรับ MFi application ใหม่ เวอร์ชันสุดท้ายคือสาย V4 (4.16.x)</td></tr>
+<tr><td>รุ่นที่รองรับ (Enterprise)</td><td>Matrice 400, Matrice 4D Enterprise Series, Matrice 4 Enterprise Series (M4E/M4T), Matrice 350 RTK, Matrice 300 RTK, M30 Series, Mavic 3 Enterprise Series, Mavic 3TA</td></tr>
+<tr><td>รุ่นที่รองรับ (Consumer)</td><td>Mini 4 Pro, Mini 3 Pro, Mini 3 <span class="muted">— เท่านั้น</span></td></tr>
+<tr><td>Payload ที่รองรับ</td><td>H30 Series</td></tr>
+</tbody>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">กับดักที่พบบ่อยที่สุดสองข้อ</span>
+<b>1. Air series และ Mavic 3 รุ่น consumer ไม่อยู่ในรายการที่รองรับ</b> — คนซื้อมาแล้วเขียนโค้ดควบคุมไม่ได้บ่อยมาก<br>
+<b>2. โค้ดตัวอย่างจาก MSDK V4 ที่หาเจอตามอินเทอร์เน็ตส่วนใหญ่ใช้กับ V5 ไม่ได้</b> — V4 ใช้ object แยกต่อ component (<code>DJICamera</code>, <code>DJIGimbal</code>) ส่วน V5 รวมเกือบทุกอย่างไว้ใน <b>KeyManager</b> (<code>KeyTools.createKey(CameraKey.KeyShootPhoto)</code> แล้ว <code>performAction</code>/<code>getValue</code>/<code>listen</code>) นี่คือสาเหตุอันดับหนึ่งของความสับสน
+</div>
+
+<h3>โมดูลที่มีให้ใช้</h3>
+
+<table class="tight">
+<thead><tr><th style="width:22%">กลุ่ม</th><th style="width:30%">Manager / Fragment</th><th>ทำอะไร</th></tr></thead>
+<tbody>
+<tr><td>Waypoint</td><td><code>IWaypointMissionManager</code>, <code>IWPMZManager</code></td><td>บิน mission แบบ KMZ/WPML — สร้าง แก้ไข ตรวจสอบ อัปโหลด บินต่อจากจุดที่ค้าง</td></tr>
+<tr><td>Manual control</td><td><code>IVirtualStickManager</code></td><td>ส่งคำสั่ง stick จากโค้ด</td></tr>
+<tr><td><b>Perception</b></td><td><code>IPerceptionManager</code></td><td><b>อ่านระยะสิ่งกีดขวาง ตั้งระยะเตือน/ระยะเบรก เปิด-ปิดระบบกันชนรายทิศ</b></td></tr>
+<tr><td>Camera / Gimbal</td><td>KeyManager (<code>CameraKey.*</code>, <code>GimbalKey.*</code>)</td><td>ถ่ายภาพ ตั้ง exposure ซูม หมุน gimbal ตั้ง palette ความร้อน</td></tr>
+<tr><td>Laser rangefinder</td><td><code>KeyLaserMeasureInformation</code></td><td>อ่านระยะและพิกัดของจุดที่เลเซอร์ยิงไปโดน</td></tr>
+<tr><td>RTK</td><td>RTK Center / Network RTK / RTK Station</td><td>Network RTK และ D-RTK base station</td></tr>
+<tr><td>Media</td><td><code>MediaFragment</code></td><td>list และ download ไฟล์จาก SD card ของอากาศยาน</td></tr>
+<tr><td>Streaming</td><td><code>LiveFragment</code>, CameraStream</td><td>live stream ออก และดึง decoded frame มาประมวลผลสด</td></tr>
+<tr><td><b>Simulator</b></td><td><code>ISimulatorManager</code></td><td><b>บินจำลองโดยไม่ต้องขึ้นบินจริง — สำคัญมากสำหรับทดสอบโค้ดก่อนออกภาคสนาม</b></td></tr>
+<tr><td>Payload</td><td>PayloadCenter, MOP</td><td>คุยกับ payload ที่เขียนด้วย PSDK ผ่านช่องข้อมูลตรง</td></tr>
+</tbody>
+</table>
+
+<h3>Waypoint Mission — สิ่งที่ต้องรู้ก่อนเขียน</h3>
+
+<p>ไฟล์ KMZ คือไฟล์ zip ที่ข้างในต้องมี <code>template.kml</code> และ <code>waylines.wpml</code> — <b>ชื่อไฟล์ zip ตั้งเองได้ แต่ชื่อไฟล์ข้างในเปลี่ยนไม่ได้</b> และ firmware จะ execute <code>waylines.wpml</code> ไม่ใช่ <code>template.kml</code> (ถ้า generate มาแต่ <code>template.kml</code> mission จะไม่วิ่ง — เป็นบั๊กยอดฮิต)</p>
+
+<table class="tight">
+<thead><tr><th>ข้อจำกัด</th><th>รายละเอียด</th></tr></thead>
+<tbody>
+<tr><td>จำนวน waypoint</td><td>ต้องอยู่ระหว่าง <b>2 ถึง 65,535</b> จุด</td></tr>
+<tr><td>M300 / M350 RTK</td><td>รองรับได้เพียง <b>1 wayline ID</b> เท่านั้น และใช้ <code>queryBreakPointInfoFromAircraft</code> ไม่ได้</td></tr>
+<tr><td>โหมดความสูง</td><td>WGS84 / EGM96 / RELATIVE — ต้องระบุตอนแปลง KML เป็น KMZ</td></tr>
+</tbody>
+</table>
+
+<h3>Virtual Stick — ข้อจำกัดที่ทำให้ใช้กับงานนี้ยาก</h3>
+
+<table class="tight">
+<thead><tr><th style="width:34%">ข้อจำกัด</th><th>ค่าจริง</th></tr></thead>
+<tbody>
+<tr><td>ความถี่ที่ควรส่งคำสั่ง</td><td>5–25 Hz</td></tr>
+<tr><td>ระบบกันชนใน advanced mode</td><td>ทำงานเฉพาะเมื่อ vertical = velocity mode, yaw = angular velocity mode, roll/pitch = velocity mode เท่านั้น</td></tr>
+<tr><td>รุ่นที่ระบบกันชนยังทำงานตอนใช้ virtual stick</td><td>M300 RTK, M350 RTK, M30 series, Mavic 3E series, Mavic 3M <b>เท่านั้น</b></td></tr>
+<tr><td>เวอร์ชัน firmware</td><td>ต่ำกว่า V7.01.10.03 → obstacle sensing ถูกปิด</td></tr>
+<tr><td>เขตจำกัดการบิน</td><td>เข้าใกล้ประมาณ 30 m → <b>รีโมตยึดการควบคุมคืนทันที</b> virtual stick ใช้ไม่ได้</td></tr>
+</tbody>
+</table>
+
+<h3>การขอ App Key</h3>
+
+<ol>
+<li>สมัคร developer account ที่ <code>developer.dji.com/register</code> — ต้อง verify ด้วยอีเมล + บัตรเครดิตหรือเบอร์โทร (บัตรไม่ถูกตัดเงิน)</li>
+<li>Apps → Create App → กรอกชื่อ แพลตฟอร์ม <b>package identifier</b> หมวดหมู่ คำอธิบาย</li>
+<li><b>package identifier ต้องตรงกับ <code>applicationId</code> ใน Gradle เป๊ะ ๆ</b> ผิดตัวเดียว register ไม่ผ่าน</li>
+<li>ใส่ App Key ใน <code>AndroidManifest.xml</code> เป็น meta-data <code>com.dji.sdk.API_KEY</code></li>
+</ol>
+
+<div class="box box--warn">
+<span class="box__t">ข้อควรระวังสำหรับงานภาคสนาม</span>
+<b>MSDK ต้องต่ออินเทอร์เน็ตเพื่อยืนยัน App Key กับเซิร์ฟเวอร์ของ DJI</b> — เครื่องที่ยังไม่เคย activate จะ register ไม่ผ่านถ้าไม่มีเน็ต<br>
+สะพานในชนบทมักไม่มีสัญญาณ ต้อง <b>activate จากที่ทำงานให้เรียบร้อยก่อนออกภาคสนามเสมอ</b>
+</div>
+
+<h2>Payload SDK V3</h2>
+
+<p>ใช้เมื่อต้องการต่ออุปกรณ์ของตัวเองเข้ากับโดรน เช่น laser rangefinder เพิ่มเติม กล้องพิเศษ หรือคอมพิวเตอร์สำหรับประมวลผลบนอากาศ</p>
+
+<table class="tight">
+<thead><tr><th>พอร์ต</th><th style="width:26%">อากาศยานที่ใช้ได้</th><th>ไฟที่จ่ายได้</th><th>หมายเหตุ</th></tr></thead>
+<tbody>
+<tr><td><b>E-Port</b></td><td>Mavic 3E/3T, M30/M30T, M300 RTK, M350 RTK</td><td>M3E/3T: 12–17.6 V/4 A · M30: 19.2–26.1 V/4 A · M300/M350: 24 V/4 A</td><td>บอร์ดขนาด 55×40×9 mm มี XT30 + USB 2.0 + UART/PPS — <b>รองรับ PSDK V3 ขึ้นไปเท่านั้น ใช้กับ Onboard SDK ไม่ได้</b></td></tr>
+<tr><td><b>E-Port V2</b></td><td>Matrice 400</td><td>XT30 VCC 13.8/17.02/24 V @5 A</td><td>บอร์ด 89×60×13.4 mm มี MCU ในตัว พร้อม General IO, UART, IIC/CAN, SPI</td></tr>
+<tr><td><b>SkyPort V2</b></td><td>M300 RTK, M350 RTK</td><td>มี High Voltage mode</td><td>quick-release สำหรับ gimbal ที่พัฒนาเอง</td></tr>
+<tr><td><b>SkyPort V3</b></td><td><b>Matrice 400 เท่านั้น</b> — ใช้กับ M300/M350 ไม่ได้</td><td>13.6 / 17 / 24 V</td><td>รองรับเฉพาะโหมด ONLY_USB_BULK และ ONLY_NETWORK</td></tr>
+<tr><td><b>X-Port</b></td><td>M300 / M350 / M400</td><td>ผ่าน SkyPort</td><td>gimbal 3 แกนสำเร็จรูปจาก DJI — ผู้พัฒนาแค่ใส่เซนเซอร์เข้าไป ไม่ต้องออกแบบ gimbal เอง</td></tr>
+</tbody>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">ทำไม PSDK อาจไม่ใช่ทางสำหรับโปรเจกต์จบ</span>
+<ul style="margin-bottom:0">
+<li>รุ่นที่มี E-Port/SkyPort ล้วนเป็น <b>Enterprise ราคาหลายแสนบาท</b></li>
+<li>ต้องเขียนโปรแกรมภาษา C ฝั่ง embedded — คนละทักษะกับงาน AI ที่เป็นแก่นของโปรเจกต์</li>
+<li><b>ยังไม่ยืนยันว่า payload ส่งค่าระยะกลับเข้า flight controller เพื่อทำ closed-loop รักษาระยะได้หรือไม่</b> — ต้องตรวจในเอกสาร PSDK API หมวด data subscription / flight control ก่อนออกแบบระบบ อย่าสมมติว่าทำได้</li>
+</ul>
+</div>
+
+<h2>SDK ที่ตายแล้ว</h2>
+
+<ul>
+<li><b>Onboard SDK</b> — เลิกใช้ พอร์ต E-Port รุ่นใหม่ไม่รองรับแล้ว</li>
+<li><b>iOS Mobile SDK</b> — หยุดอัปเดตตั้งแต่ 29 พ.ย. 2566</li>
+<li><b>Windows SDK / UX SDK</b> — ไม่มีในสาย V5</li>
+</ul>
+
+<!-- ============ 3 ============ -->
+<h1>การวัดระยะจากโดรนถึงผิววัตถุ</h1>
+
+<div class="box box--key">
+<span class="box__t">คำตอบก่อนอ่านรายละเอียด</span>
+มี 5 ทางที่โดรนจะรู้ระยะห่างจากผิววัตถุ และ <b>ไม่มีทางไหนแม่นพอสำหรับแปลง pixel เป็นมิลลิเมตรที่ระยะใกล้</b><br>
+สาเหตุร่วมคือ laser rangefinder ของ DJI ทุกรุ่นมี <b>พจน์คงที่ ±0.2 m</b> ในสูตรความแม่น ซึ่งไม่ลดลงตามระยะ →
+ยิ่งบินใกล้ ความคลาดเคลื่อน<i>สัมพัทธ์</i>ยิ่งแย่ ตรงข้ามกับสัญชาตญาณ
+</div>
+
+<h2>Laser rangefinder</h2>
+
+<table class="tight">
+<thead><tr><th>รุ่น</th><th class="num">ช่วงวัด</th><th class="num">ระยะต่ำสุด</th><th>ความแม่น</th><th class="num">อัตราวัด</th></tr></thead>
+<tbody>
+<tr><td><b>M4E / M4T</b> (ในตัว)</td><td class="num">ถึง 1,800 m</td><td class="num">1 m</td><td>1–3 m: system error &lt; 0.3 m<br>ระยะอื่น: ±(0.2 + 0.0015·D) m</td><td class="num">1 Hz</td></tr>
+<tr><td>M30 / M30T (ในตัว)</td><td class="num">3–1,200 m</td><td class="num"><b>3 m</b></td><td>±(0.2 + 0.0015·D) m</td><td class="num">ยังไม่ยืนยัน</td></tr>
+<tr><td>Zenmuse H20 / H20T / H20N</td><td class="num">3–1,200 m</td><td class="num"><b>3 m</b></td><td>±(0.2 + 0.0015·D) m</td><td class="num">ยังไม่ยืนยัน</td></tr>
+<tr><td>Zenmuse H30 / H30T</td><td class="num">3–3,000 m</td><td class="num"><b>3 m</b></td><td>≤500 m: ±(0.2 + 0.0015·D) m<br>&gt;500 m: ±1.0 m</td><td class="num">ยังไม่ยืนยัน</td></tr>
+<tr><td>Matrice 400 (ในตัว)</td><td class="num" colspan="4">ไม่มี laser rangefinder แบบจุดเดียว — ใช้ Rotating LiDAR แทน (0.5–100 m, 360°×58°, 520,000 จุด/วินาที)</td></tr>
+</tbody>
+</table>
+
+<h3>ความคลาดเคลื่อนสัมพัทธ์ — ตัวเลขที่ตอบโจทย์โดยตรง</h3>
+
+<table>
+<thead><tr><th class="num">ระยะ D</th><th class="num">ค่าคลาดเคลื่อนสัมบูรณ์</th><th class="num">คลาดเคลื่อนสัมพัทธ์</th><th>ผลต่อการแปลง pixel → mm</th></tr></thead>
+<tbody>
+<tr><td class="num">2 m</td><td class="num">&lt; 0.3 m (M4 เท่านั้น)</td><td class="num"><b>≤ 15%</b></td><td class="c"><span class="badge badge--bad">ใช้ไม่ได้</span></td></tr>
+<tr><td class="num">3 m</td><td class="num">±0.205 m</td><td class="num"><b>±6.8%</b></td><td class="c"><span class="badge badge--bad">ใช้ไม่ได้</span></td></tr>
+<tr><td class="num">5 m</td><td class="num">±0.208 m</td><td class="num">±4.2%</td><td class="c"><span class="badge badge--warn">หยาบ</span></td></tr>
+<tr><td class="num">10 m</td><td class="num">±0.215 m</td><td class="num">±2.2%</td><td class="c"><span class="badge badge--warn">พอไหว</span></td></tr>
+<tr><td class="num">15 m</td><td class="num">±0.223 m</td><td class="num">±1.5%</td><td class="c"><span class="badge badge--info">ยอมรับได้</span></td></tr>
+<tr><td class="num">20 m</td><td class="num">±0.230 m</td><td class="num">±1.2%</td><td class="c"><span class="badge badge--info">ยอมรับได้</span></td></tr>
+</tbody>
+<caption>เพราะ GSD แปรผันตรงกับ D ความคลาดเคลื่อนของระยะจึงกลายเป็นความคลาดเคลื่อนของมาตราส่วนโดยตรง — ที่ระยะ 3 m รอยแตกที่วัดได้ 1.6 mm อาจเป็น 1.49 mm หรือ 1.71 mm ก็ได้</caption>
+</table>
+
+<h3>ขนาดลำแสง — ปัญหาที่สเปกความแม่นไม่ครอบคลุม</h3>
+
+<p>DJI ประกาศขนาดจุดเลเซอร์ (spot size) เฉพาะ H30/H30T: ที่ 100 m ประมาณ 50 × 450 mm และที่ 1,000 m ประมาณ 450 × 4,500 mm แปลงเป็น divergence ได้ประมาณ <b>0.5 × 4.5 mrad</b> — ลำแสงเป็นวงรียาว ไม่ใช่วงกลม</p>
+
+<table class="tight">
+<thead><tr><th class="num">ระยะ</th><th class="num">3 m</th><th class="num">5 m</th><th class="num">10 m</th><th class="num">20 m</th></tr></thead>
+<tbody><tr><td>ขนาดจุดเลเซอร์ (H30/H30T)</td><td class="num">1.5 × 13.5 mm</td><td class="num">2.5 × 22.5 mm</td><td class="num">5 × 45 mm</td><td class="num">10 × 90 mm</td></tr></tbody>
+</table>
+
+<p>ที่ระยะ 10 m ลำแสงกินพื้นที่ 5 × 45 mm — ถ้าเล็งไปโดนขอบเสา ขอบคาน หรือช่องว่างระหว่างชิ้นส่วน พลังงานจะกระจายไปหลายเป้า DJI ระบุไว้เองในหน้าสเปกว่า <i>"If a laser pulse hits multiple targets, its energy is dispersed, which may reduce the measurable distance"</i> — ค่าที่ได้จะเป็นค่าผสมที่ไม่รู้ว่ามาจากผิวไหน สำหรับงานตรวจใต้สะพานที่ผิวมีขอบและช่องเยอะ นี่เป็นแหล่งความคลาดเคลื่อนที่สูตรความแม่นไม่ครอบคลุมเลย</p>
+
+<div class="box box--warn">
+<span class="box__t">ปัญหาที่ยังเปิดค้างในเอกสารและใน GitHub</span>
+<b>1.</b> เอกสาร DJI ระบุตรง ๆ ว่า <i>"The laser sensor must be at least 3 m away from the target point"</i> — บินใกล้กว่านั้น API จะไม่คืนค่าที่เชื่อได้<br>
+<b>2.</b> มี issue เปิดค้างบน GitHub (dji-sdk/Mobile-SDK-Android-V5 #368) รายงานว่าปรับ <code>targetPoint</code> แล้ว<b>ค่าระยะไม่เปลี่ยน</b> ไม่ว่าจะเล็งจุดไหนบนจอ และยังไม่มีคำตอบจาก DJI — แปลว่าสมมติฐาน "เล็งเลเซอร์ไปที่รอยแตกโดยตรง" <b>อาจทำไม่ได้จริง ต้องทดสอบเองก่อนออกแบบระบบรอบมัน</b>
+</div>
+
+<h2>Obstacle sensing — เซนเซอร์กันชน ไม่ใช่เครื่องมือวัด</h2>
+
+<table class="tight">
+<thead><tr><th>ทิศ</th><th>M4E / M4T</th><th>M350 RTK</th><th>Mavic 3E / 3T</th></tr></thead>
+<tbody>
+<tr><td>หน้า / หลัง</td><td>วัดได้ 0.4–22.5 m<br>ตรวจจับ 0.4–200 m</td><td>0.7–40 m</td><td>0.5–20 m / 0.5–16 m</td></tr>
+<tr><td>ข้าง</td><td>วัดได้ 0.5–32 m<br>ตรวจจับ 0.5–200 m</td><td>0.7–40 m</td><td>0.5–25 m</td></tr>
+<tr><td>ล่าง</td><td>0.3–18.8 m + 3D infrared</td><td>0.6–30 m</td><td>0.3–18 m</td></tr>
+<tr><td>บน</td><td>omnidirectional <span class="badge badge--warn">ยังไม่ยืนยันช่วงระยะแยก</span></td><td>0.6–30 m</td><td>0.2–10 m</td></tr>
+</tbody>
+<caption><b>อ่านตารางนี้ให้เป็น:</b> ตัวเลขตัวหน้า (0.3–0.7 m) คือ <b>blind zone</b> ถ้าตั้งใจบินที่ระยะ 0.3 m จากผิวเสา ระบบมองไม่เห็นผนังนั้นตั้งแต่แรก การ "ปิดระบบกันชน" จึงไม่ได้เพิ่มความเสี่ยง — ความเสี่ยงเกิดไปแล้วตั้งแต่เข้าไปในโซนบอด<br>
+ทิศ <b>บน</b> เป็นทิศที่เซนเซอร์อ่อนที่สุดของโดรนทุกยี่ห้อ ซึ่งคือทิศที่ต้องใช้เมื่อบินใต้ท้องสะพานพอดี</caption>
+</table>
+
+<h3>API ที่ดึงค่าได้จริง</h3>
+
+<table class="tight">
+<thead><tr><th>Method</th><th class="c">คืนค่า</th><th class="c">หน่วย</th><th>ความหมาย</th></tr></thead>
+<tbody>
+<tr><td colspan="4" style="background:#f0f3f6"><b><code>ObstacleData</code></b> — ค่าที่วัดได้จริง (ตั้งแต่ MSDK 5.1.0)</td></tr>
+<tr><td><code>getHorizontalObstacleDistance()</code></td><td class="c"><code>List&lt;Integer&gt;</code></td><td class="c"><b>มิลลิเมตร</b></td><td>ระยะสิ่งกีดขวางรอบตัว 360°</td></tr>
+<tr><td><code>getHorizontalAngleInterval()</code></td><td class="c"><code>int</code></td><td class="c">องศา</td><td>ช่วงมุมต่อ index (ปกติ 1° → มี 360 ค่า, index 0 = หัวเครื่อง)</td></tr>
+<tr><td><code>getUpwardObstacleDistance()</code></td><td class="c"><code>int</code></td><td class="c"><b>มิลลิเมตร</b></td><td>ระยะถึงสิ่งกีดขวางด้านบน</td></tr>
+<tr><td><code>getDownwardObstacleDistance()</code></td><td class="c"><code>int</code></td><td class="c"><b>มิลลิเมตร</b></td><td>ระยะถึงสิ่งกีดขวางด้านล่าง</td></tr>
+<tr><td colspan="4" style="background:#f0f3f6"><b><code>PerceptionInfo</code></b> — <b>ค่าตั้ง ไม่ใช่ค่าวัด</b> (ตั้งแต่ MSDK 5.0.0)</td></tr>
+<tr><td><code>get*ObstacleAvoidanceWarningDistance()</code></td><td class="c"><code>double</code></td><td class="c">เมตร</td><td>ระยะเตือน (ค่าที่ตั้งไว้)</td></tr>
+<tr><td><code>get*ObstacleAvoidanceBrakingDistance()</code></td><td class="c"><code>double</code></td><td class="c">เมตร</td><td>ระยะเบรกอัตโนมัติ (ค่าที่ตั้งไว้)</td></tr>
+<tr><td><code>get*ObstacleAvoidanceWorking()</code></td><td class="c"><code>Boolean</code></td><td class="c">—</td><td>เซนเซอร์ทิศนั้นทำงานอยู่หรือไม่</td></tr>
+</tbody>
+</table>
+
+<h3>ช่วงค่าที่ตั้งได้ (ตัวอย่าง M30 Series — เอกสารระบุว่าค่าต่างกันตามรุ่น)</h3>
+
+<table class="tight">
+<thead><tr><th>พารามิเตอร์</th><th class="num">แนวราบ</th><th class="num">ด้านบน</th><th class="num">ด้านล่าง</th></tr></thead>
+<tbody>
+<tr><td>ระยะเตือน (warning)</td><td class="num">[1.1, 33.0] m</td><td class="num">[1.1, 33.0] m</td><td class="num">[0.6, 33.0] m</td></tr>
+<tr><td>ระยะเบรก (braking)</td><td class="num"><b>[1.0, 10.0] m</b></td><td class="num"><b>[1.0, 10.0] m</b></td><td class="num">[0.5, 3.0] m</td></tr>
+</tbody>
+<caption><b>ระยะเบรกแนวราบต่ำสุดที่ตั้งได้คือ 1.0 m</b> — นี่คือขีดจำกัดที่ทำให้การบินเข้าใกล้กว่านี้ต้องปิดระบบ<br>
+แถว <b>ด้านบน</b> สำคัญเป็นพิเศษสำหรับงานใต้ท้องสะพาน ซึ่งเป็นทิศที่ต้องเข้าใกล้ "เพดาน"</caption>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">ห้ามใช้ obstacle sensing เป็นค่าวัดระยะเพื่อทำมาตราส่วน</span>
+<b>DJI ไม่เคยประกาศความแม่นยำของ obstacle sensing เลยไม่ว่ารุ่นไหน</b> — มีแต่ช่วงระยะกับ FOV
+หน่วยที่คืนเป็นมิลลิเมตรคือ <b>ความละเอียดของชนิดข้อมูล ไม่ใช่ความแม่นยำ</b><br><br>
+ในทางฟิสิกส์ ความคลาดเคลื่อนของ stereo depth โตตามสัดส่วน <code>D² / (f · B)</code> เมื่อ B คือระยะห่างระหว่างกล้องคู่
+ซึ่งบนโดรนขนาด M4 คือไม่กี่เซนติเมตร → ที่ระยะ 5–10 m ความคลาดเคลื่อนเป็นหลายสิบเซนติเมตรได้ง่าย ๆ<br><br>
+<b>ใช้ได้ดีมากสำหรับ:</b> รักษาระยะห่างให้คงที่ระหว่างบิน (auto-standoff) และเตือนก่อนชน<br>
+<b>ใช้ไม่ได้เลยสำหรับ:</b> แปลง pixel เป็นมิลลิเมตร
+</div>
+
+<h2>LiDAR payload</h2>
+
+<table class="tight">
+<thead><tr><th>สเปก</th><th>Zenmuse L1</th><th>Zenmuse L2</th><th>Zenmuse L3</th></tr></thead>
+<tbody>
+<tr><td>ระยะต่ำสุด</td><td>ยังไม่ยืนยัน</td><td><b>3 m</b></td><td>ยังไม่ยืนยัน</td></tr>
+<tr><td>ความแม่นการวัดระยะ</td><td>3 cm @100 m</td><td>2 cm @150 m</td><td>ทำซ้ำได้ 5 mm @150 m</td></tr>
+<tr><td>ความแม่นของระบบ</td><td>H 10 cm / V 5 cm @50 m</td><td>H 5 cm / V 4 cm @150 m</td><td>V 3 cm @120 m</td></tr>
+<tr><td>แพลตฟอร์ม</td><td>M300 RTK</td><td>M300 / M350 RTK</td><td><b>Matrice 400 เท่านั้น</b></td></tr>
+</tbody>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">LiDAR ใช้วัดรอยแตกไม่ได้ และใช้วัดระยะสด ๆ ก็ไม่ได้</span>
+<b>วัดสดไม่ได้</b> — ทั้งสามรุ่นเป็น payload สำหรับเก็บ point cloud แล้วประมวลผลหลังบิน ไม่มี API ให้ดึง "ระยะถึงผิวหน้าเครื่อง ณ วินาทีนี้" แบบเรียลไทม์ และ scan pattern ไม่ได้เล็งไปข้างหน้า<br>
+<b>ต่อให้ได้ point cloud มาก็ยังวัดรอยแตกไม่ได้</b> — ความแม่นของระบบ L2 = 5 cm ในแนวราบ ซึ่งหยาบกว่ารอยแตก 0.3 mm ประมาณ <b>167 เท่า</b><br><br>
+<b>สิ่งที่ LiDAR มีประโยชน์จริงในงานนี้:</b> สร้างรูปทรงของสะพาน/ตอม่อเพื่อวางแผนเส้นทางบินให้รักษาระยะคงที่ ให้มาตราส่วนระดับเซนติเมตรแก่โมเดล photogrammetry และใช้อ้างอิงตำแหน่งรอยแตกกลับเข้าระบบ BMMS
+</div>
+
+<h2>RTK</h2>
+
+<p>ทุกรุ่น DJI Enterprise ให้ตัวเลขเดียวกันเมื่อได้สถานะ RTK FIX: <b>แนวราบ 1 cm + 1 ppm, แนวดิ่ง 1.5 cm + 1 ppm</b> (1 ppm = 1 mm ต่อระยะห่างจากสถานีฐาน 1 กม.)</p>
+
+<div class="box box--bad">
+<span class="box__t">RTK ใช้กับโจทย์นี้ไม่ได้ ด้วยเหตุผลเชิงโครงสร้าง 3 ข้อ</span>
+<b>1. RTK บอกตำแหน่งของโดรน ไม่ได้บอกระยะถึงผิววัตถุ</b> — จะได้ระยะต้องรู้ตำแหน่งของผิวคอนกรีตในระบบพิกัดเดียวกันด้วย ซึ่งต้องมี as-built survey หรือ BIM ที่แม่นกว่านั้น<br>
+<b>2. ใต้ท้องสะพานคือสภาพแวดล้อม GNSS-denied โดยนิยาม</b> — ท้องคานบังท้องฟ้าไปเกือบหมด<br>
+<b>3. Multipath</b> — เสาคอนกรีตและโครงเหล็กสะท้อนสัญญาณ ทำให้ระยะที่วัดได้ยาวเกินจริงโดยที่ตัวรับไม่รู้ตัว<br><br>
+งานวิจัยรายงานว่า RTK fix ล้มเหลวบ่อยเมื่ออยู่ห่างสิ่งกีดขวางในระยะ 0–5 m และใช้เวลา re-fix ประมาณ 9–13 วินาทีหลังพ้นสิ่งกีดขวาง <span class="badge badge--warn">ควรยืนยันตัวเลขในเปเปอร์ต้นฉบับก่อนอ้างในเล่ม</span>
+</div>
+
+<h2>ตารางเปรียบเทียบและข้อสรุป</h2>
+
+<table>
+<thead><tr><th>วิธี</th><th class="c">ความแม่นที่ 3–10 m</th><th class="c">ต้นทุน</th><th>เหมาะกับ</th></tr></thead>
+<tbody>
+<tr><td><b>Laser rangefinder ในตัว (M4E/M4T)</b></td><td class="c">±2.2% @10 m<br>±6.8% @3 m</td><td class="c">฿0 ถ้ามีเครื่อง</td><td>รู้ระยะคร่าว ๆ, tag พิกัด PinPoint, ตรวจสอบไขว้กับ marker</td></tr>
+<tr><td>Obstacle sensing (binocular)</td><td class="c"><b>ไม่ประกาศ</b></td><td class="c">฿0</td><td>รักษาระยะคงที่อัตโนมัติ, เตือนก่อนชน — <b>ห้ามใช้ทำมาตราส่วน</b></td></tr>
+<tr><td>LiDAR payload</td><td class="c">5 cm (ระบบ)</td><td class="c">หลักแสน</td><td>รูปทรงโครงสร้าง, วางแผนเส้นทาง — ไม่ใช่วัดรอยแตก</td></tr>
+<tr><td>RTK</td><td class="c">1 cm (ตำแหน่งโดรน)</td><td class="c">รวมในเครื่อง</td><td>ทำแผนที่ในที่โล่ง — ใช้ใต้สะพานไม่ได้</td></tr>
+<tr><td>ติด rangefinder เอง (LightWare SF11/C)</td><td class="c">±0.1 m คงที่<br>= ±2% @5 m, ±3.3% @3 m</td><td class="c">~$199–229<br>+ ต้องมี M350/M400</td><td>ดีกว่าของ DJI ทุกช่วง วัดได้ตั้งแต่ 0.1 m — แต่ต้องพัฒนา payload เอง</td></tr>
+<tr><td><b>Fiducial marker ในภาพ (บทที่ 5)</b></td><td class="c"><b>0.26%</b> (ทดสอบแล้ว)</td><td class="c"><b>~฿500</b></td><td><b>แนะนำ — แม่นที่สุด ถูกที่สุด และแก้มุมเอียงได้ด้วย</b></td></tr>
+</tbody>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">ข้อสรุปของบทนี้</span>
+คำถาม "จะรู้ได้อย่างไรว่าโดรนห่างวัตถุเท่าไหร่" มีคำตอบที่ดีกว่าคือ <b>เปลี่ยนคำถาม</b><br>
+สิ่งที่ต้องการจริง ๆ ไม่ใช่ "ระยะ" แต่คือ <b>"หนึ่งพิกเซลในภาพนี้เท่ากับกี่มิลลิเมตรบนผิวจริง"</b> —
+ระยะเป็นเพียงทางอ้อมทางหนึ่งที่จะได้คำตอบนั้น และเป็นทางที่แม่นน้อยที่สุด เพราะต้องรู้ทั้งระยะ ทางยาวโฟกัส ขนาดเซนเซอร์ และมุมเอียง ครบทั้งสี่อย่าง<br><br>
+ถ้าถามคำถามที่ถูก คำตอบจะกลายเป็นเรื่องง่ายมาก และแทบไม่มีต้นทุน — ดูบทที่ 5
+</div>

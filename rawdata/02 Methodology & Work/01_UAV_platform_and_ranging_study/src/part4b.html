@@ -1,0 +1,171 @@
+<!-- ============ 11 ============ -->
+<h1>ข้อจำกัดที่พบเมื่อนำทุกบทมาชนกัน</h1>
+
+<p>บทนี้เกิดจากการตรวจสอบว่าตัวเลขในบทหนึ่งกับข้อสรุปในอีกบทหนึ่งอยู่ด้วยกันได้จริงหรือไม่ — ทุกข้อในบทนี้<b>เปลี่ยนขอบเขตของโปรเจกต์ ไม่ใช่แค่แก้ตัวเลข</b> จึงควรอ่านก่อนวางแผนงานจริง</p>
+
+<h2>11.1 T-BHI คำนวณจากรอยแตกอย่างเดียวไม่ได้</h2>
+
+<div class="box box--bad">
+<span class="box__t">ปัญหา</span>
+สูตรของ T-BHI คือ <code>EHI<sub>e</sub> = Σ(CHI<sub>i</sub> × y<sub>ei</sub>) × 100</code> โดย <code>y<sub>ei</sub></code> คือสัดส่วนของ element ที่อยู่ในสภาพระดับ i
+ซึ่งต้องมาจาก<b>ความเสียหายทุกชนิดบน element นั้น เอาระดับที่แย่ที่สุด</b> ไม่ใช่จากรอยแตกอย่างเดียว<br><br>
+ตาราง BMMS 4-13 (เกณฑ์เสาตอม่อ) มีเกณฑ์อย่างน้อย <b>3 แกน</b> ไม่ใช่แกนเดียว
+</div>
+
+<table>
+<thead><tr><th>เกณฑ์ในตารางเดียวกัน</th><th class="num">ระดับ 3</th><th class="num">ระดับ 2</th><th class="num">ระดับ 1</th><th class="c">UAV RGB วัดได้?</th></tr></thead>
+<tbody>
+<tr><td>ความกว้างรอยแตก</td><td class="num">1.6–3.2 mm</td><td class="num">3.2–4.8 mm</td><td class="num">&gt; 4.8 mm</td><td class="c"><span class="badge badge--ok">ได้</span> — คือทั้งหมดที่รายงานนี้พูดถึง</td></tr>
+<tr><td><b>ความลึกการสึกกร่อน/หลุดร่อน</b></td><td class="num">5–10 mm</td><td class="num">10–20 mm</td><td class="num">&gt; 20 mm</td><td class="c"><span class="badge badge--bad">ไม่ได้</span> — ต้องวัดความลึก</td></tr>
+<tr><td><b>รอยแตกจากแรงเฉือน/แรงดัด</b></td><td class="num">—</td><td class="num">—</td><td class="num"><b>ทุกขนาด = ระดับ 1</b></td><td class="c"><span class="badge badge--bad">ไม่ได้</span> — เป็นงานจำแนก pattern</td></tr>
+</tbody>
+</table>
+
+<p><b>แกนที่ 2 มีตัวเลขชนกันตรง ๆ:</b> ขอบเขตชั้นแรกคือ 5 mm แต่ SfM มีความแม่นเชิงเรขาคณิตระดับ<b>เซนติเมตร</b> (orthophoto RMSE ที่วัดได้จริง: planimetric 0.89 cm / vertical 2.74 cm) — <b>ความไม่แน่นอนของการวัดความลึกใหญ่กว่าขอบเขตชั้นแรกของเกณฑ์ 2–5 เท่า</b> จึงจำแนก spalling ระดับ 3 กับ 2 ไม่ได้เลย</p>
+
+<p><b>แกนที่ 3 อันตรายกว่ามาก:</b> เกณฑ์ "รอยแตกจากแรงเฉือนหรือแรงดัด ทุกขนาด = ระดับ 1 (วิกฤติ)" แปลว่า <b>การวัดความกว้างไม่ได้ตัดสินอะไรเลยในกรณีที่อันตรายที่สุด</b> ระบบต้องจำแนก<i>ชนิด ทิศทาง และตำแหน่ง</i>ของรอยแตก (เฉียง ~45° ใกล้ปลายเสา = shear · ตั้งฉากแนวแรงดัด = flexural · ลายแตกร่างแห = map cracking · ขนานแนวเหล็กเสริม = corrosion-induced) ซึ่งเป็น <b>pattern reasoning ไม่ใช่ metrology</b></p>
+
+<h3>ผลพวงเชิงสถิติจากกฎ override</h3>
+
+<p>ตาราง 4.11 ของ T-BHI ระบุว่า พบระดับ 1 ใน Primary element <b>บังคับ</b>สถานะสะพานเป็นวิกฤติ — <b>false positive เดียวบนเสาต้นเดียวพลิกสถานะทั้งสะพาน</b></p>
+
+<div class="eq">
+P(อย่างน้อยหนึ่ง override ผิด) = 1 − (1 − p)<sup>N</sup>
+<small>p = อัตรา false positive ของ classifier ต่อหน้าเสา · N = จำนวนหน้าเสาทั้งสะพาน</small>
+</div>
+
+<table class="tight">
+<thead><tr><th class="num">p (FPR ต่อหน้าเสา)</th><th class="num">สะพาน 3 ตอม่อ (N = 12)</th><th class="num">สะพาน 10 ตอม่อ (N = 40)</th></tr></thead>
+<tbody>
+<tr><td class="num">5%</td><td class="num">46%</td><td class="num"><b>87%</b></td></tr>
+<tr><td class="num">1%</td><td class="num">11%</td><td class="num"><b>33%</b></td></tr>
+<tr><td class="num">0.4%</td><td class="num">4.7%</td><td class="num">15%</td></tr>
+<tr><td class="num">0.1%</td><td class="num">1.2%</td><td class="num">3.9%</td></tr>
+</tbody>
+<caption>ต้องได้ FPR ≤ ~0.1–0.4% ต่อหน้าเสา จึงจะรายงานสถานะสะพานได้อย่างมีความหมาย — <b>ไม่มี crack classifier ที่ตีพิมพ์ตัวไหนแตะระดับนี้</b> (เทียบ: งานหนึ่งได้ mean IoU 20.6% บนภาพตรวจสอบจริง อีกงานได้ Precision 81.0%)</caption>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">ข้อสรุปที่ต้องเขียนลงเล่มตั้งแต่บทที่ 1 ไม่ใช่ในบทข้อจำกัด</span>
+<b>1. ระบบนี้ต้องออกแบบเป็น screening + human confirm ไม่ใช่ autonomous rater</b> ซึ่งสอดคล้องกับที่ FHWA ระบุว่า UAS ยังไม่แทน hands-on inspection<br>
+<b>2. ตัวชี้วัดที่ต้องรายงานเพิ่ม:</b> FPR ของ shear/flexural classifier ต่อหน้าเสา และ bridge-level confusion matrix ไม่ใช่แค่ per-crack MAE หรือ per-image IoU<br>
+<b>3. รายงาน sensitivity analysis:</b> ถ้าเปลี่ยนผลของ element เดียว สถานะสะพานเปลี่ยนกี่กรณี
+</div>
+
+<h3>ขอบเขตผลลัพธ์ที่ซื่อสัตย์และยังจบได้</h3>
+
+<table class="tight">
+<thead><tr><th>ชั้นผลลัพธ์</th><th class="c">ทำได้ด้วย UAV RGB?</th><th>สถานะในโปรเจกต์</th></tr></thead>
+<tbody>
+<tr><td>Layer 0 — primitive: ความกว้าง (mm), ความยาว (m), ระยะห่าง (m), พื้นที่ %</td><td class="c"><span class="badge badge--ok">ได้</span></td><td><b>deliverable หลัก</b></td></tr>
+<tr><td>Layer 0b — จำแนก pattern (shear / flexural / shrinkage / map / corrosion)</td><td class="c"><span class="badge badge--warn">ได้ถ้ามีผู้ตรวจสอบยืนยัน</span></td><td><b>novelty ที่แนะนำให้ไล่</b></td></tr>
+<tr><td>Layer 1 — BMMS 0–5 เฉพาะแกน cracking</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>deliverable</td></tr>
+<tr><td>Layer 1 — BMMS 0–5 แกน spalling / erosion depth</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>ประกาศเป็นข้อจำกัด + วัดด้วยมือ</td></tr>
+<tr><td>delamination / โพรงภายใน</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>ต้องใช้ IR หรือ hammer test</td></tr>
+<tr><td>EHI ราย element</td><td class="c"><span class="badge badge--warn">เฉพาะที่ครบทุกแกน</span></td><td>รายงานพร้อม Confidence Flag</td></tr>
+<tr><td><b>T-BHI รวมทั้งสะพาน</b></td><td class="c"><span class="badge badge--bad">ไม่ได้ลำพัง</span></td><td>ต้องผสมข้อมูลจาก manual inspection</td></tr>
+</tbody>
+<caption><b>นี่ไม่ใช่การถอย</b> — เอกสาร T-BHI เขียน Confidence Flag ไว้เองอยู่แล้ว การรายงานความไม่แน่นอนอย่างซื่อสัตย์คือการทำตามสเปก ไม่ใช่ความล้มเหลว</caption>
+</table>
+
+<h2>11.2 งบเวลาประมวลผลไม่ปิด — ต่างจากเกณฑ์ที่ตั้งไว้เอง 13 เท่า</h2>
+
+<p>จากข้อมูลจริงของงานที่ตีพิมพ์: tile 256×256 px, overlap 50%, throughput 26.87 FPS บน RTX 3090 (โมเดล detection ซึ่งเบากว่า segmentation) = <b>37.2 ms ต่อ tile</b> และการทำ overlapping tiling ทำให้ Recall ดีขึ้น ~24% จึงตัดออกไม่ได้</p>
+
+<table class="tight">
+<thead><tr><th>แผน</th><th class="num">ภาพ/เสา</th><th class="num">tiles/เสา</th><th class="num">เวลา inference/เสา</th><th class="c">ผ่านเกณฑ์ 60 นาที?</th></tr></thead>
+<tbody>
+<tr><td>A — wide @3 m</td><td class="num">168</td><td class="num">508,032</td><td class="num">5.2 ชม.</td><td class="c"><span class="badge badge--bad">ไม่ผ่าน</span></td></tr>
+<tr><td>B — tele @8 m (GSD 0.20)</td><td class="num">408</td><td class="num">1,253,376</td><td class="num"><b>13.0 ชม.</b></td><td class="c"><span class="badge badge--bad">เกิน 13 เท่า</span></td></tr>
+<tr><td>C — tele @19 m</td><td class="num">168</td><td class="num">516,096</td><td class="num">5.3 ชม.</td><td class="c"><span class="badge badge--bad">ไม่ผ่าน</span></td></tr>
+<tr><td><b>D — โหมดวัดอย่างเดียว (overlap 30%)</b></td><td class="num"><b>20</b></td><td class="num">60,480</td><td class="num"><b>37 นาที</b></td><td class="c"><span class="badge badge--ok">ผ่าน</span></td></tr>
+</tbody>
+<caption>ยังไม่รวมเวลา SfM ซึ่งงานวิจัยรายงานว่าใช้ประมาณ 5 ชั่วโมงต่อฉาก — <b>มีเพียงแผน D เท่านั้นที่ตัวเลขปิดกันได้</b></caption>
+</table>
+
+<div class="box box--key">
+<span class="box__t">ทางแก้: two-stage inference</span>
+<pre style="margin:2mm 0 0"><code>Stage 1 — SCREEN : ย่อภาพลง 4 เท่า (8192 → 2048) แล้วรัน segmentation
+                   → 192 tiles/ภาพ → ~7 วินาที/ภาพ → 408 ภาพ ≈ 48 นาที/เสา
+                   GSD ตอน screening = 0.077 × 4 = 0.31 mm/px
+                   → รอยแตก 1.6 mm (ขอบล่างของเกณฑ์ BMMS) = 5 px ⇒ ยังตรวจเจอ
+
+Stage 2 — MEASURE : ตัด crop ที่ความละเอียดเต็มเฉพาะบริเวณที่ Stage 1 จุดติด
+                   → วัดความกว้างจริงเฉพาะจุดที่มีรอยแตก</code></pre>
+<b>ข้อควรระวัง:</b> ค่า 37.2 ms/tile มาจาก RTX 3090 + โมเดล detection — นักศึกษาที่ใช้ Colab T4 + โมเดล segmentation ควรคาดว่าจะช้ากว่า <b>3–5 เท่า</b> ⇒ <b>ต้องวัด ms/tile ของเครื่องตัวเองใน Phase 0 ก่อนล็อกจำนวนภาพในแผนบิน</b>
+</div>
+
+<h2>11.3 ความจุการ์ดความจำไม่พอถ้าถ่าย RAW+JPEG</h2>
+
+<p>ไฟล์ DNG ขนาด 48MP ประมาณ 60–90 MB ต่อไฟล์ (ต้องวัดจริง)</p>
+
+<table class="tight">
+<thead><tr><th>กรณี</th><th class="num">จำนวนภาพ</th><th class="num">ความจุที่ต้องใช้</th></tr></thead>
+<tbody>
+<tr><td>ต่อเสา (RAW + JPEG)</td><td class="num">408</td><td class="num"><b>~37 GB</b> → การ์ด 64 GB รับได้ ~1.7 เสา</td></tr>
+<tr><td>ต่อสะพาน 5 ตอม่อ</td><td class="num">2,040</td><td class="num"><b>~184 GB</b> (ไม่ใช่ 40 GB ที่มักประมาณกันจาก JPEG อย่างเดียว)</td></tr>
+</tbody>
+</table>
+
+<p><b>ทางแก้ที่ถูกที่สุด:</b> ถ่าย JPEG อย่างเดียวสำหรับ screening pass และถ่าย RAW เฉพาะ measurement pass (20 ภาพ/เสา) ซึ่งเข้ากับ two-stage ในหัวข้อ 11.2 พอดี — และต้องเพิ่ม "การ์ดสำรอง" กับ "แผนสำรองข้อมูลระหว่างวัน" เข้าไปใน checklist</p>
+
+<h2>11.4 สมมติฐานสำคัญที่สุดที่ยังไม่ได้พิสูจน์ — เซนเซอร์ quad-Bayer</h2>
+
+<div class="box box--bad">
+<span class="box__t">ถ้าข้อนี้เป็นจริง ตารางระยะบินทั้งหมดในรายงานนี้ต้องคูณ 0.5</span>
+เซนเซอร์ 48MP บนโดรนส่วนใหญ่เป็นแบบ <b>quad-Bayer</b> ซึ่งรวม 4 พิกเซลจริงเป็น 1 พิกเซลข้อมูลในโหมดปกติ
+ความละเอียดเชิงแสงที่ได้จริงจึงอาจ<b>แย่กว่าตัวเลขที่ประกาศประมาณ 2 เท่า</b><br><br>
+ตาราง GSD ทุกตารางในรายงานนี้ (และในเอกสารทั่วไปทุกฉบับ) ใช้ค่า nominal ทั้งหมด<br>
+<b>ถ้าความจริงคือ 2 เท่า ข้อสรุปเรือธง "tele ที่ 10 m ดีกว่า wide ที่ 1 m" อาจยังคงจริง (เพราะกระทบทั้งคู่เท่ากัน) แต่ระยะบินที่แนะนำทุกตัวต้องลดลงครึ่งหนึ่ง</b><br><br>
+<b>วิธีปิดข้อสงสัยนี้:</b> ถ่าย slanted-edge chart (ISO 12233) ที่ระยะที่รู้ค่า แล้ววัด MTF50 จริง — ใช้เวลาไม่ถึงหนึ่งวันใน Phase 0 และเป็นผลการวิจัยที่รายงานได้ในตัวเอง
+</div>
+
+<h2>11.5 สมมติฐานที่ยังไม่ยุติ — ต้องวัดเอง ไม่ใช่หาคำตอบจากเอกสาร</h2>
+
+<table>
+<thead><tr><th style="width:26%">ประเด็น</th><th>สถานะ</th></tr></thead>
+<tbody>
+<tr><td><b>รอยแตกต้องกินกี่พิกเซลจึงจะวัดได้</b></td><td>แหล่งอ้างอิงให้ทั้ง <b>3× GSD</b> (อนุรักษ์นิยม) และ <b>0.5× GSD</b> (วิธี sub-pixel) — <b>ต่างกัน 6 เท่า</b> และระยะบินทุกตัวในรายงานนี้ขึ้นกับตัวเลือกนี้ ⇒ <b>ต้องวัดเองใน Phase 0</b> ด้วยแผ่นรอยแตกอ้างอิงที่รู้ความกว้างจริง แล้วรายงานเป็นผลการวิจัย</td></tr>
+<tr><td>ความละเอียดเชิงแสงจริงของ quad-Bayer</td><td>ดูหัวข้อ 11.4 — ต้องวัดด้วย slanted-edge chart</td></tr>
+<tr><td>ทิศบนของ obstacle sensing (M4 series)</td><td>DJI ไม่ประกาศ — ต้องเปิดคู่มือผู้ใช้ของรุ่นที่จะใช้จริง</td></tr>
+<tr><td>ระยะจาก laser rangefinder ติดมากับ EXIF หรือไม่</td><td>ไม่พบเอกสารยืนยัน — ทดสอบเองด้วย <code>exiftool -a -G1 IMG.JPG</code> ใช้เวลา 5 นาที ถ้ามีจะประหยัดงานได้มาก</td></tr>
+<tr><td>payload ส่งค่าระยะกลับเข้า flight controller ได้ไหม</td><td>ต้องตรวจในเอกสาร PSDK หมวด data subscription ก่อนออกแบบระบบ closed-loop</td></tr>
+</tbody>
+</table>
+
+<h2>11.6 คำถามที่ไม่มีใครถาม — ต้องใช้โดรนจริงหรือ</h2>
+
+<div class="box box--key">
+<span class="box__t">ผิวเสาตอม่อกี่เปอร์เซ็นต์ที่มองไม่เห็นจากพื้น</span>
+รายงานนี้ทั้งฉบับ (และการตั้งโจทย์ตั้งต้น) สมมติว่า "ต้องใช้โดรน" โดยไม่เคยตรวจสอบสมมติฐานนี้เลย
+</div>
+
+<table class="tight">
+<thead><tr><th>ส่วนของโครงสร้าง</th><th class="c">เห็นจากพื้น + เลนส์ 200 mm บนขาตั้ง?</th><th class="c">ต้องใช้โดรน?</th></tr></thead>
+<tbody>
+<tr><td>หน้าเสาตอม่อด้านที่เข้าถึงได้ (บนบก)</td><td class="c"><span class="badge badge--ok">เห็นเกือบหมด</span></td><td class="c">ไม่ต้อง</td></tr>
+<tr><td>หน้าเสาด้านที่ติดคลอง/แม่น้ำ</td><td class="c"><span class="badge badge--bad">ไม่เห็น</span></td><td class="c">ต้อง</td></tr>
+<tr><td><b>ท้องสะพาน (soffit)</b></td><td class="c"><span class="badge badge--bad">ไม่เห็น</span></td><td class="c">ต้อง — <b>แต่ GPS ตาย</b></td></tr>
+<tr><td>pier cap / bearing</td><td class="c"><span class="badge badge--warn">มุมเฉียงมาก</span></td><td class="c">ต้อง</td></tr>
+<tr><td>ตอม่อกลางน้ำ</td><td class="c"><span class="badge badge--bad">ไม่เห็น</span></td><td class="c">ต้อง</td></tr>
+</tbody>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">การตัดสินใจเชิงขอบเขตที่ควรอยู่ในบทที่ 1</span>
+โดรนมีค่าเฉพาะสามกรณี: <b>(ก) ท้องสะพาน (ข) เสากลางน้ำ (ค) เสาสูงเกินเอื้อม</b><br>
+ส่วนที่เหลือใช้<b>กล้องบนขาตั้งที่พื้น + เลนส์เทเล</b> จะ <b>นิ่งกว่า ถูกกว่า และไม่ต้องขออนุญาต CAAT</b><br><br>
+ข้อดีที่สำคัญที่สุดของการยอมรับข้อนี้: <b>Phase 0 และ Phase 1 เดินหน้าได้แม้ยืมโดรนไม่ได้</b> และตัวเลข validation ทั้งหมดยังเก็บได้ครบ — ลดความเสี่ยงที่ใหญ่ที่สุดของโปรเจกต์ลงทันที
+</div>
+
+<h2>11.7 สิ่งที่ต้องแก้ก่อนนำตัวเลขในรายงานนี้ไปใช้</h2>
+
+<table class="tight">
+<thead><tr><th style="width:30%">ประเด็นที่เคยเข้าใจผิด</th><th>ข้อยุติ</th></tr></thead>
+<tbody>
+<tr><td>ใช้ laser rangefinder ของโดรนทำมาตราส่วนได้</td><td><b>ไม่ได้</b> — ตัวเลข "±2.15%" ที่ดูดีนั้นคำนวณที่ระยะ 10 m ซึ่งไกลกว่าระยะทำงานจริง ที่ 2–3 m สเปกคือ system error &lt; 0.3 m = 10–15% ⇒ <b>ใช้ได้แค่เพื่อความปลอดภัยและรักษาระยะ</b></td></tr>
+<tr><td>ใช้โดรน consumer รุ่นท็อปได้</td><td><b>ไม่ได้ถ้าจะเขียนโปรแกรมการบิน</b> — MSDK V5 รองรับ consumer แค่ Mini 3 / Mini 3 Pro / Mini 4 Pro และรุ่น consumer ไม่มี laser rangefinder ⇒ ต้องเป็น M4E/M4T</td></tr>
+<tr><td>เป้าหมายคือวัดรอยแตก 0.2 mm ให้ได้</td><td><b>ตั้งจากงานวิจัยต่างประเทศ ไม่ใช่จากมาตรฐานที่โปรเจกต์นี้ต้องส่งมอบ</b> — เกณฑ์ไทยขอบล่างคือ 1.6 mm ⇒ เป้าที่สมเหตุสมผลคือ <b>0.5 mm ที่ POD ≥ 90%</b></td></tr>
+<tr><td>Matrice 4 Series ทำ waypoint ผ่าน MSDK ไม่ได้</td><td><b>ทำได้</b> — README ของ MSDK 5.18.0 ระบุ Matrice 4 Enterprise Series ไว้ชัดเจน</td></tr>
+</tbody>
+</table>

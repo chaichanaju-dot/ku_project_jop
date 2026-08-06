@@ -1,0 +1,2189 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>UAV Platform &amp; Ranging Study — ku_project_jop</title>
+<link rel="stylesheet" href="report.css">
+</head>
+<body>
+
+<!-- ============ ปก ============ -->
+<section class="cover">
+  <div>
+    <div class="cover__tag">เอกสารประกอบระเบียบวิธีวิจัย · 02 Methodology &amp; Work</div>
+    <div class="cover__rule"></div>
+    <h1 class="cover__title nonum" style="border:0;padding:0;page-break-before:auto">โดรน DJI เขียนโปรแกรมเองได้แค่ไหน<br>และจะรู้ระยะห่างจากผิวเสาได้อย่างไร</h1>
+    <div class="cover__sub">การศึกษาแพลตฟอร์ม UAV การวัดระยะ และการวางแผนบิน<br>สำหรับงานตรวจจับและวัดขนาดรอยแตกคอนกรีตด้วย AI</div>
+  </div>
+
+  <div class="cover__q">
+    <b>โจทย์ตั้งต้น</b> — "อยากทำโปรแกรมการบินให้โดรนบินใกล้วัตถุมากขึ้น เพื่อให้เห็นรอยแตกชัดขึ้นแล้วเอาภาพมารวมกัน
+    และจะมีประโยชน์มากถ้ารู้ว่าโดรนอยู่ห่างจากวัตถุเป็นระยะเท่าไหร่"<br><br>
+    <b>คำตอบสั้นที่สุดของรายงานฉบับนี้</b> — เขียนโปรแกรมได้ผ่าน SDK แต่แก้ปัญหาไม่ตรงจุด
+    <b>การบินเข้าใกล้เป็นทางที่ผิด</b> ทั้งเรื่องความปลอดภัยและความแม่นยำ ทางที่ถูกคือ
+    <b>ถอยออกแล้วซูม</b> และให้มาตราส่วนมาจากวัตถุอ้างอิงในภาพ ไม่ใช่จากเซนเซอร์วัดระยะ
+  </div>
+
+  <div class="cover__meta">
+    <table>
+      <tr><td>โครงการ</td><td>KU senior project (203499) ต่อยอดงานวิจัยทุน วช. ปีงบประมาณ 68 — การตรวจสอบสภาพโครงสร้างสะพาน/เสาตอม่อด้วย AI (T-BHI)</td></tr>
+      <tr><td>ที่เก็บเอกสาร</td><td><code>rawdata/02 Methodology &amp; Work/01_UAV_platform_and_ranging_study/</code></td></tr>
+      <tr><td>วันที่</td><td>5 สิงหาคม 2569</td></tr>
+      <tr><td>ที่มาของข้อมูล</td><td>การค้นคว้าจากเอกสารทางการของผู้ผลิต เอกสาร API และงานตีพิมพ์ที่เข้าถึงได้ทางอินเทอร์เน็ต <b>ไม่ได้มาจากไฟล์ใน <code>rawdata/01 Literature Review/</code></b> — ดูข้อจำกัดในหัวข้อ 1.4</td></tr>
+      <tr><td>สถานะ</td><td>เอกสารศึกษาเบื้องต้น ยังไม่ได้ทดสอบกับโดรนจริงและภาพถ่ายจริง</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============ สารบัญ ============ -->
+<section class="toc">
+<h1 class="nonum" style="page-break-before:auto">สารบัญ</h1>
+<ol>
+  <li>บทสรุปสำหรับผู้อ่านที่มีเวลา 5 นาที
+    <ol><li>ห้าคำตอบหลัก</li><li>สิ่งที่เปลี่ยนไปจากความเข้าใจตั้งต้น</li><li>ข้อเสนอแนะเชิงปฏิบัติ</li><li>ขอบเขตและข้อจำกัดของเอกสารนี้</li></ol></li>
+  <li>DJI SDK — เขียนโปรแกรมอะไรได้ อะไรไม่ได้
+    <ol><li>ภาพรวม: เขียนได้ 2 ที่เท่านั้น</li><li>Mobile SDK V5</li><li>Payload SDK V3</li><li>SDK ที่ตายแล้ว</li><li>สิ่งที่ทำไม่ได้เด็ดขาด</li></ol></li>
+  <li>การวัดระยะจากโดรนถึงผิววัตถุ
+    <ol><li>Laser rangefinder</li><li>Obstacle sensing</li><li>LiDAR payload</li><li>RTK</li><li>ตารางเปรียบเทียบและข้อสรุป</li></ol></li>
+  <li>คณิตศาสตร์ของการวางแผนบิน — GSD และระยะที่ต้องใช้จริง
+    <ol><li>สูตรหลัก</li><li>ตาราง GSD และระยะบิน</li><li>ระยะขยับต่อช็อตและจำนวนภาพ</li><li>ความเร็วชัตเตอร์สูงสุด</li></ol></li>
+  <li>วิธี marker — ให้ภาพมีมาตราส่วนโดยไม่ต้องวัดระยะ
+    <ol><li>หลักการและการเลือกชนิด marker</li><li>ความคลาดเคลื่อนจากมุมเอียง</li><li>สามกับดักที่เจอจริงตอนทดสอบโค้ด</li><li>การติดตั้งภาคสนาม</li></ol></li>
+  <li>การรวมภาพและ photogrammetry สำหรับผิวแนวดิ่ง</li>
+  <li>ทางเลือกแพลตฟอร์มอื่นนอกเหนือจาก DJI</li>
+  <li>ความปลอดภัย กฎหมาย และข้อจำกัดหน้างาน</li>
+  <li>ทบทวนวรรณกรรมที่เกี่ยวข้อง</li>
+  <li>สถาปัตยกรรมระบบและแผนดำเนินงานที่แนะนำ
+    <ol><li>ภาพรวม pipeline</li><li>ข้อควรระวังในการออกแบบ</li><li>เครื่องมือที่แนะนำ</li><li>แผนงานเป็นเฟส</li><li>การตรวจสอบความถูกต้อง</li><li>ความเสี่ยงและแผนสำรอง</li></ol></li>
+  <li>ข้อจำกัดที่พบเมื่อนำทุกบทมาชนกัน <span class="badge badge--bad" style="font-weight:400">อ่านก่อนวางแผนจริง</span>
+    <ol><li>T-BHI คำนวณจากรอยแตกอย่างเดียวไม่ได้</li><li>งบเวลาประมวลผลไม่ปิด</li><li>ความจุการ์ดความจำไม่พอ</li><li>สมมติฐาน quad-Bayer ที่ยังไม่พิสูจน์</li><li>สมมติฐานที่ต้องวัดเอง</li><li>คำถามที่ไม่มีใครถาม — ต้องใช้โดรนจริงหรือ</li><li>สิ่งที่ต้องแก้ก่อนนำตัวเลขไปใช้</li></ol></li>
+</ol>
+<p class="small muted" style="margin-top:5mm">
+<b>ภาคผนวก ก.</b> โค้ดหามาตราส่วนและวัดความกว้างรอยแตก ·
+<b>ภาคผนวก ข.</b> สร้างไฟล์ marker ขนาดจริงสำหรับสั่งพิมพ์ ·
+<b>ภาคผนวก ค.</b> แหล่งอ้างอิง (405 แหล่ง) ·
+<b>ภาคผนวก ง.</b> คำถามที่ยังไม่มีคำตอบ (106 ข้อ)
+</p>
+<p class="small muted">
+ไฟล์ประกอบในโฟลเดอร์เดียวกัน: <code>crack_scale.py</code> · <code>make_marker.py</code> · <code>research_notes/</code> (บันทึกการค้นคว้าฉบับเต็ม 8 ไฟล์ ~780 KB พร้อมแหล่งอ้างอิงครบทุกข้อ)
+</p>
+</section>
+
+<!-- ============ 1 ============ -->
+<h1>บทสรุปสำหรับผู้อ่านที่มีเวลา 5 นาที</h1>
+
+<h2>ห้าคำตอบหลัก</h2>
+
+<div class="box box--key">
+<span class="box__t">1. "ลง software แยกลงโดรน DJI ได้ไหม" — ได้ แต่ไม่ใช่ในความหมายที่มักเข้าใจ</span>
+DJI เปิดให้เขียนโปรแกรมได้ <b>2 ที่เท่านั้น</b> คือ (ก) แอป Android ที่คุยกับรีโมต ผ่าน <b>Mobile SDK V5</b> และ
+(ข) คอมพิวเตอร์ที่แขวนไว้กับตัวโดรนในฐานะ payload ผ่าน <b>Payload SDK V3</b><br>
+ตัว flight controller เป็นกล่องดำปิดสนิท — <b>แก้ firmware เอง เขียนโค้ดรันบน flight controller เอง หรือปิด geofence ทำไม่ได้เลย</b>
+</div>
+
+<div class="box box--key">
+<span class="box__t">2. "บินใกล้วัตถุมากขึ้นเพื่อให้เห็นชัดขึ้น" — เป็นทางที่ผิด</span>
+ที่ความละเอียดเป้าหมายเท่ากัน (0.2 mm/pixel) เลนส์ wide ต้องบินห่างเพียง <b>1.12 m</b> ซึ่งอยู่ในเขต
+braking distance ต่ำสุดที่ DJI ยอมให้ตั้งได้ (1.0 m) พอดี แปลว่าต้องปิดระบบกันชน<br>
+เลนส์ tele 168 mm ให้ความละเอียดเท่ากันที่ระยะ <b>7.95 m</b> — ห่างกว่า 7 เท่า ปลอดภัยกว่ามาก
+และ laser rangefinder ก็แม่นขึ้นด้วย (ที่ 2 m คลาดเคลื่อนถึง 15% แต่ที่ 8 m เหลือ 2.7%)
+</div>
+
+<div class="box box--key">
+<span class="box__t">3. "อยากรู้ว่าโดรนห่างวัตถุเท่าไหร่" — เซนเซอร์ของ DJI ไม่มีตัวไหนแม่นพอที่ระยะใกล้</span>
+laser rangefinder ทุกรุ่นของ DJI มีพจน์คงที่ <b>±0.2 m</b> ในสูตรความแม่น ซึ่งไม่ลดลงตามระยะ →
+ที่ระยะ 3 m คลาดเคลื่อน ±6.8%, ที่ 2 m คลาดเคลื่อนถึง 15%<br>
+ยิ่งไปกว่านั้น H20/H30/M30 <b>มี minimum range 3 m ตายตัว</b> วัดใกล้กว่านั้นไม่ได้เลย
+ส่วน obstacle sensing แม้จะคืนค่าเป็นมิลลิเมตรผ่าน API แต่ <b>DJI ไม่เคยประกาศความแม่นยำเลยแม้แต่รุ่นเดียว</b>
+— มันเป็นเซนเซอร์กันชน ไม่ใช่เครื่องมือวัด
+</div>
+
+<div class="box box--ok">
+<span class="box__t">4. ทางออกที่ทั้งถูกที่สุดและแม่นที่สุด — ไม่ต้องวัดระยะเลย</span>
+ติด <b>fiducial marker (ArUco)</b> ที่รู้ขนาดจริงลงบนผิวเสา แล้วให้มาตราส่วนมาจากภาพเอง
+ไม่ต้องรู้ระยะ ไม่ต้องรู้ทางยาวโฟกัส ไม่ต้อง calibrate กล้อง ต้นทุนเกือบเป็นศูนย์<br>
+และได้ของแถมที่เซนเซอร์วัดระยะให้ไม่ได้: <b>marker มี 4 มุมจึงแก้ความเอียงของกล้องได้ด้วย</b>
+ซึ่งเป็นแหล่งความคลาดเคลื่อนที่ใหญ่กว่าเรื่องระยะเสียอีก (เอียง 30° ทำให้ผิด 7.2%)<br>
+โค้ดที่ทดสอบแล้วอยู่ในภาคผนวก ก. — วัดได้คลาดเคลื่อน <b>0.26%</b> บนภาพทดสอบ
+</div>
+
+<div class="box box--warn">
+<span class="box__t">5. สิ่งที่ DJI ทำไม่ได้จริง ๆ และต้องยอมรับ — การบินใต้ท้องสะพาน</span>
+ใต้ deck คือสภาพแวดล้อม GNSS-denied โดยนิยาม RTK ใช้ไม่ได้ vision positioning ก็ล้มเหลวกับผนังคอนกรีตเรียบไร้ texture
+งานวิจัยรายงานว่า RTK fix ล้มเหลวเมื่ออยู่ห่างสิ่งกีดขวาง 0–5 m และต้องใช้เวลา re-fix 9–13 วินาที<br>
+<b>ถ้าขอบเขตงานคือเสาตอม่อที่มองเห็นฟ้า → DJI พอ ถ้าต้องเข้าใต้ท้องสะพาน → ต้องเป็น Skydio หรือ Elios ซึ่งมีข้อจำกัดด้านการจัดหาในไทย</b>
+</div>
+
+<h2>สิ่งที่เปลี่ยนไปจากความเข้าใจตั้งต้น</h2>
+
+<table>
+<thead><tr><th style="width:34%">ความเข้าใจตั้งต้น</th><th>สิ่งที่พบจริง</th></tr></thead>
+<tbody>
+<tr><td>บินใกล้ = เห็นชัดขึ้น</td><td>จริงในแง่ทัศนศาสตร์ แต่ผลรวมแย่ลง เพราะต้องปิดระบบกันชน เซนเซอร์วัดระยะแม่นน้อยลง และ downwash รบกวนที่ระยะใกล้ผนัง — ใช้เลนส์ tele แทนได้ผลเดียวกันโดยไม่มีข้อเสียเหล่านี้</td></tr>
+<tr><td>รู้ระยะแล้วจะแปลง pixel → mm ได้</td><td>ไม่พอ เพราะยังไม่รู้ว่ากล้อง<i>เอียง</i>กี่องศาเทียบผิว ซึ่งทำให้มาตราส่วนแปรทั่วทั้งภาพ งานวิจัยที่ได้ความแม่นระดับมิลลิเมตรจึงใช้เลเซอร์ <b>4 จุด</b> เพื่อแก้สมการระนาบ ไม่ใช่จุดเดียว</td></tr>
+<tr><td>ต้องเขียนโปรแกรมควบคุมการบินเอง</td><td>เขียนได้ (waypoint KMZ, virtual stick) แต่ไม่ใช่คอขวดของโปรเจกต์ คอขวดจริงคือการให้มาตราส่วนที่เชื่อถือได้กับทุกภาพ ซึ่งแก้ได้ที่ขั้นตอนประมวลผล ไม่ใช่ที่การบิน</td></tr>
+<tr><td>เอาภาพมารวมกัน (stitching) เป็นเป้าหมาย</td><td>เป็นเครื่องมือ ไม่ใช่เป้าหมาย — ถ้าวัตถุประสงค์คือให้ AI เห็นรอยแตกชัด ภาพเดี่ยวความละเอียดสูงพร้อมมาตราส่วนที่ถูกต้องก็เพียงพอ และแม่นกว่าการวัดบน orthomosaic ที่ผ่านการ resample มาแล้ว</td></tr>
+</tbody>
+</table>
+
+<h2>ข้อเสนอแนะเชิงปฏิบัติ</h2>
+
+<ol>
+<li><b>อย่าเพิ่งซื้ออะไร</b> — ตรวจก่อนว่าโดรนที่ทีมวิจัย/ภาควิชามีอยู่แล้วมีเลนส์เทเลหรือไม่ ถ้ามี ก็เริ่มได้ทันที</li>
+<li><b>ทดสอบ EXIF ก่อนอย่างอื่น</b> — ถ้ามี M4E/M4T/M30T ให้ถ่ายภาพหนึ่งใบแล้วรัน <code>exiftool -a -G1 IMG.JPG</code> ดูว่ามี field ระยะจาก laser rangefinder ติดมากับภาพหรือไม่ ถ้ามี จะประหยัดงานไปมาก (ยังไม่มีเอกสารยืนยัน — ต้องทดลองเอง)</li>
+<li><b>เริ่มจากผนังทดสอบในมหาวิทยาลัย ไม่ใช่สะพานจริง</b> — พิสูจน์ให้ได้ก่อนว่าวัดรอยแตกที่รู้ความกว้างจริงได้แม่นกี่เปอร์เซ็นต์ ก่อนจะไปเจอปัญหา GPS/แสง/ลมที่หน้างานพร้อมกันทีเดียว</li>
+<li><b>เตรียม ground truth ตั้งแต่วันแรก</b> — ซื้อ crack width comparator card และ feeler gauge ราคาไม่กี่ร้อยบาท ถ้าไม่มีค่าจริงมาเทียบ ตัวเลขทุกตัวที่รายงานก็พิสูจน์ไม่ได้</li>
+</ol>
+
+<h2>ขอบเขตและข้อจำกัดของเอกสารนี้</h2>
+
+<div class="box box--warn">
+<span class="box__t">ต้องอ่านก่อนนำไปอ้างอิงในเล่ม</span>
+<ul style="margin-bottom:0">
+<li>ข้อมูลในเอกสารนี้มาจาก <b>เอกสารทางการของผู้ผลิต เอกสาร API และงานตีพิมพ์ที่เข้าถึงได้ทางอินเทอร์เน็ต</b> ไม่ได้มาจากไฟล์ใน <code>rawdata/01 Literature Review/</code> — ตามกฎข้อ 4 ของ <code>rule_of_tune.md</code> เอกสารที่จะนำไปใช้ในเล่มวิทยานิพนธ์ต้องอ้างอิงย้อนกลับไปยังไฟล์ต้นฉบับ จึงต้อง<b>ตรวจสอบซ้ำกับเอกสารต้นฉบับก่อนอ้าง</b></li>
+<li><b>ยังไม่มีการทดสอบกับโดรนจริงและภาพถ่ายจริง</b> — ผลการทดสอบโค้ดในหัวข้อ 5 เป็นการทดสอบกับภาพสังเคราะห์ที่รู้คำตอบจริง ซึ่งไม่มี noise, motion blur, หรือผิวคอนกรีตที่ไม่เรียบ</li>
+<li>ตัวเลขสเปกฮาร์ดแวร์อ้างจากหน้าสเปกทางการ ณ สิงหาคม 2569 <b>ผู้ผลิตเปลี่ยนสเปกและเลิกผลิตรุ่นได้ตลอดเวลา</b></li>
+<li>รายการที่ค้นไม่พบคำตอบชัดเจนถูกทำเครื่องหมาย <span class="badge badge--warn">ยังไม่ยืนยัน</span> และรวบรวมไว้ในภาคผนวก ง. — ไม่ได้เดาค่าให้</li>
+</ul>
+</div>
+
+
+
+<!-- ============ 2 ============ -->
+<h1>DJI SDK — เขียนโปรแกรมอะไรได้ อะไรไม่ได้</h1>
+
+<h2>ภาพรวม: เขียนได้ 2 ที่เท่านั้น</h2>
+
+<p>คำถามตั้งต้นคือ "ลง software แยกลงโดรน DJI ได้ไหม เช่น software บังคับการบิน การวัดระยะ" คำตอบขึ้นกับว่า "ลง software ลงโดรน" หมายถึงอะไร</p>
+
+<table>
+<thead><tr><th style="width:26%">สิ่งที่อยากทำ</th><th class="c" style="width:12%">ทำได้ไหม</th><th>ทำอย่างไร / ทำไมไม่ได้</th></tr></thead>
+<tbody>
+<tr><td>แอปควบคุมการบินของตัวเอง (แทน DJI Pilot 2)</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>เขียนแอป <b>Android</b> ด้วย Mobile SDK V5 — แอปรันบนแท็บเล็ต/มือถือที่ต่อกับรีโมต ไม่ได้รันบนตัวโดรน</td></tr>
+<tr><td>ต่ออุปกรณ์ของตัวเอง (เซนเซอร์ กล้อง คอมพิวเตอร์) เข้ากับโดรน</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>เขียนโปรแกรมฝั่ง payload ด้วย Payload SDK V3 ผ่านพอร์ต E-Port / SkyPort — โปรแกรมรันบนคอมพิวเตอร์ที่<i>คุณแขวนไว้กับโดรน</i></td></tr>
+<tr><td>บินอัตโนมัติตามเส้นทางที่กำหนดเอง</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>สร้างไฟล์ KMZ/WPML เองแล้วส่งเข้า flight controller ผ่าน MSDK (<code>IWPMZManager</code> + <code>IWaypointMissionManager</code>)</td></tr>
+<tr><td>ส่งคำสั่งบังคับแบบเรียลไทม์จากโค้ด</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>Virtual Stick — ส่งคำสั่งที่ความถี่ 5–25 Hz แต่มีข้อจำกัดมาก (ดู 2.2)</td></tr>
+<tr><td>อ่านค่าระยะจากเซนเซอร์กันชน</td><td class="c"><span class="badge badge--ok">ได้</span></td><td><code>IPerceptionManager.addObstacleDataListener()</code> คืนระยะเป็นมิลลิเมตร (แต่ไม่มีสเปกความแม่นยำ — ดูบทที่ 3)</td></tr>
+<tr><td>อ่านค่าจาก laser rangefinder</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>ผ่าน <code>KeyLaserMeasureInformation</code> ใน KeyManager (MSDK 5.1.0 ขึ้นไป)</td></tr>
+<tr><td>เขียนโค้ดรันบน flight controller / แก้ firmware</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>flight controller เป็นระบบปิดสนิท ไม่มี SDK ระดับนั้น และการ reverse engineer ผิดเงื่อนไข EULA</td></tr>
+<tr><td>ปิด geofence / บินในเขตห้าม</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>ระบบ GEO บังคับที่ firmware — SDK ให้แค่<i>อ่าน</i>ข้อมูลเขต ไม่ให้แก้</td></tr>
+<tr><td>เปลี่ยน EKF / อัลกอริทึม positioning</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>ปิดสนิท — ถ้าต้องการระดับนี้ต้องไปทาง PX4/ArduPilot (ดูบทที่ 7)</td></tr>
+</tbody>
+</table>
+
+<div class="box box--key">
+<span class="box__t">สรุปเป็นประโยคเดียว</span>
+DJI ให้คุณเขียนโปรแกรมได้ <b>รอบ ๆ</b> ตัวโดรน (บนรีโมต และบน payload) แต่ไม่ให้เข้าไป <b>ใน</b> ตัวโดรน —
+เพียงพออย่างยิ่งสำหรับโปรเจกต์นี้ เพราะสิ่งที่ต้องการคือการวางแผนบิน ถ่ายภาพ และอ่านค่าเซนเซอร์ ไม่ใช่การเปลี่ยนวิธีที่โดรนรักษาสมดุล
+</div>
+
+<h2>Mobile SDK V5</h2>
+
+<table class="tight">
+<thead><tr><th style="width:24%">หัวข้อ</th><th>รายละเอียด</th></tr></thead>
+<tbody>
+<tr><td>เวอร์ชันล่าสุด</td><td><b>5.18.0</b> (release notes ลงวันที่ 22 พ.ค. 2569)</td></tr>
+<tr><td>แพลตฟอร์ม</td><td><b>Android เท่านั้น</b></td></tr>
+<tr><td>iOS</td><td><b>ยุติแล้ว</b> — DJI ประกาศหยุดอัปเดต iOS Mobile SDK มีผล 29 พ.ย. 2566 และเลิกรับ MFi application ใหม่ เวอร์ชันสุดท้ายคือสาย V4 (4.16.x)</td></tr>
+<tr><td>รุ่นที่รองรับ (Enterprise)</td><td>Matrice 400, Matrice 4D Enterprise Series, Matrice 4 Enterprise Series (M4E/M4T), Matrice 350 RTK, Matrice 300 RTK, M30 Series, Mavic 3 Enterprise Series, Mavic 3TA</td></tr>
+<tr><td>รุ่นที่รองรับ (Consumer)</td><td>Mini 4 Pro, Mini 3 Pro, Mini 3 <span class="muted">— เท่านั้น</span></td></tr>
+<tr><td>Payload ที่รองรับ</td><td>H30 Series</td></tr>
+</tbody>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">กับดักที่พบบ่อยที่สุดสองข้อ</span>
+<b>1. Air series และ Mavic 3 รุ่น consumer ไม่อยู่ในรายการที่รองรับ</b> — คนซื้อมาแล้วเขียนโค้ดควบคุมไม่ได้บ่อยมาก<br>
+<b>2. โค้ดตัวอย่างจาก MSDK V4 ที่หาเจอตามอินเทอร์เน็ตส่วนใหญ่ใช้กับ V5 ไม่ได้</b> — V4 ใช้ object แยกต่อ component (<code>DJICamera</code>, <code>DJIGimbal</code>) ส่วน V5 รวมเกือบทุกอย่างไว้ใน <b>KeyManager</b> (<code>KeyTools.createKey(CameraKey.KeyShootPhoto)</code> แล้ว <code>performAction</code>/<code>getValue</code>/<code>listen</code>) นี่คือสาเหตุอันดับหนึ่งของความสับสน
+</div>
+
+<h3>โมดูลที่มีให้ใช้</h3>
+
+<table class="tight">
+<thead><tr><th style="width:22%">กลุ่ม</th><th style="width:30%">Manager / Fragment</th><th>ทำอะไร</th></tr></thead>
+<tbody>
+<tr><td>Waypoint</td><td><code>IWaypointMissionManager</code>, <code>IWPMZManager</code></td><td>บิน mission แบบ KMZ/WPML — สร้าง แก้ไข ตรวจสอบ อัปโหลด บินต่อจากจุดที่ค้าง</td></tr>
+<tr><td>Manual control</td><td><code>IVirtualStickManager</code></td><td>ส่งคำสั่ง stick จากโค้ด</td></tr>
+<tr><td><b>Perception</b></td><td><code>IPerceptionManager</code></td><td><b>อ่านระยะสิ่งกีดขวาง ตั้งระยะเตือน/ระยะเบรก เปิด-ปิดระบบกันชนรายทิศ</b></td></tr>
+<tr><td>Camera / Gimbal</td><td>KeyManager (<code>CameraKey.*</code>, <code>GimbalKey.*</code>)</td><td>ถ่ายภาพ ตั้ง exposure ซูม หมุน gimbal ตั้ง palette ความร้อน</td></tr>
+<tr><td>Laser rangefinder</td><td><code>KeyLaserMeasureInformation</code></td><td>อ่านระยะและพิกัดของจุดที่เลเซอร์ยิงไปโดน</td></tr>
+<tr><td>RTK</td><td>RTK Center / Network RTK / RTK Station</td><td>Network RTK และ D-RTK base station</td></tr>
+<tr><td>Media</td><td><code>MediaFragment</code></td><td>list และ download ไฟล์จาก SD card ของอากาศยาน</td></tr>
+<tr><td>Streaming</td><td><code>LiveFragment</code>, CameraStream</td><td>live stream ออก และดึง decoded frame มาประมวลผลสด</td></tr>
+<tr><td><b>Simulator</b></td><td><code>ISimulatorManager</code></td><td><b>บินจำลองโดยไม่ต้องขึ้นบินจริง — สำคัญมากสำหรับทดสอบโค้ดก่อนออกภาคสนาม</b></td></tr>
+<tr><td>Payload</td><td>PayloadCenter, MOP</td><td>คุยกับ payload ที่เขียนด้วย PSDK ผ่านช่องข้อมูลตรง</td></tr>
+</tbody>
+</table>
+
+<h3>Waypoint Mission — สิ่งที่ต้องรู้ก่อนเขียน</h3>
+
+<p>ไฟล์ KMZ คือไฟล์ zip ที่ข้างในต้องมี <code>template.kml</code> และ <code>waylines.wpml</code> — <b>ชื่อไฟล์ zip ตั้งเองได้ แต่ชื่อไฟล์ข้างในเปลี่ยนไม่ได้</b> และ firmware จะ execute <code>waylines.wpml</code> ไม่ใช่ <code>template.kml</code> (ถ้า generate มาแต่ <code>template.kml</code> mission จะไม่วิ่ง — เป็นบั๊กยอดฮิต)</p>
+
+<table class="tight">
+<thead><tr><th>ข้อจำกัด</th><th>รายละเอียด</th></tr></thead>
+<tbody>
+<tr><td>จำนวน waypoint</td><td>ต้องอยู่ระหว่าง <b>2 ถึง 65,535</b> จุด</td></tr>
+<tr><td>M300 / M350 RTK</td><td>รองรับได้เพียง <b>1 wayline ID</b> เท่านั้น และใช้ <code>queryBreakPointInfoFromAircraft</code> ไม่ได้</td></tr>
+<tr><td>โหมดความสูง</td><td>WGS84 / EGM96 / RELATIVE — ต้องระบุตอนแปลง KML เป็น KMZ</td></tr>
+</tbody>
+</table>
+
+<h3>Virtual Stick — ข้อจำกัดที่ทำให้ใช้กับงานนี้ยาก</h3>
+
+<table class="tight">
+<thead><tr><th style="width:34%">ข้อจำกัด</th><th>ค่าจริง</th></tr></thead>
+<tbody>
+<tr><td>ความถี่ที่ควรส่งคำสั่ง</td><td>5–25 Hz</td></tr>
+<tr><td>ระบบกันชนใน advanced mode</td><td>ทำงานเฉพาะเมื่อ vertical = velocity mode, yaw = angular velocity mode, roll/pitch = velocity mode เท่านั้น</td></tr>
+<tr><td>รุ่นที่ระบบกันชนยังทำงานตอนใช้ virtual stick</td><td>M300 RTK, M350 RTK, M30 series, Mavic 3E series, Mavic 3M <b>เท่านั้น</b></td></tr>
+<tr><td>เวอร์ชัน firmware</td><td>ต่ำกว่า V7.01.10.03 → obstacle sensing ถูกปิด</td></tr>
+<tr><td>เขตจำกัดการบิน</td><td>เข้าใกล้ประมาณ 30 m → <b>รีโมตยึดการควบคุมคืนทันที</b> virtual stick ใช้ไม่ได้</td></tr>
+</tbody>
+</table>
+
+<h3>การขอ App Key</h3>
+
+<ol>
+<li>สมัคร developer account ที่ <code>developer.dji.com/register</code> — ต้อง verify ด้วยอีเมล + บัตรเครดิตหรือเบอร์โทร (บัตรไม่ถูกตัดเงิน)</li>
+<li>Apps → Create App → กรอกชื่อ แพลตฟอร์ม <b>package identifier</b> หมวดหมู่ คำอธิบาย</li>
+<li><b>package identifier ต้องตรงกับ <code>applicationId</code> ใน Gradle เป๊ะ ๆ</b> ผิดตัวเดียว register ไม่ผ่าน</li>
+<li>ใส่ App Key ใน <code>AndroidManifest.xml</code> เป็น meta-data <code>com.dji.sdk.API_KEY</code></li>
+</ol>
+
+<div class="box box--warn">
+<span class="box__t">ข้อควรระวังสำหรับงานภาคสนาม</span>
+<b>MSDK ต้องต่ออินเทอร์เน็ตเพื่อยืนยัน App Key กับเซิร์ฟเวอร์ของ DJI</b> — เครื่องที่ยังไม่เคย activate จะ register ไม่ผ่านถ้าไม่มีเน็ต<br>
+สะพานในชนบทมักไม่มีสัญญาณ ต้อง <b>activate จากที่ทำงานให้เรียบร้อยก่อนออกภาคสนามเสมอ</b>
+</div>
+
+<h2>Payload SDK V3</h2>
+
+<p>ใช้เมื่อต้องการต่ออุปกรณ์ของตัวเองเข้ากับโดรน เช่น laser rangefinder เพิ่มเติม กล้องพิเศษ หรือคอมพิวเตอร์สำหรับประมวลผลบนอากาศ</p>
+
+<table class="tight">
+<thead><tr><th>พอร์ต</th><th style="width:26%">อากาศยานที่ใช้ได้</th><th>ไฟที่จ่ายได้</th><th>หมายเหตุ</th></tr></thead>
+<tbody>
+<tr><td><b>E-Port</b></td><td>Mavic 3E/3T, M30/M30T, M300 RTK, M350 RTK</td><td>M3E/3T: 12–17.6 V/4 A · M30: 19.2–26.1 V/4 A · M300/M350: 24 V/4 A</td><td>บอร์ดขนาด 55×40×9 mm มี XT30 + USB 2.0 + UART/PPS — <b>รองรับ PSDK V3 ขึ้นไปเท่านั้น ใช้กับ Onboard SDK ไม่ได้</b></td></tr>
+<tr><td><b>E-Port V2</b></td><td>Matrice 400</td><td>XT30 VCC 13.8/17.02/24 V @5 A</td><td>บอร์ด 89×60×13.4 mm มี MCU ในตัว พร้อม General IO, UART, IIC/CAN, SPI</td></tr>
+<tr><td><b>SkyPort V2</b></td><td>M300 RTK, M350 RTK</td><td>มี High Voltage mode</td><td>quick-release สำหรับ gimbal ที่พัฒนาเอง</td></tr>
+<tr><td><b>SkyPort V3</b></td><td><b>Matrice 400 เท่านั้น</b> — ใช้กับ M300/M350 ไม่ได้</td><td>13.6 / 17 / 24 V</td><td>รองรับเฉพาะโหมด ONLY_USB_BULK และ ONLY_NETWORK</td></tr>
+<tr><td><b>X-Port</b></td><td>M300 / M350 / M400</td><td>ผ่าน SkyPort</td><td>gimbal 3 แกนสำเร็จรูปจาก DJI — ผู้พัฒนาแค่ใส่เซนเซอร์เข้าไป ไม่ต้องออกแบบ gimbal เอง</td></tr>
+</tbody>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">ทำไม PSDK อาจไม่ใช่ทางสำหรับโปรเจกต์จบ</span>
+<ul style="margin-bottom:0">
+<li>รุ่นที่มี E-Port/SkyPort ล้วนเป็น <b>Enterprise ราคาหลายแสนบาท</b></li>
+<li>ต้องเขียนโปรแกรมภาษา C ฝั่ง embedded — คนละทักษะกับงาน AI ที่เป็นแก่นของโปรเจกต์</li>
+<li><b>ยังไม่ยืนยันว่า payload ส่งค่าระยะกลับเข้า flight controller เพื่อทำ closed-loop รักษาระยะได้หรือไม่</b> — ต้องตรวจในเอกสาร PSDK API หมวด data subscription / flight control ก่อนออกแบบระบบ อย่าสมมติว่าทำได้</li>
+</ul>
+</div>
+
+<h2>SDK ที่ตายแล้ว</h2>
+
+<ul>
+<li><b>Onboard SDK</b> — เลิกใช้ พอร์ต E-Port รุ่นใหม่ไม่รองรับแล้ว</li>
+<li><b>iOS Mobile SDK</b> — หยุดอัปเดตตั้งแต่ 29 พ.ย. 2566</li>
+<li><b>Windows SDK / UX SDK</b> — ไม่มีในสาย V5</li>
+</ul>
+
+<!-- ============ 3 ============ -->
+<h1>การวัดระยะจากโดรนถึงผิววัตถุ</h1>
+
+<div class="box box--key">
+<span class="box__t">คำตอบก่อนอ่านรายละเอียด</span>
+มี 5 ทางที่โดรนจะรู้ระยะห่างจากผิววัตถุ และ <b>ไม่มีทางไหนแม่นพอสำหรับแปลง pixel เป็นมิลลิเมตรที่ระยะใกล้</b><br>
+สาเหตุร่วมคือ laser rangefinder ของ DJI ทุกรุ่นมี <b>พจน์คงที่ ±0.2 m</b> ในสูตรความแม่น ซึ่งไม่ลดลงตามระยะ →
+ยิ่งบินใกล้ ความคลาดเคลื่อน<i>สัมพัทธ์</i>ยิ่งแย่ ตรงข้ามกับสัญชาตญาณ
+</div>
+
+<h2>Laser rangefinder</h2>
+
+<table class="tight">
+<thead><tr><th>รุ่น</th><th class="num">ช่วงวัด</th><th class="num">ระยะต่ำสุด</th><th>ความแม่น</th><th class="num">อัตราวัด</th></tr></thead>
+<tbody>
+<tr><td><b>M4E / M4T</b> (ในตัว)</td><td class="num">ถึง 1,800 m</td><td class="num">1 m</td><td>1–3 m: system error &lt; 0.3 m<br>ระยะอื่น: ±(0.2 + 0.0015·D) m</td><td class="num">1 Hz</td></tr>
+<tr><td>M30 / M30T (ในตัว)</td><td class="num">3–1,200 m</td><td class="num"><b>3 m</b></td><td>±(0.2 + 0.0015·D) m</td><td class="num">ยังไม่ยืนยัน</td></tr>
+<tr><td>Zenmuse H20 / H20T / H20N</td><td class="num">3–1,200 m</td><td class="num"><b>3 m</b></td><td>±(0.2 + 0.0015·D) m</td><td class="num">ยังไม่ยืนยัน</td></tr>
+<tr><td>Zenmuse H30 / H30T</td><td class="num">3–3,000 m</td><td class="num"><b>3 m</b></td><td>≤500 m: ±(0.2 + 0.0015·D) m<br>&gt;500 m: ±1.0 m</td><td class="num">ยังไม่ยืนยัน</td></tr>
+<tr><td>Matrice 400 (ในตัว)</td><td class="num" colspan="4">ไม่มี laser rangefinder แบบจุดเดียว — ใช้ Rotating LiDAR แทน (0.5–100 m, 360°×58°, 520,000 จุด/วินาที)</td></tr>
+</tbody>
+</table>
+
+<h3>ความคลาดเคลื่อนสัมพัทธ์ — ตัวเลขที่ตอบโจทย์โดยตรง</h3>
+
+<table>
+<thead><tr><th class="num">ระยะ D</th><th class="num">ค่าคลาดเคลื่อนสัมบูรณ์</th><th class="num">คลาดเคลื่อนสัมพัทธ์</th><th>ผลต่อการแปลง pixel → mm</th></tr></thead>
+<tbody>
+<tr><td class="num">2 m</td><td class="num">&lt; 0.3 m (M4 เท่านั้น)</td><td class="num"><b>≤ 15%</b></td><td class="c"><span class="badge badge--bad">ใช้ไม่ได้</span></td></tr>
+<tr><td class="num">3 m</td><td class="num">±0.205 m</td><td class="num"><b>±6.8%</b></td><td class="c"><span class="badge badge--bad">ใช้ไม่ได้</span></td></tr>
+<tr><td class="num">5 m</td><td class="num">±0.208 m</td><td class="num">±4.2%</td><td class="c"><span class="badge badge--warn">หยาบ</span></td></tr>
+<tr><td class="num">10 m</td><td class="num">±0.215 m</td><td class="num">±2.2%</td><td class="c"><span class="badge badge--warn">พอไหว</span></td></tr>
+<tr><td class="num">15 m</td><td class="num">±0.223 m</td><td class="num">±1.5%</td><td class="c"><span class="badge badge--info">ยอมรับได้</span></td></tr>
+<tr><td class="num">20 m</td><td class="num">±0.230 m</td><td class="num">±1.2%</td><td class="c"><span class="badge badge--info">ยอมรับได้</span></td></tr>
+</tbody>
+<caption>เพราะ GSD แปรผันตรงกับ D ความคลาดเคลื่อนของระยะจึงกลายเป็นความคลาดเคลื่อนของมาตราส่วนโดยตรง — ที่ระยะ 3 m รอยแตกที่วัดได้ 1.6 mm อาจเป็น 1.49 mm หรือ 1.71 mm ก็ได้</caption>
+</table>
+
+<h3>ขนาดลำแสง — ปัญหาที่สเปกความแม่นไม่ครอบคลุม</h3>
+
+<p>DJI ประกาศขนาดจุดเลเซอร์ (spot size) เฉพาะ H30/H30T: ที่ 100 m ประมาณ 50 × 450 mm และที่ 1,000 m ประมาณ 450 × 4,500 mm แปลงเป็น divergence ได้ประมาณ <b>0.5 × 4.5 mrad</b> — ลำแสงเป็นวงรียาว ไม่ใช่วงกลม</p>
+
+<table class="tight">
+<thead><tr><th class="num">ระยะ</th><th class="num">3 m</th><th class="num">5 m</th><th class="num">10 m</th><th class="num">20 m</th></tr></thead>
+<tbody><tr><td>ขนาดจุดเลเซอร์ (H30/H30T)</td><td class="num">1.5 × 13.5 mm</td><td class="num">2.5 × 22.5 mm</td><td class="num">5 × 45 mm</td><td class="num">10 × 90 mm</td></tr></tbody>
+</table>
+
+<p>ที่ระยะ 10 m ลำแสงกินพื้นที่ 5 × 45 mm — ถ้าเล็งไปโดนขอบเสา ขอบคาน หรือช่องว่างระหว่างชิ้นส่วน พลังงานจะกระจายไปหลายเป้า DJI ระบุไว้เองในหน้าสเปกว่า <i>"If a laser pulse hits multiple targets, its energy is dispersed, which may reduce the measurable distance"</i> — ค่าที่ได้จะเป็นค่าผสมที่ไม่รู้ว่ามาจากผิวไหน สำหรับงานตรวจใต้สะพานที่ผิวมีขอบและช่องเยอะ นี่เป็นแหล่งความคลาดเคลื่อนที่สูตรความแม่นไม่ครอบคลุมเลย</p>
+
+<div class="box box--warn">
+<span class="box__t">ปัญหาที่ยังเปิดค้างในเอกสารและใน GitHub</span>
+<b>1.</b> เอกสาร DJI ระบุตรง ๆ ว่า <i>"The laser sensor must be at least 3 m away from the target point"</i> — บินใกล้กว่านั้น API จะไม่คืนค่าที่เชื่อได้<br>
+<b>2.</b> มี issue เปิดค้างบน GitHub (dji-sdk/Mobile-SDK-Android-V5 #368) รายงานว่าปรับ <code>targetPoint</code> แล้ว<b>ค่าระยะไม่เปลี่ยน</b> ไม่ว่าจะเล็งจุดไหนบนจอ และยังไม่มีคำตอบจาก DJI — แปลว่าสมมติฐาน "เล็งเลเซอร์ไปที่รอยแตกโดยตรง" <b>อาจทำไม่ได้จริง ต้องทดสอบเองก่อนออกแบบระบบรอบมัน</b>
+</div>
+
+<h2>Obstacle sensing — เซนเซอร์กันชน ไม่ใช่เครื่องมือวัด</h2>
+
+<table class="tight">
+<thead><tr><th>ทิศ</th><th>M4E / M4T</th><th>M350 RTK</th><th>Mavic 3E / 3T</th></tr></thead>
+<tbody>
+<tr><td>หน้า / หลัง</td><td>วัดได้ 0.4–22.5 m<br>ตรวจจับ 0.4–200 m</td><td>0.7–40 m</td><td>0.5–20 m / 0.5–16 m</td></tr>
+<tr><td>ข้าง</td><td>วัดได้ 0.5–32 m<br>ตรวจจับ 0.5–200 m</td><td>0.7–40 m</td><td>0.5–25 m</td></tr>
+<tr><td>ล่าง</td><td>0.3–18.8 m + 3D infrared</td><td>0.6–30 m</td><td>0.3–18 m</td></tr>
+<tr><td>บน</td><td>omnidirectional <span class="badge badge--warn">ยังไม่ยืนยันช่วงระยะแยก</span></td><td>0.6–30 m</td><td>0.2–10 m</td></tr>
+</tbody>
+<caption><b>อ่านตารางนี้ให้เป็น:</b> ตัวเลขตัวหน้า (0.3–0.7 m) คือ <b>blind zone</b> ถ้าตั้งใจบินที่ระยะ 0.3 m จากผิวเสา ระบบมองไม่เห็นผนังนั้นตั้งแต่แรก การ "ปิดระบบกันชน" จึงไม่ได้เพิ่มความเสี่ยง — ความเสี่ยงเกิดไปแล้วตั้งแต่เข้าไปในโซนบอด<br>
+ทิศ <b>บน</b> เป็นทิศที่เซนเซอร์อ่อนที่สุดของโดรนทุกยี่ห้อ ซึ่งคือทิศที่ต้องใช้เมื่อบินใต้ท้องสะพานพอดี</caption>
+</table>
+
+<h3>API ที่ดึงค่าได้จริง</h3>
+
+<table class="tight">
+<thead><tr><th>Method</th><th class="c">คืนค่า</th><th class="c">หน่วย</th><th>ความหมาย</th></tr></thead>
+<tbody>
+<tr><td colspan="4" style="background:#f0f3f6"><b><code>ObstacleData</code></b> — ค่าที่วัดได้จริง (ตั้งแต่ MSDK 5.1.0)</td></tr>
+<tr><td><code>getHorizontalObstacleDistance()</code></td><td class="c"><code>List&lt;Integer&gt;</code></td><td class="c"><b>มิลลิเมตร</b></td><td>ระยะสิ่งกีดขวางรอบตัว 360°</td></tr>
+<tr><td><code>getHorizontalAngleInterval()</code></td><td class="c"><code>int</code></td><td class="c">องศา</td><td>ช่วงมุมต่อ index (ปกติ 1° → มี 360 ค่า, index 0 = หัวเครื่อง)</td></tr>
+<tr><td><code>getUpwardObstacleDistance()</code></td><td class="c"><code>int</code></td><td class="c"><b>มิลลิเมตร</b></td><td>ระยะถึงสิ่งกีดขวางด้านบน</td></tr>
+<tr><td><code>getDownwardObstacleDistance()</code></td><td class="c"><code>int</code></td><td class="c"><b>มิลลิเมตร</b></td><td>ระยะถึงสิ่งกีดขวางด้านล่าง</td></tr>
+<tr><td colspan="4" style="background:#f0f3f6"><b><code>PerceptionInfo</code></b> — <b>ค่าตั้ง ไม่ใช่ค่าวัด</b> (ตั้งแต่ MSDK 5.0.0)</td></tr>
+<tr><td><code>get*ObstacleAvoidanceWarningDistance()</code></td><td class="c"><code>double</code></td><td class="c">เมตร</td><td>ระยะเตือน (ค่าที่ตั้งไว้)</td></tr>
+<tr><td><code>get*ObstacleAvoidanceBrakingDistance()</code></td><td class="c"><code>double</code></td><td class="c">เมตร</td><td>ระยะเบรกอัตโนมัติ (ค่าที่ตั้งไว้)</td></tr>
+<tr><td><code>get*ObstacleAvoidanceWorking()</code></td><td class="c"><code>Boolean</code></td><td class="c">—</td><td>เซนเซอร์ทิศนั้นทำงานอยู่หรือไม่</td></tr>
+</tbody>
+</table>
+
+<h3>ช่วงค่าที่ตั้งได้ (ตัวอย่าง M30 Series — เอกสารระบุว่าค่าต่างกันตามรุ่น)</h3>
+
+<table class="tight">
+<thead><tr><th>พารามิเตอร์</th><th class="num">แนวราบ</th><th class="num">ด้านบน</th><th class="num">ด้านล่าง</th></tr></thead>
+<tbody>
+<tr><td>ระยะเตือน (warning)</td><td class="num">[1.1, 33.0] m</td><td class="num">[1.1, 33.0] m</td><td class="num">[0.6, 33.0] m</td></tr>
+<tr><td>ระยะเบรก (braking)</td><td class="num"><b>[1.0, 10.0] m</b></td><td class="num"><b>[1.0, 10.0] m</b></td><td class="num">[0.5, 3.0] m</td></tr>
+</tbody>
+<caption><b>ระยะเบรกแนวราบต่ำสุดที่ตั้งได้คือ 1.0 m</b> — นี่คือขีดจำกัดที่ทำให้การบินเข้าใกล้กว่านี้ต้องปิดระบบ<br>
+แถว <b>ด้านบน</b> สำคัญเป็นพิเศษสำหรับงานใต้ท้องสะพาน ซึ่งเป็นทิศที่ต้องเข้าใกล้ "เพดาน"</caption>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">ห้ามใช้ obstacle sensing เป็นค่าวัดระยะเพื่อทำมาตราส่วน</span>
+<b>DJI ไม่เคยประกาศความแม่นยำของ obstacle sensing เลยไม่ว่ารุ่นไหน</b> — มีแต่ช่วงระยะกับ FOV
+หน่วยที่คืนเป็นมิลลิเมตรคือ <b>ความละเอียดของชนิดข้อมูล ไม่ใช่ความแม่นยำ</b><br><br>
+ในทางฟิสิกส์ ความคลาดเคลื่อนของ stereo depth โตตามสัดส่วน <code>D² / (f · B)</code> เมื่อ B คือระยะห่างระหว่างกล้องคู่
+ซึ่งบนโดรนขนาด M4 คือไม่กี่เซนติเมตร → ที่ระยะ 5–10 m ความคลาดเคลื่อนเป็นหลายสิบเซนติเมตรได้ง่าย ๆ<br><br>
+<b>ใช้ได้ดีมากสำหรับ:</b> รักษาระยะห่างให้คงที่ระหว่างบิน (auto-standoff) และเตือนก่อนชน<br>
+<b>ใช้ไม่ได้เลยสำหรับ:</b> แปลง pixel เป็นมิลลิเมตร
+</div>
+
+<h2>LiDAR payload</h2>
+
+<table class="tight">
+<thead><tr><th>สเปก</th><th>Zenmuse L1</th><th>Zenmuse L2</th><th>Zenmuse L3</th></tr></thead>
+<tbody>
+<tr><td>ระยะต่ำสุด</td><td>ยังไม่ยืนยัน</td><td><b>3 m</b></td><td>ยังไม่ยืนยัน</td></tr>
+<tr><td>ความแม่นการวัดระยะ</td><td>3 cm @100 m</td><td>2 cm @150 m</td><td>ทำซ้ำได้ 5 mm @150 m</td></tr>
+<tr><td>ความแม่นของระบบ</td><td>H 10 cm / V 5 cm @50 m</td><td>H 5 cm / V 4 cm @150 m</td><td>V 3 cm @120 m</td></tr>
+<tr><td>แพลตฟอร์ม</td><td>M300 RTK</td><td>M300 / M350 RTK</td><td><b>Matrice 400 เท่านั้น</b></td></tr>
+</tbody>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">LiDAR ใช้วัดรอยแตกไม่ได้ และใช้วัดระยะสด ๆ ก็ไม่ได้</span>
+<b>วัดสดไม่ได้</b> — ทั้งสามรุ่นเป็น payload สำหรับเก็บ point cloud แล้วประมวลผลหลังบิน ไม่มี API ให้ดึง "ระยะถึงผิวหน้าเครื่อง ณ วินาทีนี้" แบบเรียลไทม์ และ scan pattern ไม่ได้เล็งไปข้างหน้า<br>
+<b>ต่อให้ได้ point cloud มาก็ยังวัดรอยแตกไม่ได้</b> — ความแม่นของระบบ L2 = 5 cm ในแนวราบ ซึ่งหยาบกว่ารอยแตก 0.3 mm ประมาณ <b>167 เท่า</b><br><br>
+<b>สิ่งที่ LiDAR มีประโยชน์จริงในงานนี้:</b> สร้างรูปทรงของสะพาน/ตอม่อเพื่อวางแผนเส้นทางบินให้รักษาระยะคงที่ ให้มาตราส่วนระดับเซนติเมตรแก่โมเดล photogrammetry และใช้อ้างอิงตำแหน่งรอยแตกกลับเข้าระบบ BMMS
+</div>
+
+<h2>RTK</h2>
+
+<p>ทุกรุ่น DJI Enterprise ให้ตัวเลขเดียวกันเมื่อได้สถานะ RTK FIX: <b>แนวราบ 1 cm + 1 ppm, แนวดิ่ง 1.5 cm + 1 ppm</b> (1 ppm = 1 mm ต่อระยะห่างจากสถานีฐาน 1 กม.)</p>
+
+<div class="box box--bad">
+<span class="box__t">RTK ใช้กับโจทย์นี้ไม่ได้ ด้วยเหตุผลเชิงโครงสร้าง 3 ข้อ</span>
+<b>1. RTK บอกตำแหน่งของโดรน ไม่ได้บอกระยะถึงผิววัตถุ</b> — จะได้ระยะต้องรู้ตำแหน่งของผิวคอนกรีตในระบบพิกัดเดียวกันด้วย ซึ่งต้องมี as-built survey หรือ BIM ที่แม่นกว่านั้น<br>
+<b>2. ใต้ท้องสะพานคือสภาพแวดล้อม GNSS-denied โดยนิยาม</b> — ท้องคานบังท้องฟ้าไปเกือบหมด<br>
+<b>3. Multipath</b> — เสาคอนกรีตและโครงเหล็กสะท้อนสัญญาณ ทำให้ระยะที่วัดได้ยาวเกินจริงโดยที่ตัวรับไม่รู้ตัว<br><br>
+งานวิจัยรายงานว่า RTK fix ล้มเหลวบ่อยเมื่ออยู่ห่างสิ่งกีดขวางในระยะ 0–5 m และใช้เวลา re-fix ประมาณ 9–13 วินาทีหลังพ้นสิ่งกีดขวาง <span class="badge badge--warn">ควรยืนยันตัวเลขในเปเปอร์ต้นฉบับก่อนอ้างในเล่ม</span>
+</div>
+
+<h2>ตารางเปรียบเทียบและข้อสรุป</h2>
+
+<table>
+<thead><tr><th>วิธี</th><th class="c">ความแม่นที่ 3–10 m</th><th class="c">ต้นทุน</th><th>เหมาะกับ</th></tr></thead>
+<tbody>
+<tr><td><b>Laser rangefinder ในตัว (M4E/M4T)</b></td><td class="c">±2.2% @10 m<br>±6.8% @3 m</td><td class="c">฿0 ถ้ามีเครื่อง</td><td>รู้ระยะคร่าว ๆ, tag พิกัด PinPoint, ตรวจสอบไขว้กับ marker</td></tr>
+<tr><td>Obstacle sensing (binocular)</td><td class="c"><b>ไม่ประกาศ</b></td><td class="c">฿0</td><td>รักษาระยะคงที่อัตโนมัติ, เตือนก่อนชน — <b>ห้ามใช้ทำมาตราส่วน</b></td></tr>
+<tr><td>LiDAR payload</td><td class="c">5 cm (ระบบ)</td><td class="c">หลักแสน</td><td>รูปทรงโครงสร้าง, วางแผนเส้นทาง — ไม่ใช่วัดรอยแตก</td></tr>
+<tr><td>RTK</td><td class="c">1 cm (ตำแหน่งโดรน)</td><td class="c">รวมในเครื่อง</td><td>ทำแผนที่ในที่โล่ง — ใช้ใต้สะพานไม่ได้</td></tr>
+<tr><td>ติด rangefinder เอง (LightWare SF11/C)</td><td class="c">±0.1 m คงที่<br>= ±2% @5 m, ±3.3% @3 m</td><td class="c">~$199–229<br>+ ต้องมี M350/M400</td><td>ดีกว่าของ DJI ทุกช่วง วัดได้ตั้งแต่ 0.1 m — แต่ต้องพัฒนา payload เอง</td></tr>
+<tr><td><b>Fiducial marker ในภาพ (บทที่ 5)</b></td><td class="c"><b>0.26%</b> (ทดสอบแล้ว)</td><td class="c"><b>~฿500</b></td><td><b>แนะนำ — แม่นที่สุด ถูกที่สุด และแก้มุมเอียงได้ด้วย</b></td></tr>
+</tbody>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">ข้อสรุปของบทนี้</span>
+คำถาม "จะรู้ได้อย่างไรว่าโดรนห่างวัตถุเท่าไหร่" มีคำตอบที่ดีกว่าคือ <b>เปลี่ยนคำถาม</b><br>
+สิ่งที่ต้องการจริง ๆ ไม่ใช่ "ระยะ" แต่คือ <b>"หนึ่งพิกเซลในภาพนี้เท่ากับกี่มิลลิเมตรบนผิวจริง"</b> —
+ระยะเป็นเพียงทางอ้อมทางหนึ่งที่จะได้คำตอบนั้น และเป็นทางที่แม่นน้อยที่สุด เพราะต้องรู้ทั้งระยะ ทางยาวโฟกัส ขนาดเซนเซอร์ และมุมเอียง ครบทั้งสี่อย่าง<br><br>
+ถ้าถามคำถามที่ถูก คำตอบจะกลายเป็นเรื่องง่ายมาก และแทบไม่มีต้นทุน — ดูบทที่ 5
+</div>
+
+
+<!-- ===== ส่วนที่ verify เองแล้ว: GSD + marker + โค้ด ===== -->
+
+<h1>คณิตศาสตร์ของการวางแผนบิน — GSD และระยะที่ต้องใช้จริง</h1>
+
+<p>ก่อนจะถามว่า "โดรนรุ่นไหนดี" ต้องตอบก่อนว่า <b>ต้องการรายละเอียดกี่มิลลิเมตรต่อพิกเซล</b> เพราะตัวเลขนี้ตัวเดียวกำหนดทั้งระยะที่ต้องบิน เลนส์ที่ต้องใช้ จำนวนภาพต่อเสา และความเร็วชัตเตอร์ที่ยอมได้</p>
+
+<h2>สูตรหลัก</h2>
+
+<figure>
+<svg viewBox="0 0 620 224" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+  <defs>
+    <marker id="a1" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#14508c"/></marker>
+    <marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#4a5058"/></marker>
+    <marker id="a3" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#1c6b3f"/></marker>
+  </defs>
+  <rect x="470" y="20" width="16" height="180" fill="#e6e9ed" stroke="#b9c0c8"/>
+  <text x="478" y="215" font-size="10" fill="#4a5058" text-anchor="middle">ผิวเสา</text>
+  <line x1="478" y1="88" x2="478" y2="132" stroke="#a02929" stroke-width="3"/>
+  <text x="540" y="106" font-size="10" fill="#a02929">รอยแตก</text>
+  <text x="540" y="118" font-size="10" fill="#a02929">กว้าง w</text>
+  <rect x="86" y="80" width="8" height="60" fill="#14508c"/>
+  <text x="90" y="156" font-size="10" fill="#14508c" text-anchor="middle">เซนเซอร์</text>
+  <text x="90" y="168" font-size="9" fill="#4a5058" text-anchor="middle">W พิกเซล</text>
+  <ellipse cx="150" cy="110" rx="7" ry="26" fill="none" stroke="#16181d" stroke-width="1.6"/>
+  <text x="150" y="156" font-size="10" fill="#16181d" text-anchor="middle">เลนส์</text>
+  <line x1="94" y1="84" x2="470" y2="138" stroke="#8b939c" stroke-width="1"/>
+  <line x1="94" y1="136" x2="470" y2="82" stroke="#8b939c" stroke-width="1"/>
+  <line x1="94" y1="196" x2="150" y2="196" stroke="#4a5058" marker-end="url(#a2)" marker-start="url(#a2)"/>
+  <text x="122" y="192" font-size="10" fill="#4a5058" text-anchor="middle">f</text>
+  <line x1="150" y1="196" x2="470" y2="196" stroke="#14508c" stroke-width="1.4" marker-end="url(#a1)" marker-start="url(#a1)"/>
+  <text x="310" y="192" font-size="11" fill="#14508c" text-anchor="middle" font-weight="700">D  (ระยะที่อยากรู้)</text>
+  <line x1="458" y1="82" x2="458" y2="138" stroke="#1c6b3f" stroke-width="1.4" marker-end="url(#a3)" marker-start="url(#a3)"/>
+  <text x="418" y="60" font-size="10" fill="#1c6b3f" text-anchor="middle">พื้นที่ที่ภาพครอบคลุม</text>
+  <text x="418" y="72" font-size="10" fill="#1c6b3f" text-anchor="middle">= GSD × W</text>
+</svg>
+<figcaption><b>รูปที่ 1</b> — เรขาคณิตของ GSD: หนึ่งพิกเซลบนเซนเซอร์ครอบคลุมพื้นที่จริงเท่าไรบนผิววัตถุ ขึ้นกับระยะ D และทางยาวโฟกัส f เท่านั้น</figcaption>
+</figure>
+
+<div class="eq">
+GSD = D × 34.62 / (f<sub>equiv</sub> × W<sub>px</sub>)
+<small>GSD หน่วย mm/pixel · D = ระยะกล้องถึงผิว (mm) · f<sub>equiv</sub> = ทางยาวโฟกัสเทียบ 35 มม. · W<sub>px</sub> = ความกว้างภาพเป็นพิกเซล</small>
+</div>
+
+<div class="box box--key">
+<span class="box__t">ที่มาของค่าคงที่ 34.62 — และกับดักที่ทำให้ผิด 4%</span>
+สูตรมาตรฐานคือ <code>GSD = D × pixel_pitch / f_actual</code> ซึ่งต้องรู้ขนาดเซนเซอร์จริง — ตัวเลขที่ DJI <b>ไม่ประกาศ</b> (บอกแค่ "1/1.3 นิ้ว" ซึ่งไม่ใช่ขนาดจริง และค่าที่หาได้ตามเว็บก็ขัดกันเอง 9.6×7.2 กับ 9.8×7.3 mm)<br><br>
+ทางออกคือใช้นิยามของ <i>equivalent focal length</i> ซึ่งอิง<b>เส้นทแยงมุม</b>ของฟิล์ม 35 มม. (43.27 mm) ไม่ใช่ความกว้าง →
+<code>diag_sensor / f_actual = 43.27 / f_equiv</code><br>
+กล้อง DJI ทุกตัวในตารางนี้เป็นอัตราส่วน <b>4:3</b> (8064×6048, 8192×6144, 5280×3956) ซึ่งความกว้าง = 0.8 × เส้นทแยง จึงได้
+<code>43.27 × 0.8 = 34.62</code><br><br>
+<b>ถ้าใช้ 36 (ความกว้างฟิล์ม 35 มม.) จะได้ค่าที่ผิดไป 4%</b> เพราะนั่นถูกต้องเฉพาะเซนเซอร์อัตราส่วน 3:2 เท่านั้น — เป็นข้อผิดพลาดที่เกิดง่ายมากและไม่มีอะไรเตือน<br><br>
+<span class="small">สูตรนี้เท่ากันทุกประการกับรูปที่เขียนด้วยเส้นทแยงมุมโดยตรง <code>GSD = D × 43.267 / (f<sub>equiv</sub> × W<sub>diag,px</sub>)</code> เพราะ <code>W<sub>diag</sub> = 1.25 × W</code> สำหรับเซนเซอร์ 4:3 — ใช้รูปไหนก็ได้ ผลเท่ากัน</span>
+</div>
+
+<div class="box box--ok">
+<span class="box__t">หลักฐานว่า FOV ที่ DJI ประกาศเป็นเส้นทแยงมุมจริง</span>
+ตรวจสอบกับสเปกของ DJI เอง (M4 wide, f<sub>equiv</sub> = 24 mm):<br>
+ถ้าตีความเป็น <b>เส้นทแยงมุม</b>: <code>2·atan(21.63/24) = 84.1°</code> → DJI ประกาศ 82–84° <b>✓ ตรง</b><br>
+ถ้าตีความเป็น <b>แนวนอน</b>: <code>2·atan(18/24) = 73.7°</code> → ห่างจากที่ประกาศ 10° <b>✗ ไม่ตรง</b><br>
+ตรวจซ้ำที่เลนส์เทเล (f<sub>equiv</sub> 168 mm): เส้นทแยงมุม 14.7° เทียบ DJI 15° <b>✓</b> · แนวนอน 12.2° <b>✗</b><br>
+<b>สรุป: FOV ของ DJI เป็น diagonal FOV</b> — ปิดคำถามนี้ได้โดยไม่ต้องออกภาคสนามไปถ่ายไม้บรรทัด
+</div>
+
+<div class="box box--warn">
+<span class="box__t">ทุกสูตร GSD มีความไม่แน่นอน ±5% — และนี่คือเหตุผลที่ต้องมี marker</span>
+ตรวจสอบไขว้กับสูตรที่คำนวณจาก FOV ที่ DJI ประกาศเอง (<code>GSD = D × 2·tan(FOV/2) / √(W²+H²)</code> โดย FOV ของ DJI เป็น<b>แนวทแยง</b> ไม่ใช่แนวนอน) ได้ค่าต่างกัน:
+<table class="tight" style="margin:2mm 0 0">
+<thead><tr><th>เลนส์</th><th class="num">สูตรทางยาวโฟกัส</th><th class="num">สูตร FOV</th><th class="num">ต่างกัน</th></tr></thead>
+<tbody>
+<tr><td>M4T wide 24 mm</td><td class="num">0.894</td><td class="num">0.862</td><td class="num">−3.6%</td></tr>
+<tr><td>medium tele 70 mm</td><td class="num">0.307</td><td class="num">0.313</td><td class="num">+2.0%</td></tr>
+<tr><td>tele 168 mm</td><td class="num">0.126</td><td class="num">0.129</td><td class="num">+2.2%</td></tr>
+</tbody>
+<caption>GSD ที่ระยะ 5 m — ความไม่ตรงกันมาจากตัวสเปกของ DJI เอง (f<sub>equiv</sub> ที่ประกาศกับ FOV ที่ประกาศไม่สอดคล้องกันพอดี) ไม่ใช่จากการคำนวณผิด</caption>
+</table>
+<b>สรุป: ใช้ตารางนี้วางแผนการบินได้ แต่ห้ามใช้เป็นมาตราส่วนสำหรับวัดขนาดจริง</b> — ต้องได้มาตราส่วนจากวัตถุอ้างอิงในภาพ (บทที่ 5) ซึ่งไม่ต้องพึ่งสเปกใด ๆ ของผู้ผลิตเลย
+</div>
+
+<h2>ตารางที่ 1 — GSD (mm/pixel) ของ Matrice 4T/4E ที่ระยะต่าง ๆ</h2>
+
+<table>
+<thead><tr><th>เลนส์ (ความละเอียด)</th><th class="num">2 m</th><th class="num">3 m</th><th class="num">5 m</th><th class="num">8 m</th><th class="num">10 m</th><th class="num">15 m</th></tr></thead>
+<tbody>
+<tr><td>M4T wide 24 mm <span class="muted">(8064×6048)</span></td><td class="num">0.358</td><td class="num">0.537</td><td class="num">0.894</td><td class="num">1.431</td><td class="num">1.789</td><td class="num">2.683</td></tr>
+<tr><td>M4E wide 24 mm <span class="muted">(5280×3956, 4/3″ 20MP)</span></td><td class="num">0.546</td><td class="num">0.820</td><td class="num">1.366</td><td class="num">2.185</td><td class="num">2.732</td><td class="num">4.098</td></tr>
+<tr><td>medium tele 70 mm <span class="muted">(8064×6048)</span></td><td class="num">0.123</td><td class="num">0.184</td><td class="num">0.307</td><td class="num">0.491</td><td class="num">0.613</td><td class="num">0.920</td></tr>
+<tr><td><b>tele 168 mm</b> <span class="muted">(8192×6144)</span></td><td class="num"><b>0.050</b></td><td class="num"><b>0.075</b></td><td class="num"><b>0.126</b></td><td class="num"><b>0.201</b></td><td class="num"><b>0.252</b></td><td class="num"><b>0.377</b></td></tr>
+</tbody>
+<caption>สังเกตว่า M4E เลนส์ wide ให้ GSD <i>แย่กว่า</i> M4T แม้เซนเซอร์ใหญ่กว่า (4/3″ vs 1/1.3″) เพราะความละเอียดต่ำกว่า (20MP vs 48MP) — เซนเซอร์ใหญ่ช่วยเรื่องแสงน้อยและ dynamic range ไม่ได้ช่วยเรื่องรายละเอียดต่อพิกเซล</caption>
+</table>
+
+<h2>ตารางที่ 2 — ระยะที่ต้องบิน (เมตร) เพื่อให้ได้ GSD เป้าหมาย</h2>
+
+<table>
+<thead><tr><th>เลนส์</th><th class="num">0.1 mm/px</th><th class="num">0.2 mm/px</th><th class="num">0.3 mm/px</th><th class="num">0.5 mm/px</th></tr></thead>
+<tbody>
+<tr><td>M4T wide 24 mm</td><td class="num">0.56</td><td class="num">1.12</td><td class="num">1.68</td><td class="num">2.80</td></tr>
+<tr><td>M4E wide 24 mm</td><td class="num">0.37</td><td class="num">0.73</td><td class="num">1.10</td><td class="num">1.83</td></tr>
+<tr><td>medium tele 70 mm</td><td class="num">1.63</td><td class="num">3.26</td><td class="num">4.89</td><td class="num">8.15</td></tr>
+<tr><td><b>tele 168 mm</b></td><td class="num"><b>3.98</b></td><td class="num"><b>7.95</b></td><td class="num"><b>11.93</b></td><td class="num"><b>19.88</b></td></tr>
+</tbody>
+</table>
+
+<figure>
+<svg viewBox="0 0 620 190" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+  <rect x="14" y="26" width="16" height="130" fill="#e6e9ed" stroke="#b9c0c8"/>
+  <text x="22" y="170" font-size="9" fill="#4a5058" text-anchor="middle">เสา</text>
+  <g font-size="9.5">
+    <rect x="58" y="30" width="70" height="22" rx="3" fill="#fceded" stroke="#e8bcbc"/>
+    <text x="64" y="45" fill="#a02929">wide 24 mm → 1.12 m</text>
+    <rect x="58" y="62" width="185" height="22" rx="3" fill="#fdf4e3" stroke="#ecd6a8"/>
+    <text x="64" y="77" fill="#9a5b00">medium tele 70 mm → 3.26 m</text>
+    <rect x="58" y="94" width="450" height="22" rx="3" fill="#ecf7f0" stroke="#bfe0cd"/>
+    <text x="64" y="109" fill="#1c6b3f">tele 168 mm → 7.95 m   (ปลอดภัยที่สุด และ rangefinder แม่นที่สุด)</text>
+  </g>
+  <rect x="58" y="132" width="56" height="12" fill="#a02929" opacity=".18"/>
+  <text x="120" y="142" font-size="8.5" fill="#a02929">เขตที่ตั้ง braking distance ต่ำสุดของ DJI ได้ (1.0 m)</text>
+  <line x1="58" y1="156" x2="560" y2="156" stroke="#4a5058"/>
+  <g font-size="9" fill="#4a5058" text-anchor="middle">
+    <text x="58" y="170">0</text><text x="171" y="170">2 m</text><text x="284" y="170">4 m</text>
+    <text x="397" y="170">6 m</text><text x="510" y="170">8 m</text>
+  </g>
+  <g stroke="#8b939c" stroke-dasharray="3 3">
+    <line x1="171" y1="150" x2="171" y2="162"/><line x1="284" y1="150" x2="284" y2="162"/>
+    <line x1="397" y1="150" x2="397" y2="162"/><line x1="510" y1="150" x2="510" y2="162"/>
+  </g>
+</svg>
+<figcaption><b>รูปที่ 2</b> — ระยะที่ต้องบินเพื่อให้ได้ GSD 0.2 mm/pixel <b>เท่ากัน</b> ด้วยเลนส์ต่างกัน (Matrice 4T) — เลนส์เทเลทำให้ยืนห่างได้ 7 เท่าโดยได้รายละเอียดเท่าเดิม</figcaption>
+</figure>
+
+<div class="box box--ok">
+<span class="box__t">ข้อสรุปที่สำคัญที่สุดของรายงานฉบับนี้</span>
+โจทย์ตั้งต้นคือ "ทำโปรแกรมให้บินใกล้วัตถุมากขึ้นเพื่อให้เห็นรอยแตกชัด" — <b>ตารางที่ 2 บอกว่าไม่จำเป็น และไม่ควรทำ</b><br>
+ที่ GSD 0.2 mm/px เท่ากัน เลนส์ wide ต้องบินห่างแค่ <b>1.12 m</b> ซึ่งอยู่ในเขต braking distance ต่ำสุดที่ DJI ยอมให้ตั้งได้ (1.0 m) แปลว่าต้องปิดระบบกันชน<br>
+เลนส์ tele 168 mm ยืนห่างได้ <b>7.95 m</b> ได้รายละเอียดเท่ากัน — <b>ไกลกว่า 7 เท่า</b><br>
+และการยืนไกลยังทำให้ laser rangefinder แม่นขึ้นมาก: ที่ 2 m คลาดเคลื่อนถึง ±15% แต่ที่ 8 m เหลือเพียง ±2.7%
+</div>
+
+<h2>ตารางที่ 3 — พื้นที่ที่ภาพหนึ่งใบครอบคลุม และระยะขยับต่อช็อต (overlap 80%)</h2>
+
+<table class="tight">
+<thead><tr><th>เลนส์</th><th class="num">D</th><th class="num">GSD</th><th class="num">พื้นที่ต่อภาพ (กว้าง×สูง)</th><th class="num">ขยับ แนวนอน/แนวตั้ง</th></tr></thead>
+<tbody>
+<tr><td>M4T wide 24 mm</td><td class="num">3 m</td><td class="num">0.537</td><td class="num">4.33 × 3.25 m</td><td class="num">0.87 / 0.65 m</td></tr>
+<tr><td>M4T wide 24 mm</td><td class="num">5 m</td><td class="num">0.894</td><td class="num">7.21 × 5.41 m</td><td class="num">1.44 / 1.08 m</td></tr>
+<tr><td>medium tele 70 mm</td><td class="num">3 m</td><td class="num">0.184</td><td class="num">1.48 × 1.11 m</td><td class="num">0.30 / 0.22 m</td></tr>
+<tr><td>medium tele 70 mm</td><td class="num">5 m</td><td class="num">0.307</td><td class="num">2.47 × 1.85 m</td><td class="num">0.49 / 0.37 m</td></tr>
+<tr><td>tele 168 mm</td><td class="num">5 m</td><td class="num">0.126</td><td class="num">1.03 × 0.77 m</td><td class="num">0.21 / 0.15 m</td></tr>
+<tr><td>tele 168 mm</td><td class="num">10 m</td><td class="num">0.252</td><td class="num">2.06 × 1.55 m</td><td class="num">0.41 / 0.31 m</td></tr>
+</tbody>
+</table>
+
+<h3>จำนวนภาพจริงต่อเสาหนึ่งต้น</h3>
+
+<p>เสาตอม่อหน้ากว้าง 1.2 m สูง 6 m ถ่ายครบ 4 หน้า ที่ overlap 80%:</p>
+
+<table class="tight">
+<thead><tr><th>เลนส์</th><th class="num">ระยะ</th><th class="num">GSD</th><th class="num">ภาพ/หน้า</th><th class="num">ภาพ/เสา</th><th>ประเมิน</th></tr></thead>
+<tbody>
+<tr><td>M4T wide 24 mm</td><td class="num">3 m</td><td class="num">0.537</td><td class="num">6</td><td class="num">24</td><td>ภาพน้อย แต่ GSD หยาบเกินไปสำหรับรอยแตกเล็ก</td></tr>
+<tr><td>medium tele 70 mm</td><td class="num">5 m</td><td class="num">0.307</td><td class="num">13</td><td class="num">52</td><td><b>สมดุลดีที่สุด</b> — พอสำหรับเกณฑ์ T-BHI</td></tr>
+<tr><td>medium tele 70 mm</td><td class="num">3 m</td><td class="num">0.184</td><td class="num">23</td><td class="num">92</td><td>ละเอียดกว่า แต่ใกล้ขึ้นและภาพเพิ่มเกือบเท่าตัว</td></tr>
+<tr><td>tele 168 mm</td><td class="num">10 m</td><td class="num">0.252</td><td class="num">16</td><td class="num">64</td><td><b>ปลอดภัยที่สุด</b> — ไกล 10 m แต่ยังละเอียดกว่า wide ที่ 3 m ถึง 2 เท่า</td></tr>
+<tr><td>tele 168 mm</td><td class="num">5 m</td><td class="num">0.126</td><td class="num">70</td><td class="num">280</td><td>ละเอียดเกินจำเป็น จำนวนภาพระเบิด — ไม่คุ้ม</td></tr>
+</tbody>
+<caption>คำนวณโดยนับคอลัมน์/แถวจริงจากขนาดหน้าเสาเทียบ footprint ไม่ใช่หารพื้นที่ตรง ๆ — ถ้า footprint กว้างกว่าหน้าเสาแล้ว ก็ใช้คอลัมน์เดียวพอ</caption>
+</table>
+
+<div class="box box--key">
+<span class="box__t">เป้าหมาย GSD ที่ถูกต้องสำหรับโปรเจกต์นี้คือ 0.2–0.3 mm/px ไม่ใช่ 0.05</span>
+เกณฑ์ T-BHI ที่โปรเจกต์นี้ใช้เองกำหนดขอบเขตชั้นล่างสุดของ RC Cracking ไว้ที่ <b>1.6 mm</b> และระบุว่ารอยร้าวที่แคบกว่า 1 mm ให้ทำเครื่องหมายเป็น <i>Medium Confidence</i><br>
+ที่ GSD 0.25 mm/px รอยแตก 1.6 mm กินพื้นที่ประมาณ <b>6.4 pixel</b> ซึ่งเพียงพอต่อการวัดความกว้างอย่างมั่นใจ (โดยทั่วไปต้องการ ≥3 pixel)<br>
+<b>การไล่ตาม GSD 0.05 mm/px ตามงานวิจัยต่างประเทศจึงเป็นการลงทุนเกินความจำเป็นของเกณฑ์ที่งานนี้ใช้จริง</b> — ควรอ้างเหตุผลข้อนี้ในบทระเบียบวิธีวิจัย
+</div>
+
+<h2>ความเร็วชัตเตอร์สูงสุดที่ยอมได้ (motion blur ≤ 1 pixel)</h2>
+
+<div class="eq">
+t<sub>max</sub> = GSD / v
+<small>t = เวลาเปิดชัตเตอร์ (s) · GSD (mm/px) · v = ความเร็วสัมพัทธ์ระหว่างโดรนกับผิว (mm/s) รวมทั้งการบินและการโคลงจากลม</small>
+</div>
+
+<table class="tight">
+<thead><tr><th class="num">GSD</th><th class="num">v = 0.1 m/s</th><th class="num">v = 0.3 m/s</th><th class="num">v = 0.5 m/s</th><th class="num">v = 1.0 m/s</th></tr></thead>
+<tbody>
+<tr><td class="num">0.1 mm/px</td><td class="num">1/1000 s</td><td class="num">1/3000 s</td><td class="num">1/5000 s</td><td class="num">1/10000 s</td></tr>
+<tr><td class="num">0.2 mm/px</td><td class="num">1/500 s</td><td class="num">1/1500 s</td><td class="num">1/2500 s</td><td class="num">1/5000 s</td></tr>
+<tr><td class="num">0.5 mm/px</td><td class="num">1/200 s</td><td class="num">1/1000 s</td><td class="num">1/2000 s</td><td class="num">1/2000 s</td></tr>
+</tbody>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">ผลที่ตามมาที่คนมักลืม</span>
+ที่ GSD 0.2 mm/px ถ้าบินด้วยความเร็วปกติ 1 m/s ต้องใช้ชัตเตอร์ <b>1/5000 วินาที</b> ซึ่งใต้ท้องสะพานที่แสงน้อยเป็นไปไม่ได้เลยถ้าไม่ดัน ISO จนภาพเต็มไปด้วย noise (ซึ่งทำลาย crack segmentation)<br>
+<b>ทางแก้คือหยุดนิ่งถ่าย (hover) ทีละจุด ไม่ใช่บินถ่ายไปเรื่อย ๆ</b> — ที่ v = 0.1 m/s ชัตเตอร์ 1/500 s ก็พอ ซึ่งถ่ายได้จริงในที่ร่ม ข้อนี้กระทบการออกแบบ waypoint mission โดยตรง: ต้องตั้งเป็นโหมด hover-and-shoot ไม่ใช่ถ่ายระหว่างเคลื่อนที่
+</div>
+
+<h1>วิธี marker — ให้ภาพมีมาตราส่วนโดยไม่ต้องวัดระยะ</h1>
+
+<p>ทุกวิธีวัดระยะในบทที่แล้วมีข้อจำกัดร่วมกันข้อหนึ่ง: <b>ต่อให้รู้ระยะแม่นแค่ไหน ก็ยังไม่รู้ว่ากล้องเอียงกี่องศาเทียบกับผิว</b> ซึ่งเป็นแหล่งความคลาดเคลื่อนที่ใหญ่กว่าเรื่องระยะเสียอีก วิธี fiducial marker แก้ทั้งสองเรื่องพร้อมกันในขั้นตอนเดียว และไม่มีต้นทุนฮาร์ดแวร์</p>
+
+<h2>หลักการ</h2>
+
+<p>แปะแผ่นที่รู้ขนาดจริงแน่นอนไว้บนผิวที่จะตรวจ ให้อยู่ในภาพเดียวกับรอยแตก จากนั้น</p>
+<div class="eq">mm/pixel = ขนาดจริงของ marker (mm) / ขนาดของ marker ในภาพ (pixel)</div>
+<p>ไม่ต้องรู้ระยะ ไม่ต้องรู้ทางยาวโฟกัส ไม่ต้อง calibrate กล้อง และ<b>ทนต่อการซูมกลางคัน</b> เพราะเมื่อซูม marker ก็ขยายไปพร้อมรอยแตก อัตราส่วนไม่เปลี่ยน — ต่างจากวิธีคำนวณจาก GSD ซึ่งพังทันทีถ้าทางยาวโฟกัสเปลี่ยนโดยไม่ได้บันทึกไว้ และไม่ต้องพึ่งสเปกของผู้ผลิตซึ่งมีความไม่แน่นอน ±5% ตามที่แสดงในบทที่แล้ว</p>
+
+<figure>
+<svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+  <g>
+    <text x="95" y="16" font-size="10.5" fill="#16181d" text-anchor="middle" font-weight="700">(ก) ภาพถ่ายจริง — เอียง</text>
+    <path d="M20,40 L170,28 L178,168 L14,152 Z" fill="#f2f4f6" stroke="#b9c0c8"/>
+    <path d="M36,58 L96,53 L100,110 L38,104 Z" fill="#16181d"/>
+    <path d="M46,66 L86,63 L88,100 L48,96 Z" fill="#fff"/>
+    <path d="M56,74 L76,72 L77,90 L57,88 Z" fill="#16181d"/>
+    <path d="M128,40 L140,166" stroke="#a02929" stroke-width="2.5" fill="none"/>
+    <text x="95" y="188" font-size="9" fill="#a02929" text-anchor="middle">มาตราส่วนเพี้ยน 13.2%</text>
+  </g>
+  <g transform="translate(200,0)">
+    <text x="30" y="102" font-size="20" fill="#14508c">→</text>
+    <text x="26" y="86" font-size="9" fill="#4a5058">homography</text>
+    <text x="26" y="120" font-size="9" fill="#4a5058">จาก 4 มุม marker</text>
+  </g>
+  <g transform="translate(330,0)">
+    <text x="120" y="16" font-size="10.5" fill="#16181d" text-anchor="middle" font-weight="700">(ข) หลัง rectify — ระนาบตรง</text>
+    <rect x="30" y="32" width="180" height="136" fill="#f2f4f6" stroke="#b9c0c8"/>
+    <rect x="44" y="46" width="62" height="62" fill="#16181d"/>
+    <rect x="54" y="56" width="42" height="42" fill="#fff"/>
+    <rect x="64" y="66" width="22" height="22" fill="#16181d"/>
+    <line x1="44" y1="120" x2="106" y2="120" stroke="#1c6b3f" stroke-width="1.4"/>
+    <text x="75" y="134" font-size="9" fill="#1c6b3f" text-anchor="middle">200.0 mm = 400 px</text>
+    <line x1="160" y1="40" x2="160" y2="160" stroke="#a02929" stroke-width="2.5"/>
+    <text x="120" y="188" font-size="9" fill="#1c6b3f" text-anchor="middle">0.500 mm/px คงที่ทั้งภาพ</text>
+  </g>
+</svg>
+<figcaption><b>รูปที่ 3</b> — marker ให้ทั้ง "มาตราส่วน" และ "การแก้มุมเอียง" ในขั้นตอนเดียว ตัวเลขทั้งสองมาจากการทดสอบจริงในหัวข้อ 5.5</figcaption>
+</figure>
+
+<h2>ทำไมต้องเป็น ArUco ไม่ใช่ไม้บรรทัดธรรมดา</h2>
+
+<table>
+<thead><tr><th>วิธี</th><th>ให้มาตราส่วน</th><th>แก้มุมเอียงได้</th><th>ตรวจจับอัตโนมัติ</th><th>เหมาะกับ</th></tr></thead>
+<tbody>
+<tr><td>ไม้บรรทัด / scale bar</td><td class="c">✓</td><td class="c">✗</td><td class="c">✗ ต้องคลิกเอง</td><td>ถ่ายไม่กี่ภาพ วัดมือ</td></tr>
+<tr><td>Crack comparator card</td><td class="c">✓</td><td class="c">✗</td><td class="c">✗</td><td>ตรวจสอบความถูกต้อง (ground truth)</td></tr>
+<tr><td><b>ArUco / AprilTag</b></td><td class="c">✓</td><td class="c">✓ homography</td><td class="c">✓ อัตโนมัติ</td><td><b>งานนี้ — ประมวลผลเป็นพันภาพ</b></td></tr>
+<tr><td>ChArUco board</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td><td>เมื่อต้องการ calibrate กล้องไปด้วย</td></tr>
+<tr><td>Checkerboard</td><td class="c">✓</td><td class="c">✓</td><td class="c">△ ต้องเห็นทั้งแผ่น</td><td>calibrate ในห้อง ไม่เหมาะภาคสนาม</td></tr>
+</tbody>
+<caption>ArUco มีรหัส id ในตัว ทำให้แยกได้ว่า marker ตัวไหนอยู่เสาต้นไหน — ใช้ id ต่างกันต่อเสา แล้วระบบจะ map ภาพกลับไปยังตำแหน่งบนโครงสร้างได้เองโดยไม่ต้องพึ่ง GPS</caption>
+</table>
+
+<h2>ความคลาดเคลื่อนจากมุมเอียง — ตัวเลขจริง</h2>
+
+<p>ถ้าใช้ค่าเฉลี่ยความยาว 4 ด้านของ marker เป็นมาตราส่วนโดยไม่แก้มุม จะเกิดความคลาดเคลื่อนตามสูตร</p>
+<div class="eq">
+error = (1 − cos θ) / (1 + cos θ)
+<small>θ = มุมระหว่างแกนกล้องกับเส้นตั้งฉากผิว · สูตรนี้ตรวจสอบแล้วว่าตรงกับการ project แบบ pinhole จริงทุกทศนิยม และ<b>ไม่ขึ้นกับระยะ</b></small>
+</div>
+
+<table class="tight">
+<thead><tr><th class="num">มุมเอียง θ</th><th class="num">5°</th><th class="num">10°</th><th class="num">15°</th><th class="num">20°</th><th class="num">30°</th><th class="num">45°</th></tr></thead>
+<tbody><tr><td>ความคลาดเคลื่อนของมาตราส่วน</td><td class="num">0.19%</td><td class="num">0.77%</td><td class="num">1.73%</td><td class="num">3.11%</td><td class="num">7.18%</td><td class="num">17.16%</td></tr></tbody>
+</table>
+
+<div class="box box--key">
+<span class="box__t">กฎที่ใช้จริงหน้างาน</span>
+เอียงไม่เกิน <b>15°</b> → ใช้ค่าเฉลี่ย 4 ด้านได้เลย คลาดเคลื่อน &lt; 2%<br>
+เอียงเกิน 15° → <b>ต้อง rectify ด้วย homography</b> ซึ่งกำจัดความคลาดเคลื่อนส่วนนี้ลงเป็นศูนย์ตามนิยาม
+</div>
+
+<h2>สามกับดักที่เจอจริงตอนทดสอบโค้ด</h2>
+
+<p>โค้ดในภาคผนวก ก. ถูกเขียนและรันจริง ระหว่างนั้นเจอบั๊กสามตัวที่ทุกตัวทำให้ผลลัพธ์ "ดูเหมือนถูก" แต่ผิด — บันทึกไว้เพราะเป็นกับดักที่คนทำงานนี้ต่อจะเจอซ้ำแน่นอน</p>
+
+<h3>กับดักที่ 1 — distance transform ให้ความกว้างเกินจริง 1 pixel เสมอ</h3>
+<p>วิธีมาตรฐานในการวัดความกว้างรอยแตกจาก binary mask คือใช้ <code>cv2.distanceTransform</code> แล้วคูณสอง แต่ distance transform คืน "ระยะถึงพิกเซล<i>พื้นหลัง</i>ที่ใกล้ที่สุด" ไม่ใช่ "ระยะถึงขอบ" — แถบกว้าง W พิกเซลจึงได้ค่าสูงสุด (W+1)/2 ทำให้ <code>2 × maxdist</code> เกินจริงไป 1 pixel เสมอ สูตรที่ถูกคือ</p>
+<div class="eq">width<sub>px</sub> = 2 × maxdist − 1</div>
+<p>ตรวจสอบแล้วกับความหนา 3–8 พิกเซล ได้ค่าตรงเป๊ะทุกกรณี <b>ที่ GSD 0.2 mm/px ความผิดพลาด 1 pixel นี้ = 0.2 mm</b> ซึ่งใหญ่กว่ารอยแตกที่มาตรฐานถือว่ายอมรับได้ในหลายกรณี — ลืมลบ 1 คือรายงานผิดทั้งชุดข้อมูล</p>
+
+<h3>กับดักที่ 2 — <code>warpPerspective</code> เติมขอบด้วยสีดำ แล้วขอบดำถูกนับเป็นรอยแตก</h3>
+<p>ค่า default ของ <code>borderValue</code> คือ 0 (ดำ) พอ threshold หารอยแตก (ซึ่งดำ) ขอบภาพทั้งแถบก็เข้าเกณฑ์ไปด้วย ได้ "รอยแตก" กว้าง 140 mm ในการทดสอบ ต้องตั้ง <code>borderValue</code> เป็นสีพื้นผิวเสมอ</p>
+
+<h3>กับดักที่ 3 — ArUco ตรวจไม่เจอถ้า marker ชิดขอบภาพ</h3>
+<p>ArUco ต้องการ <b>quiet zone</b> (ขอบขาวรอบตัว marker) จึงจะ detect ได้ ถ้า rectify แล้ววาง marker ชิดมุมภาพพอดี จะ detect ไม่เจออีกเลย ผลคือโค้ดที่ตัด marker ออกจาก mask ทำงานพลาด แล้ว marker ทั้งก้อน (401×401 px) กลายเป็น "รอยแตก" ก้อนใหญ่ <b>ข้อนี้ใช้กับการพิมพ์ด้วย: ต้องเว้นขอบขาวรอบ marker อย่างน้อย 1 ช่อง (= 1/6 ของด้าน) ห้ามตัดชิดขอบดำ</b></p>
+
+<h2>ผลการทดสอบโค้ด</h2>
+
+<table class="tight">
+<thead><tr><th>การทดสอบ</th><th class="num">ผลที่ได้</th><th class="num">ค่าจริง</th><th class="num">คลาดเคลื่อน</th></tr></thead>
+<tbody>
+<tr><td>มาตราส่วนจากภาพตั้งฉาก</td><td class="num">0.5013 mm/px</td><td class="num">0.5000</td><td class="num">0.26%</td></tr>
+<tr><td>ความกว้างรอยแตก (ภาพตั้งฉาก)</td><td class="num">3.51 mm</td><td class="num">3.50 mm</td><td class="num">0.3%</td></tr>
+<tr><td>มาตราส่วนจากภาพเอียง (ไม่แก้)</td><td class="num">0.5662 mm/px</td><td class="num">0.5000</td><td class="num"><b>13.2%</b></td></tr>
+<tr><td>ความกว้างรอยแตก หลัง rectify</td><td class="num">3.50 mm</td><td class="num">3.50 mm</td><td class="num">0.0%</td></tr>
+<tr><td>SVG marker → พิมพ์ → ถ่าย → detect กลับ</td><td class="num">139.69 mm</td><td class="num">140.00 mm</td><td class="num">0.22%</td></tr>
+</tbody>
+<caption>ทดสอบด้วยภาพสังเคราะห์ที่รู้คำตอบจริง บน OpenCV 4.13.0 / NumPy 2.5.0 / Python 3.13 — ยังไม่ใช่การทดสอบกับภาพถ่ายจริง ซึ่งจะมี noise, blur, และผิวคอนกรีตที่ไม่เรียบเข้ามาเพิ่ม</caption>
+</table>
+
+<h2>การติดตั้งภาคสนาม</h2>
+
+<table>
+<thead><tr><th>สถานการณ์</th><th>วิธี</th><th>ข้อควรระวัง</th></tr></thead>
+<tbody>
+<tr><td>เสาที่เดินเข้าถึงโคนได้</td><td>เทปกาวสองหน้าโฟม หรือเทปย่นบนผิวที่ปัดฝุ่นและแห้ง</td><td>ผิวต้องแห้ง — คอนกรีตชื้นทำให้เทปหลุดกลางเที่ยวบิน</td></tr>
+<tr><td>ต้องบินสูงเกินเอื้อม</td><td>หย่อนป้ายผ้า/แผ่นยาวจากด้านบนลงมาแนบหน้าเสา หรือใช้ไม้ยืดติดที่ระดับ 3–4 m</td><td>ป้ายที่แกว่งตามลมทำให้ marker ไม่ร่วมระนาบกับผิว</td></tr>
+<tr><td>ต้องกลับมาวัดซ้ำทุกปี (monitoring)</td><td>ยิงพุกยึดแผ่นอลูมิเนียม/สเตนเลสถาวร เป็น benchmark ประจำเสา</td><td>ต้องขออนุญาตเจ้าของโครงสร้างก่อนเจาะ</td></tr>
+<tr><td>ติดอะไรไม่ได้เลย</td><td>ใช้มิติที่รู้จากแบบ as-built (หน้าตัดเสา, ระยะ joint, แผ่นรองคาน) เป็นมาตราส่วน</td><td>ต้องมั่นใจว่าของจริงตรงแบบ — งานก่อสร้างคลาดเคลื่อนจากแบบเป็นเรื่องปกติ</td></tr>
+</tbody>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">กติกาข้อเดียวที่ห้ามพลาด</span>
+<b>marker ต้องอยู่ระนาบเดียวกับรอยแตก</b> ถ้าแปะบนหน้าเสาด้านหนึ่งแล้ววัดรอยแตกบนอีกหน้าหนึ่ง มาตราส่วนผิดทันทีและไม่มีทางรู้ตัวจากภาพเพียงอย่างเดียว — ในทางปฏิบัติหมายความว่า <b>ต้องมี marker อย่างน้อย 1 ตัวต่อ 1 หน้าเสา</b>
+</div>
+
+<h2>ขนาด marker ที่ควรใช้</h2>
+
+<p>ข้อจำกัดด้านการตรวจจับแทบไม่เป็นปัญหาเลยในงานนี้ — ที่ GSD 0.2 mm/px marker ขนาด 140 mm จะกินพื้นที่ถึง 700 pixel ซึ่งมากเกินพอ (ArUco ต้องการประมาณ 60–100 pixel ขึ้นไปเพื่อความเสถียร) ข้อจำกัดจริงคือ<b>ความแม่นในการหาตำแหน่งมุม</b> ซึ่งดีขึ้นเมื่อ marker ใหญ่ขึ้น กับ<b>ขนาดกระดาษ</b></p>
+
+<table class="tight">
+<thead><tr><th class="num">ด้านดำของ marker</th><th class="num">+ quiet zone</th><th class="num">รวมเป็นกระดาษ</th><th>พิมพ์บน</th></tr></thead>
+<tbody>
+<tr><td class="num">100 mm</td><td class="num">16.7 mm ต่อด้าน</td><td class="num">133 × 133 mm</td><td>A4 แนวตั้ง สบาย ๆ</td></tr>
+<tr><td class="num">140 mm</td><td class="num">23.3 mm ต่อด้าน</td><td class="num">187 × 187 mm</td><td>A4 แนวตั้ง (พอดีขอบ)</td></tr>
+<tr><td class="num">200 mm</td><td class="num">33.3 mm ต่อด้าน</td><td class="num">267 × 267 mm</td><td>ต้อง A3 — ไม่พอดี A4</td></tr>
+</tbody>
+<caption>quiet zone = 1 ช่องของ marker (marker 4×4 มีทั้งหมด 6 ช่องรวมขอบดำ จึงเท่ากับ 1/6 ของด้าน)</caption>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">อย่าเชื่อขนาดที่สั่งพิมพ์</span>
+เครื่องพิมพ์แทบทุกเครื่องมีการย่อ/ขยายอัตโนมัติ 1–3% (ตัวเลือก "Fit to page", "Shrink oversized pages") <b>ต้องวัดด้านดำของ marker ที่พิมพ์ออกมาจริงด้วยเวอร์เนีย แล้วเอาค่านั้นไปใส่ในโค้ด</b> — ถ้าพิมพ์เพี้ยน 2% ความกว้างรอยแตกทุกค่าในรายงานก็ผิด 2% ทันที และเป็นความผิดพลาดเชิงระบบที่ไม่มีทางเห็นจากในภาพ
+</div>
+
+
+<!-- ============ 6 ============ -->
+<h1>การรวมภาพและ photogrammetry สำหรับผิวแนวดิ่ง</h1>
+
+<div class="box box--key">
+<span class="box__t">คำถามที่ต้องตอบก่อนลงมือ: จำเป็นต้องรวมภาพจริงหรือ</span>
+โจทย์ตั้งต้นบอกว่า "เอาภาพมารวมกัน" แต่ต้องแยกให้ชัดว่ารวมไปเพื่ออะไร<br><br>
+<b>ถ้าเพื่อให้ AI เห็นรอยแตกชัดขึ้น → ไม่จำเป็นเลย</b> โมเดล segmentation ทำงานบน tile ขนาด 256×256 หรือ 512×512 pixel อยู่แล้ว การรวมภาพไม่ได้เพิ่มข้อมูลใหม่ มีแต่ทำให้เสียรายละเอียดจากการ resample<br><br>
+<b>สิ่งที่การรวมภาพมีไว้เพื่อ:</b> (1) ระบุตำแหน่งว่ารอยแตกอยู่ตรงไหนของโครงสร้าง (2) ไม่นับรอยแตกเดียวกันซ้ำจากหลายภาพ (3) คิดปริมาณความเสียหายเป็นพื้นที่/สัดส่วนเพื่อเข้าเกณฑ์ T-BHI<br><br>
+<b>กฎที่ควรยึด: วัดความกว้างรอยแตกบนภาพเดี่ยว วัดความยาว/พื้นที่/ตำแหน่งบน orthomosaic</b> — เพราะ ortho ผ่าน resampling มาแล้ว ความคลาดเคลื่อนของความกว้างสูงมาก
+</div>
+
+<h2>ทำไม lawnmower จากด้านบนใช้กับงานนี้ไม่ได้</h2>
+
+<p>งานทำแผนที่แนวราบ (nadir grid) กล้องมองลงตั้งฉากกับพื้น ระยะกล้อง–วัตถุคงที่เกือบทั้งภาพ ผลคือ GSD คงที่ baseline ตั้งฉากกับแนวมอง และฉากมี texture ธรรมชาติเยอะ งานผิวแนวดิ่งเปลี่ยนทั้งสามข้อพร้อมกัน:</p>
+
+<ul>
+<li><b>ระยะไม่คงที่</b> ถ้าผิวไม่เรียบสนิท (เสาโค้ง ตอม่อมีบัว คานมี haunch) → GSD ต่างกันภายในภาพเดียว → ค่าที่วัดได้ผิดถ้าไม่แก้ perspective</li>
+<li><b>มุมตกกระทบเฉียง</b> ถ้าเก็บด้วย nadir จะกลายเป็น grazing angle → ความคลาดเคลื่อนของ depth ระเบิด</li>
+<li><b>ฉากไม่มี texture</b> คอนกรีตทาสีหรือผิวแบบเรียบเป็นสีเทาทั้งแผ่น → feature detector หา keypoint ไม่ได้</li>
+</ul>
+
+<h2>Overlap ที่ต้องใช้</h2>
+
+<table>
+<thead><tr><th>ประเภทงาน</th><th class="num">Forward overlap</th><th class="num">Side overlap</th></tr></thead>
+<tbody>
+<tr><td>Mapping แนวราบทั่วไป</td><td class="num">70–80%</td><td class="num">60–70%</td></tr>
+<tr><td>เมืองและ facade (double grid)</td><td class="num">75%</td><td class="num">60%</td></tr>
+<tr><td><b>Facade / ผิวแนวดิ่ง (แนะนำ)</b></td><td class="num"><b>80–90%</b></td><td class="num"><b>~80%</b></td></tr>
+<tr><td>ขั้นต่ำที่ยัง reconstruct สำเร็จ (จากงานวิจัยสะพานจริง)</td><td class="num">66%</td><td class="num">—</td></tr>
+</tbody>
+<caption>บนผนัง <b>forward overlap</b> = ทับซ้อนในแนวดิ่ง (ตามทิศที่โดรนไต่ขึ้น) และ <b>side overlap</b> = ทับซ้อนในแนวนอนระหว่าง strip ข้างเคียง</caption>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">ผลการวิจัยที่ควรใส่ในบทระเบียบวิธีวิจัย</span>
+งานวิจัยสะพานจริง (Sensors 23(16):7159) พบว่า <i>"conducting multiple flight paths improved local geometric accuracy <b>better than increasing the overlapping rate</b>"</i>
+โดยการรวม route แบบ overall + partial ให้คุณภาพโมเดลดีกว่า route เดียวถึง <b>46.7%</b><br><br>
+<b>แปลว่า:</b> ถ้าเลือกได้ระหว่าง "เพิ่ม overlap จาก 80% เป็น 90%" กับ "บินเพิ่มอีกหนึ่ง route ที่มุมต่างกัน" — <b>เลือกบินเพิ่ม route คุ้มกว่า</b>
+</div>
+
+<h2>ปัญหาผิวคอนกรีตไม่มี texture</h2>
+
+<p>นี่คือกรณีที่แย่ที่สุดของ SfM และเป็นความเสี่ยงจริงของโปรเจกต์ ไม่ใช่ปัญหาทางทฤษฎี วิธีแก้เรียงตามความคุ้มค่า:</p>
+
+<ol>
+<li><b>ติด marker / coded target บนผิว</b> — แก้ได้ทั้งปัญหา texture และปัญหามาตราส่วนพร้อมกัน (ดูบทที่ 5) เป็นวิธีที่คุ้มที่สุด</li>
+<li><b>เพิ่ม overlap และเพิ่มจำนวน route</b> ที่มุมต่างกัน</li>
+<li><b>ถ่ายวันฟ้าปิด</b> — แสงกระจายสม่ำเสมอ ลดเงาจัดที่ทำให้ feature matching สับสนระหว่าง route</li>
+<li><b>ปรับพารามิเตอร์ซอฟต์แวร์</b> (เพิ่ม min features / ลด threshold) — ช่วยได้น้อยที่สุด แก้ที่ปลายเหตุ</li>
+</ol>
+
+<h2>ซอฟต์แวร์</h2>
+
+<table class="tight">
+<thead><tr><th>ซอฟต์แวร์</th><th class="c">ราคา</th><th class="c">scale bar ในตัว</th><th>เหมาะ / ไม่เหมาะ</th></tr></thead>
+<tbody>
+<tr><td><b>Agisoft Metashape Professional</b> (Educational)</td><td class="c">~$549</td><td class="c">✓</td><td>มีทั้ง scale bar และ planar-projection ortho ซึ่งเป็นสองอย่างที่จำเป็นสำหรับผิวแนวดิ่ง — <b>คุ้มที่สุดถ้ามีงบ</b></td></tr>
+<tr><td><b>COLMAP</b></td><td class="c">ฟรี (BSD)</td><td class="c">✗</td><td>คุณภาพระดับงานวิจัย เขียนสคริปต์ได้ <b>แต่ไม่มีฟังก์ชัน scaling ในตัว</b> ต้องเขียน post-scaling เอง — ซึ่งเป็นข้อดีสำหรับวิทยานิพนธ์เพราะได้อธิบายวิธีในบทระเบียบวิธีวิจัยแทนที่จะเป็นกล่องดำ</td></tr>
+<tr><td>ODM / WebODM</td><td class="c">ฟรี (AGPL)</td><td class="c">GCP</td><td>มี GCP workflow พร้อม เหมาะถ้าต้องการ orthophoto ของหน้าเสา</td></tr>
+<tr><td>RealityScan / RealityCapture</td><td class="c">ฟรี (มีเงื่อนไข)</td><td class="c">✓</td><td>ลองก่อนได้ เร็วมาก</td></tr>
+<tr><td>DJI Terra</td><td class="c">มีค่าลิขสิทธิ์</td><td class="c">✗</td><td><b>ไม่รองรับ planar-projection ortho สำหรับผนัง</b> — ไม่เหมาะกับงานนี้</td></tr>
+</tbody>
+</table>
+
+<h2>รูปแบบการบินที่ถูกต้อง</h2>
+
+<figure>
+<svg viewBox="0 0 620 210" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+  <defs><marker id="f1" markerWidth="7" markerHeight="7" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 z" fill="#14508c"/></marker></defs>
+  <g font-size="9">
+  <text x="100" y="14" text-anchor="middle" font-weight="700" fill="#a02929">(ก) lawnmower จากด้านบน — ใช้ไม่ได้</text>
+  <rect x="55" y="34" width="90" height="150" fill="#e6e9ed" stroke="#b9c0c8"/>
+  <text x="100" y="196" text-anchor="middle" fill="#4a5058">เสา (มองด้านข้าง)</text>
+  <path d="M20,24 L180,24" stroke="#a02929" stroke-width="1.4" stroke-dasharray="5 3"/>
+  <circle cx="40" cy="24" r="4" fill="#a02929"/><circle cx="100" cy="24" r="4" fill="#a02929"/><circle cx="160" cy="24" r="4" fill="#a02929"/>
+  <text x="100" y="112" text-anchor="middle" fill="#a02929" font-size="10" font-weight="700">เห็นแต่หัวเสา</text>
+  <text x="100" y="126" text-anchor="middle" fill="#a02929" font-size="10" font-weight="700">ผิวข้างไม่โดนถ่ายเลย</text>
+
+  <text x="400" y="14" text-anchor="middle" font-weight="700" fill="#1c6b3f">(ข) vertical strip + orbit — ถูกต้อง</text>
+  <rect x="355" y="34" width="90" height="150" fill="#e6e9ed" stroke="#b9c0c8"/>
+  <text x="400" y="196" text-anchor="middle" fill="#4a5058">ถ่ายทีละหน้า ไล่จากล่างขึ้นบน แล้ววนรอบ 4 หน้า</text>
+  <g fill="#14508c">
+    <circle cx="315" cy="170" r="4"/><circle cx="315" cy="140" r="4"/><circle cx="315" cy="110" r="4"/>
+    <circle cx="315" cy="80" r="4"/><circle cx="315" cy="50" r="4"/>
+  </g>
+  <path d="M315,178 L315,44" stroke="#14508c" stroke-width="1.2" marker-end="url(#f1)"/>
+  <g stroke="#8b939c" stroke-width=".8" stroke-dasharray="2 2">
+    <line x1="319" y1="170" x2="353" y2="170"/><line x1="319" y1="140" x2="353" y2="140"/>
+    <line x1="319" y1="110" x2="353" y2="110"/><line x1="319" y1="80" x2="353" y2="80"/><line x1="319" y1="50" x2="353" y2="50"/>
+  </g>
+  <path d="M470,60 A62,62 0 0 1 470,158" stroke="#1c6b3f" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#f1)"/>
+  <text x="500" y="112" fill="#1c6b3f">วนไปหน้าถัดไป</text>
+  <line x1="315" y1="110" x2="353" y2="110" stroke="#14508c" stroke-width="1.2"/>
+  <text x="250" y="112" fill="#14508c" font-weight="600">D คงที่</text>
+  <text x="245" y="124" fill="#4a5058">ขยับ 0.37 m/ช็อต</text>
+  <text x="245" y="136" fill="#4a5058">(overlap 80%)</text>
+  </g>
+</svg>
+<figcaption><b>รูปที่ 4</b> — รูปแบบการบินสำหรับผิวแนวดิ่ง ระยะ D ต้องคงที่ตลอด strip ไม่งั้น GSD เปลี่ยนไปทุกภาพและมาตราส่วนไม่ตรงกัน</figcaption>
+</figure>
+
+<div class="box box--key">
+<span class="box__t">แยกสองรอบบิน อย่าประนีประนอมเป็นรอบเดียว</span>
+<b>รอบที่ 1 — โหมดวัด (metrology):</b> เลนส์เทเล ระยะไกล hover ทีละจุด marker อยู่ในเฟรม overlap แค่ 20–30% ก็พอ (ขอแค่ครอบคลุมผิว) เพราะแต่ละภาพหามาตราส่วนของตัวเองได้<br>
+<b>รอบที่ 2 — โหมดสร้างโมเดล (geometry):</b> เลนส์ wide overlap 80/80 หลาย route เพื่อสร้าง 3D และ orthomosaic สำหรับระบุตำแหน่ง<br><br>
+จำนวนภาพของสองโหมดต่างกันประมาณ <b>5 เท่า</b> — การพยายามทำรอบเดียวให้ได้ทั้งสองอย่างจะได้ผลแย่ทั้งคู่
+</div>
+
+<!-- ============ 7 ============ -->
+<h1>ทางเลือกแพลตฟอร์มอื่นนอกเหนือจาก DJI</h1>
+
+<p>โจทย์จริงมี 3 ชั้น และมีเพียงชั้นเดียวที่ต้องใช้โดรนพิเศษ — การแยกให้ออกก่อนช่วยประหยัดงบได้มาก</p>
+
+<table>
+<thead><tr><th class="c" style="width:8%">ชั้น</th><th style="width:38%">โจทย์จริง</th><th>ต้องซื้อโดรนใหม่ไหม</th></tr></thead>
+<tbody>
+<tr><td class="c">1</td><td>ความละเอียดภาพพอไหม (GSD) — เห็นรอยแตก 0.2 mm</td><td><b>ไม่ต้อง</b> — แก้ด้วยเลนส์เทเล + ระยะยืนที่คำนวณจากบทที่ 4</td></tr>
+<tr><td class="c">2</td><td>รู้มาตราส่วนเพื่อแปลง pixel เป็น mm</td><td><b>ไม่ต้อง</b> — แก้ด้วย marker ในบทที่ 5</td></tr>
+<tr><td class="c">3</td><td>บินใต้สะพาน / ที่อับสัญญาณ GPS ได้ไหม</td><td><b>ต้อง</b> — นี่คือชั้นเดียวที่ DJI ทำได้ไม่ดี</td></tr>
+</tbody>
+</table>
+
+<h2>ตารางเปรียบเทียบแพลตฟอร์ม</h2>
+
+<table class="tight">
+<thead><tr><th>แพลตฟอร์ม</th><th class="c">บิน GPS-denied</th><th class="c">ควบคุมได้ลึก</th><th class="c">งบประมาณ</th><th>ข้อจำกัดสำคัญ</th></tr></thead>
+<tbody>
+<tr><td><b>DJI Matrice 4E / 4T</b></td><td class="c"><span class="badge badge--warn">จำกัด</span></td><td class="c">MSDK / PSDK</td><td class="c">หลายแสน</td><td>vision positioning ล้มเหลวกับผนังคอนกรีตเรียบ ทิศบนอ่อนที่สุด</td></tr>
+<tr><td><b>Skydio X10 / X10D</b></td><td class="c"><span class="badge badge--ok">ดีมาก</span></td><td class="c">จำกัด</td><td class="c">สูงมาก</td><td>ระบบ visual navigation 6 กล้องไม่พึ่ง GPS + 3D Scan บินรอบโครงสร้างอัตโนมัติ <b>แต่ข้อจำกัดการส่งออกของสหรัฐทำให้จัดหาในไทยยากมาก</b></td></tr>
+<tr><td><b>Flyability Elios 3</b></td><td class="c"><span class="badge badge--ok">ดีที่สุด</span></td><td class="c">จำกัด</td><td class="c">สูงมาก</td><td>โครงกรงชนได้ + LiDAR SLAM ออกแบบมาสำหรับพื้นที่อับสัญญาณโดยเฉพาะ — ตัวแทนจำหน่ายในไทยต้องตรวจสอบ</td></tr>
+<tr><td>Voliro T</td><td class="c"><span class="badge badge--ok">ดี</span></td><td class="c">จำกัด</td><td class="c">สูงมาก</td><td>ออกแบบมาสำหรับ contact inspection (สัมผัสผิวโดยตรง) เกินความจำเป็นของงานนี้</td></tr>
+<tr><td>Parrot Anafi Ai</td><td class="c"><span class="badge badge--warn">ปานกลาง</span></td><td class="c"><b>Air SDK บนตัวเครื่อง</b></td><td class="c">ปานกลาง</td><td>เป็นเจ้าเดียวที่ให้รันโค้ดบนตัวโดรนได้จริง แต่กล้องด้อยกว่า DJI มาก</td></tr>
+<tr><td><b>สร้างเอง</b> (PX4/ArduPilot + Jetson + depth camera/LiDAR)</td><td class="c"><span class="badge badge--ok">ทำได้ทุกอย่าง</span></td><td class="c"><b>เต็มที่</b></td><td class="c">หลักหมื่น–แสน</td><td><b>ใช้เวลาทั้งปีไปกับการทำให้บินได้ ไม่เหลือเวลาทำ AI ซึ่งเป็นแก่นของโปรเจกต์</b></td></tr>
+</tbody>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">คำเตือนเรื่องการสร้างโดรนเอง</span>
+การประกอบ PX4/ArduPilot + companion computer + VIO/SLAM ให้บินในที่อับสัญญาณได้อย่างเสถียร เป็นงานระดับวิทยานิพนธ์ปริญญาโทด้านหุ่นยนต์ทั้งเล่มด้วยตัวมันเอง<br>
+<b>ถ้าเป้าหมายของโปรเจกต์คือ AI ตรวจจับและประเมินความเสียหาย การไปเสียเวลากับ flight control คือการทำโปรเจกต์ผิดเรื่อง</b> — ให้เลือกขอบเขตงานที่โดรนซึ่งมีอยู่แล้วบินได้ (เสาตอม่อที่มองเห็นฟ้า) แทนการเปลี่ยนโดรนให้เข้ากับขอบเขตงานที่ยากขึ้น
+</div>
+
+<h2>ข้อเสนอตามงบประมาณ</h2>
+
+<table>
+<thead><tr><th style="width:22%">สถานการณ์</th><th>ควรทำอะไร</th></tr></thead>
+<tbody>
+<tr><td><b>งบ 0 บาท</b> (ใช้โดรนที่ทีมวิจัย/ภาควิชามีอยู่)</td><td>ตรวจว่ามีเลนส์เทเลหรือไม่ → คำนวณระยะยืนจากตารางบทที่ 4 → ติด marker → เริ่มเก็บข้อมูลได้ทันที ค่าใช้จ่ายเพิ่มเติมมีเพียงค่าพิมพ์ marker และ crack comparator card ไม่เกินหลักร้อยบาท</td></tr>
+<tr><td><b>งบหลักหมื่น</b></td><td>ซื้อ crack width gauge/microscope ที่ดีสำหรับทำ ground truth + สติกเกอร์ marker กันน้ำ + ไฟเสริมสำหรับใต้ท้องสะพาน — ลงทุนที่ <b>ความน่าเชื่อถือของข้อมูล</b> ไม่ใช่ที่ตัวโดรน</td></tr>
+<tr><td><b>งบหลักแสน (ทุน วช.)</b></td><td>Matrice 4T (มีทั้งเลนส์เทเล 168 mm, laser rangefinder และรองรับ MSDK) เป็นตัวเลือกที่สมเหตุสมผลที่สุด — ไม่ควรเอางบไปลง LiDAR payload เพราะพิสูจน์แล้วว่าวัดรอยแตกไม่ได้</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 8 ============ -->
+<h1>ความปลอดภัย กฎหมาย และข้อจำกัดหน้างาน</h1>
+
+<h2>ความเสี่ยงอันดับหนึ่งไม่ใช่กฎหมาย แต่คือผนังคอนกรีตเรียบ</h2>
+
+<div class="box box--bad">
+<span class="box__t">ระบบสองอย่างล้มพร้อมกันด้วยสาเหตุเดียว</span>
+<b>obstacle avoidance</b> และ <b>vision positioning</b> ใช้กล้อง binocular <b>ชุดเดียวกัน</b> และต้องการเงื่อนไขเดียวกันคือ ผิวต้องมี texture และแสงต้องพอ<br><br>
+ผิวคอนกรีตทาสีเรียบใต้เงาสะพานทำให้ทั้งสองระบบล้มเหลว<b>ในคราวเดียวกัน</b> — โดรนจะทั้งมองไม่เห็นผนังและลอยนิ่งไม่ได้พร้อมกัน<br>
+<b>นี่คือความเสี่ยงหลักของโปรเจกต์นี้ ไม่ใช่เรื่องใบอนุญาต</b>
+</div>
+
+<h2>ถ้าอยากบินใกล้กว่าระยะเบรก — อย่าปิดระบบ ให้ย่นระยะเบรกแทน</h2>
+
+<p>คำแนะนำที่พบทั่วไปคือ "ปิด obstacle avoidance" ซึ่งเป็นคำตอบที่หยาบเกินไป วิธีที่ถูกต้องคือ:</p>
+
+<pre><code>// ★ วิธีที่ควรใช้ — ยังมีระบบเบรกเป็นตาข่ายกันตาย แค่ขยับเส้นเข้ามาใกล้ผนัง
+setObstacleAvoidanceBrakingDistance(distance, PerceptionDirection.HORIZONTAL, callback);
+setObstacleAvoidanceWarningDistance(distance, PerceptionDirection.HORIZONTAL, callback);
+
+// ปิดเฉพาะทิศที่หันเข้าผนัง ไม่ใช่ปิดหมด
+setObstacleAvoidanceEnabled(false, PerceptionDirection.HORIZONTAL, callback);
+
+// ทางเลือกสุดท้ายเท่านั้น เมื่อระยะเป้าหมาย &lt; ระยะตรวจจับต่ำสุด (0.4 m)
+setObstacleAvoidanceType(ObstacleAvoidanceType.CLOSE, callback);
+// BRAKE  = ลอยค้างเมื่อเจอสิ่งกีดขวาง (ค่าเริ่มต้น)
+// BYPASS = หลบเอง
+// CLOSE  = ไม่เบรกไม่หลบ</code></pre>
+
+<div class="box box--warn">
+<span class="box__t">สามข้อที่ต้องรู้</span>
+<b>1.</b> ระยะตรวจจับต่ำสุดของ M4 series คือ 0.4 m (หน้า/หลัง), 0.5 m (ข้าง), 0.3 m (ล่าง) — <b>ถ้าตั้งใจบินใกล้กว่านี้ เซนเซอร์บอดอยู่แล้ว ปิดหรือไม่ปิดก็ไม่ต่างกัน</b> ความเสี่ยงเกิดตั้งแต่ตัดสินใจเข้าโซนบอดแล้ว<br>
+<b>2. ห้ามใช้โหมด Sport (S) ใกล้โครงสร้างเด็ดขาด</b> — โหมดนี้ปิด obstacle avoidance อัตโนมัติ และเพิ่มความเร็ว/ความไวไปพร้อมกัน เป็นส่วนผสมที่แย่ที่สุด<br>
+<b>3.</b> ทิศ <b>บน</b> เป็นทิศที่เซนเซอร์อ่อนที่สุดของโดรนทุกยี่ห้อ ซึ่งเป็นทิศที่ต้องใช้เมื่อบินใต้ท้องสะพานพอดี — ข้อมูลช่วงระยะทิศบนของ M4 series <span class="badge badge--warn">ยังไม่ยืนยัน</span> ต้องเปิดคู่มือผู้ใช้ของรุ่นที่จะใช้จริง</p>
+</div>
+
+<h2>ข้อจำกัดของฮาร์ดแวร์ที่มักถูกลืมสองข้อ</h2>
+
+<div class="box box--key">
+<span class="box__t">1. เลนส์เทเลโฟกัสใกล้กว่า 3 เมตรไม่ได้</span>
+Matrice 4E/4T: เลนส์ wide โฟกัสได้ตั้งแต่ <b>1 m ถึงระยะอนันต์</b> แต่ <b>medium tele และ tele โฟกัสได้ตั้งแต่ 3 m เท่านั้น</b><br>
+แปลว่าแม้จะบินเข้าไปใกล้ 1 m ได้ ก็ถ่ายด้วยเลนส์เทเลไม่ได้อยู่ดี — ภาพจะเบลอทั้งใบ<br>
+ข้อนี้บังคับเส้นทางการออกแบบโดยตรง และเป็นอีกเหตุผลที่การ "ถอยออกแล้วซูม" เป็นทางเดียวที่ใช้ได้จริง
+</div>
+
+<div class="box box--key">
+<span class="box__t">2. มุมเงยของ gimbal — ตัวชี้ขาดว่าถ่ายท้องสะพานได้หรือไม่</span>
+<table class="tight" style="margin:2mm 0 0">
+<thead><tr><th>รุ่น</th><th class="num">ช่วงเชิงกล</th><th class="num">ช่วงที่ควบคุมได้จริง</th><th class="c">เงยขึ้นได้</th><th class="c">ถ่ายท้องสะพาน</th></tr></thead>
+<tbody>
+<tr><td><b>Matrice 4T</b></td><td class="num">−140° ถึง 113°</td><td class="num"><b>−90° ถึง +70°</b></td><td class="c">+70°</td><td class="c"><span class="badge badge--ok">พอ</span></td></tr>
+<tr><td>Matrice 4E</td><td class="num">−140° ถึง 50°</td><td class="num">−90° ถึง +35°</td><td class="c">+35°</td><td class="c"><span class="badge badge--bad">ไม่พอ</span></td></tr>
+<tr><td>Mavic 3E / 3T</td><td class="num">—</td><td class="num">−135° ถึง +35°</td><td class="c">+35°</td><td class="c"><span class="badge badge--bad">ไม่พอ</span></td></tr>
+</tbody>
+</table>
+<b>ข้อนี้เปลี่ยนคำแนะนำเรื่องการเลือกรุ่นโดยตรง</b> — ถ้าขอบเขตงานรวมท้องสะพาน (soffit) <b>M4T เป็นรุ่นเดียวในสามรุ่นนี้ที่เงยกล้องได้พอ</b> ส่วน M4E และ Mavic 3E/3T เงยได้แค่ 35° ซึ่งไม่พอ<br>
+ถ้าขอบเขตงานเป็นเสาตอม่อในแนวดิ่งอย่างเดียว ทั้งสามรุ่นใช้ได้หมด
+</div>
+
+<h2>ปัญหาแสงและ motion blur</h2>
+
+<p>ใต้ท้องสะพานมีทั้งเงามืดจัดและแสงจ้าจากด้านนอกในภาพเดียวกัน ซึ่งเป็นกรณีที่แย่ที่สุดสำหรับทั้ง dynamic range ของกล้องและ vision positioning การบินกลางคืนในไทยเข้าข่าย Specific Category ต้องขออนุญาต จึงควร <b>เก็บงานใต้ท้องสะพานในเวลากลางวันโดยใช้ไฟเสริมสู้เงา</b> แทนการบินกลางคืนจริง เพราะภาระทางกฎหมายต่างกันมาก</p>
+
+<p>จากตารางในบทที่ 4 ที่ GSD 0.2 mm/px และความเร็ว 0.5 m/s ต้องใช้ชัตเตอร์ 1/2500 s ซึ่งใต้สะพานที่แสงน้อยเป็นไปไม่ได้ → <b>ต้องใช้วิธี hover แล้วถ่าย (stop-and-shoot) ไม่ใช่บินผ่านแล้วถ่ายรัว</b></p>
+
+<h2>กฎหมายไทย — เปลี่ยนมากในปี 2569</h2>
+
+<div class="box box--warn">
+<span class="box__t">ข้อมูลส่วนนี้เปลี่ยนเร็วมาก ต้องตรวจสอบกับ CAAT โดยตรงก่อนบินจริง</span>
+มีประกาศใหม่สองฉบับในปี 2569 และแหล่งข้อมูลที่ค้นได้ยังขัดแย้งกันในบางประเด็น รายการด้านล่างเป็นจุดตั้งต้นสำหรับไปตรวจสอบ <b>ไม่ใช่คำแนะนำทางกฎหมาย</b>
+</div>
+
+<table class="tight">
+<thead><tr><th style="width:28%">เรื่อง</th><th>ข้อกำหนด</th></tr></thead>
+<tbody>
+<tr><td>ประกาศ CAAT ฉบับใหม่</td><td>มีผล <b>17 พฤษภาคม 2569</b> — ครอบคลุมอากาศยานไร้คนขับไม่เกิน 25 kg</td></tr>
+<tr><td>ประกาศ CAAT ฉบับที่ 16</td><td>มีผล <b>26 มิถุนายน 2569</b> (ยกเลิกฉบับที่ 15 ทั้งฉบับ) — ผ่อนคลายทั่วประเทศ ยกเว้น 28 อำเภอชายแดน</td></tr>
+<tr><td>ขึ้นทะเบียนผู้บังคับ</td><td>ต้องผ่านการอบรมที่ CAAT รับรอง อายุใบอนุญาต <b>5 ปี</b> (เดิม 2 ปี)</td></tr>
+<tr><td>ขึ้นทะเบียนตัวอากาศยาน</td><td>ต้องติดหมายเลขรูปแบบ <code>XX-NN-NN-NNNN</code> บนลำตัว ตัวอักษรสูง ≥0.3 cm ตัดกับสีพื้น</td></tr>
+<tr><td>ทะเบียนวิทยุคมนาคม</td><td>ขึ้นทะเบียนกับ <b>กสทช.</b> ค่าธรรมเนียม 200 บาท ต้องขึ้นทะเบียนทันทีที่ครอบครอง</td></tr>
+<tr><td>ประกันภัย</td><td>บุคคลที่สาม <b>≥1,000,000 บาท</b> ต่อครั้ง</td></tr>
+<tr><td>แผนการบิน</td><td>ยื่นออนไลน์ผ่าน CAAT UAS Portal <b>ทุกเที่ยวบิน</b></td></tr>
+<tr><td>สะพาน</td><td>เป็นโครงสร้างพื้นฐานสำคัญ → <b>เข้าข่าย Specific Category เกือบแน่นอน</b> ต้องขออนุญาตเป็นกรณี</td></tr>
+<tr><td>บทลงโทษ</td><td>ไม่ขึ้นทะเบียน: ปรับไม่เกิน 50,000 บาท · บินในเขตหวงห้าม: ปรับไม่เกิน 100,000 บาท</td></tr>
+</tbody>
+</table>
+
+<div class="box box--key">
+<span class="box__t">ข้อกฎหมายที่กระทบการเลือกเซนเซอร์โดยตรง</span>
+ประกาศ กสทช. กำหนดมาตรฐานเรดาร์และระบบหลบสิ่งกีดขวาง (ย่าน 24 GHz, 57–64 GHz, 76–77 GHz) โดยผู้นำเข้า/ผู้ขายต้องได้รับการรับรองก่อนขาย<br><br>
+<b>ถ้าคิดจะติดเซนเซอร์วัดระยะเพิ่มเอง:</b> อุปกรณ์ที่ปล่อยคลื่นวิทยุ (mmWave radar) <b>เข้าข่ายต้องผ่านการรับรอง กสทช.</b> แต่ <b>LiDAR/ToF ที่ใช้แสงอินฟราเรด (905/940 nm) ไม่ใช่คลื่นวิทยุ จึงไม่เข้าข่าย</b><br>
+— เป็นเหตุผลเพิ่มเติมที่ควรเลือก LiDAR/ToF แทน mmWave radar สำหรับโครงงานนักศึกษา
+</div>
+
+<h2>Checklist ก่อนออกภาคสนาม</h2>
+
+<table class="tight">
+<thead><tr><th style="width:22%">หมวด</th><th>รายการ</th></tr></thead>
+<tbody>
+<tr><td><b>เอกสาร</b></td><td>ใบขึ้นทะเบียนผู้บังคับ (CAAT) · ทะเบียนตัวอากาศยาน + หมายเลขติดลำตัว · ทะเบียน กสทช. · กรมธรรม์ประกันภัย ≥1 ล้านบาท · แผนบินที่ยื่นผ่าน UAS Portal แล้ว · หนังสือขออนุญาตจากเจ้าของโครงสร้าง</td></tr>
+<tr><td><b>อุปกรณ์</b></td><td>marker พิมพ์แล้ว <b>วัดขนาดจริงด้วยเวอร์เนียแล้ว</b> · เทปกาว/สติกเกอร์กันน้ำ · crack comparator card สำหรับ ground truth · ไฟเสริม · แบตเตอรี่สำรอง · โน้ตบุ๊กสำหรับ QC ภาพหน้างาน</td></tr>
+<tr><td><b>ซอฟต์แวร์</b></td><td><b>activate App Key ของ MSDK จากที่ทำงานก่อน</b> (ต้องมีเน็ต) · ทดสอบ mission ใน Simulator ก่อนบินจริง · เตรียมสคริปต์ตรวจความเบลอไว้รันหน้างาน</td></tr>
+<tr><td><b>การบิน</b></td><td>ห้ามใช้โหมด Sport · ตั้ง braking distance แทนการปิดระบบ · บินแบบ hover-and-shoot · ตรวจว่า marker อยู่ในเฟรมทุกภาพ · <b>QC ภาพก่อนออกจากไซต์</b> ไม่ใช่กลับไปดูที่บ้าน</td></tr>
+</tbody>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">ข้อผิดพลาดที่ทำให้ต้องกลับไปบินใหม่ทั้งชุด</span>
+<b>ไม่ตรวจสอบคุณภาพภาพก่อนออกจากไซต์</b> — กลับถึงบ้านแล้วพบว่าภาพเบลอทั้งชุด หรือ marker หลุดเฟรม หรือ marker หลุดจากผนังกลางทาง<br>
+ทางแก้ราคาถูก: เขียนสคริปต์ 3 บรรทัด <code>cv2.Laplacian(img, cv2.CV_64F).var()</code> รันบนโน้ตบุ๊กหน้างาน คัดภาพที่ค่าต่ำกว่าเกณฑ์ออก แล้วบินซ้ำเฉพาะจุดนั้นทันที
+</div>
+
+
+<!-- ============ 9 ============ -->
+<h1>ทบทวนวรรณกรรมที่เกี่ยวข้อง</h1>
+
+<h2>งานหลักที่ตรงกับโจทย์ที่สุด</h2>
+
+<p><b>Tian et al. (2022), "Bridge Crack Inspection Efficiency of an Unmanned Aerial Vehicle System with a Laser Ranging Module", <i>Sensors</i> 22(12), 4469</b> — เป็นงานที่ตอบโจทย์ "รู้ระยะเพื่อวัดรอยแตก" ตรงที่สุดและควรเป็นงานอ้างอิงหลักของโปรเจกต์</p>
+
+<table class="tight">
+<thead><tr><th style="width:26%">องค์ประกอบ</th><th>สเปก</th></tr></thead>
+<tbody>
+<tr><td>อากาศยาน</td><td>multicopter ประกอบเอง wheelbase 63 cm (เล็กเพื่อเข้าซอกสะพาน)</td></tr>
+<tr><td>กล้องตรวจสอบ</td><td>SONY DSC-RX0 · 4800×3200 px · เซนเซอร์ 1″ · f = 9.346 mm · pixel pitch 0.00275 mm</td></tr>
+<tr><td><b>ระบบวัดระยะ</b></td><td><b>Lidar-100 จำนวน 4 ตัว</b> ติดที่มุมทั้งสี่ของกล้อง ความแม่น ±2 mm ผ่าน UART</td></tr>
+<tr><td>ประมวลผลบนอากาศ</td><td>Raspberry Pi 4</td></tr>
+<tr><td>กล้องนำร่อง</td><td>fisheye แยกอีกตัว — <b>ใช้กล้องคนละตัวสำหรับบินกับสำหรับถ่ายงาน</b></td></tr>
+</tbody>
+</table>
+
+<div class="box box--key">
+<span class="box__t">แก่นของงานนี้: ทำไมต้องเลเซอร์ 4 จุด ไม่ใช่จุดเดียว</span>
+ระยะทั้ง 4 ค่าถูกนำไป fit <b>สมการระนาบของผิววัตถุ</b> (<code>Ax + By + Cz + 1 = 0</code>) แล้วรวมกับผลการ calibrate กล้อง ใช้ collinearity equation แปลง pixel เป็นหน่วยจริง <b>พร้อมชดเชยกรณีกล้องไม่ตั้งฉากกับผิว</b><br><br>
+<b>เลเซอร์ 1 จุดบอกได้แค่ระยะ — เลเซอร์ 4 จุดบอกได้ทั้งระยะและมุมเอียง</b><br>
+นี่คือหลักการเดียวกันกับที่ marker 4 มุมทำได้ในบทที่ 5 ต่างกันแค่ marker ไม่ต้องมีฮาร์ดแวร์เลย
+</div>
+
+<h3>ผลการทดสอบและความคลาดเคลื่อน</h3>
+
+<table class="tight">
+<thead><tr><th>การทดสอบ</th><th class="num">ระยะ</th><th class="num">ความคลาดเคลื่อน</th></tr></thead>
+<tbody>
+<tr><td>ในร่ม — control points บนผนัง</td><td class="num">3 m</td><td class="num">สูงสุด 6 mm · สัมพัทธ์ <b>0.8%</b></td></tr>
+<tr><td>ในร่ม — เป้า 1.0 × 1.0 m</td><td class="num">3 m</td><td class="num">สูงสุด 7 mm · สัมพัทธ์ 0.7%</td></tr>
+<tr><td>ในร่ม — เป้า 2.0 × 2.0 m</td><td class="num">3 m</td><td class="num">สูงสุด 19 mm · สัมพัทธ์ 1.0%</td></tr>
+<tr><td>สนาม Case 1</td><td class="num">4.6 m</td><td class="num"><b>6.1%</b> (รอยแตกกว้าง 3.9 mm ยาว 0.412 m)</td></tr>
+<tr><td>สนาม Case 2</td><td class="num">2.9 m</td><td class="num">3.0% / 1.8%</td></tr>
+<tr><td>สนาม Case 3</td><td class="num">2.5 m</td><td class="num">0.8% / 0.0%</td></tr>
+</tbody>
+<caption>สังเกตว่าความคลาดเคลื่อนโตขึ้นอย่างชัดเจนเมื่อระยะเกิน 3 m — ผู้เขียนระบุข้อจำกัดเองว่า <b>ระยะวัดไม่ควรเกิน 3 m และเป้าไม่ควรใหญ่เกิน 1.0 × 1.0 m</b></caption>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">ช่องว่างที่โปรเจกต์นี้เสียบเข้าไปได้ตรง ๆ — และผู้เขียนงานนั้นเขียนไว้เอง</span>
+ผู้เขียนระบุข้อจำกัดของตัวเองว่า <b>"ไม่ได้ทำ visual test ด้วย UAV จริง"</b> — การตรวจสอบความถูกต้องทั้งหมดใช้ control point ภาคพื้น และผู้เขียน<b>แนะนำให้ผู้ที่ทำต่อ "สร้างรอยแตกจำลองบนผนังเอง" เพื่อเปรียบเทียบการวัดด้วย UAV กับการวัดด้วยมือ</b><br><br>
+นั่นคือสิ่งที่โปรเจกต์นี้ทำได้พอดี และเป็น contribution ที่ชัดเจนพอจะเขียนเป็นวัตถุประสงค์ของงานได้<br><br>
+<b>ข้อจำกัดอีกข้อที่ควรระวัง:</b> วิธีเลเซอร์ 4 จุดสมมติว่าผิวเป็น<b>ระนาบ</b> — <b>เสาตอม่อทรงกลมละเมิดสมมติฐานนี้</b> ซึ่งเป็นอีกช่องว่างที่งานนี้ต้องจัดการ (และเป็นเหตุผลที่ marker ซึ่งวางบนผิวโค้งได้ในบริเวณเล็ก ๆ อาจได้เปรียบ)
+</div>
+
+<h2>เกณฑ์มาตรฐาน → ย้อนกลับกำหนด GSD ที่ต้องการ</h2>
+
+<p>นี่คือส่วนที่สำคัญที่สุดสำหรับการวางแผน เพราะเป็นการเชื่อมจาก<b>เกณฑ์วิศวกรรมที่ต้องตัดสิน</b> กลับไปสู่<b>ความละเอียดภาพที่ต้องมี</b></p>
+
+<table>
+<thead><tr><th>ระบบ</th><th>ขอบเขตที่ต้องตัดสิน</th><th class="num">ความกว้าง</th><th class="num">GSD ที่ 4 px<br><span class="muted">(ขั้นต่ำ)</span></th><th class="num">GSD ที่ 8 px<br><span class="muted">(แนะนำ)</span></th></tr></thead>
+<tbody>
+<tr><td rowspan="3"><b>BMMS</b> กรมทางหลวง<br><span class="small muted">(เกณฑ์เสาตอม่อ)</span></td><td><b>ระดับ 4 ↔ 3</b> — ขอบเขตที่ตัดสินบ่อยที่สุด</td><td class="num">1.6 mm</td><td class="num"><b>0.40</b></td><td class="num"><b>0.20</b></td></tr>
+<tr><td>ระดับ 3 ↔ 2</td><td class="num">3.2 mm</td><td class="num">0.80</td><td class="num">0.40</td></tr>
+<tr><td>ระดับ 2 ↔ 1</td><td class="num">4.8 mm</td><td class="num">1.20</td><td class="num">0.60</td></tr>
+<tr><td rowspan="2"><b>AASHTO MBEI</b></td><td>RC · CS1 ↔ CS2</td><td class="num">0.3 mm</td><td class="num"><b>0.075</b></td><td class="num">0.038</td></tr>
+<tr><td>RC · CS2 ↔ CS3</td><td class="num">1.3 mm</td><td class="num">0.33</td><td class="num">0.16</td></tr>
+<tr><td><b>BMMS</b> พื้นสะพาน (PC)</td><td>ระดับ 4 ↔ 3</td><td class="num">0.10 mm</td><td class="num">0.025</td><td class="num">0.013</td></tr>
+</tbody>
+<caption>หน่วยของ GSD ทุกช่องคือ mm/pixel — "4 px" คือจำนวนพิกเซลขั้นต่ำที่รอยแตกต้องกินเพื่อวัดความกว้างได้อย่างมีความหมาย</caption>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">ต้องตัดสินใจตั้งแต่ต้นว่าจะยึดเกณฑ์ไหน เพราะต่างกันถึง 5 เท่า</span>
+<b>ถ้ายึด BMMS (เกณฑ์ไทย):</b> เป้าหมาย GSD <b>0.20–0.40 mm/px</b> ซึ่งทำได้ด้วยเลนส์เทเลที่ระยะ 8–16 m — ปลอดภัย ทำได้จริงวันนี้<br>
+<b>ถ้ายึด AASHTO CS1↔CS2 (0.3 mm):</b> ต้องการ GSD <b>0.075 mm/px</b> ซึ่งเลนส์เทเลต้องเข้าไปที่ 3 m และเลนส์ wide ต้องเข้าไปที่ 0.27 m ซึ่ง<b>เป็นไปไม่ได้</b><br><br>
+<b>เอกสาร T-BHI ของโปรเจกต์เองระบุว่ารอยร้าวแคบกว่า 1 mm ให้ทำเครื่องหมายเป็น <i>Medium Confidence</i></b> ซึ่งเป็นการยอมรับข้อจำกัดนี้ไว้แล้วในตัวเกณฑ์<br>
+<b>ข้อเสนอ: ยึด BMMS เป็นเกณฑ์หลัก และรายงาน AASHTO เป็นข้อมูลประกอบพร้อมระบุข้อจำกัดอย่างชัดเจน</b> — ซึ่งเป็นจุดยืนที่ป้องกันได้ในการสอบ
+</div>
+
+<h2>ข้อจำกัดเชิงกายภาพที่อัลกอริทึมแก้ไม่ได้</h2>
+
+<p>งานวิจัยหนึ่งรายงานค่าความคลาดเคลื่อนเฉลี่ย 0.09 mm ซึ่งฟังดูดีมาก แต่เมื่อแยกตามช่วงความกว้างพบว่า</p>
+
+<table class="tight">
+<thead><tr><th class="num">ช่วงความกว้างรอยแตก</th><th class="num">ความคลาดเคลื่อนสัมพัทธ์</th></tr></thead>
+<tbody>
+<tr><td class="num">0.29–0.58 mm</td><td class="num"><b>30–34%</b></td></tr>
+<tr><td class="num">0.5–1.5 mm</td><td class="num">1.5–5%</td></tr>
+</tbody>
+</table>
+
+<p>ที่ GSD ที่งานนั้นใช้ รอยแตก 0.3 mm กว้างเพียง ~4 พิกเซล ความผิดพลาดของการหาขอบ ±1 pixel ต่อข้างจึงกลายเป็น ±50% ทันที <b>นี่เป็นข้อจำกัดเชิงกายภาพ ไม่ใช่บั๊กของอัลกอริทึม</b> — ไม่มีโมเดล deep learning ตัวไหนแก้ได้ ต้องแก้ที่การเก็บภาพเท่านั้น</p>
+
+<h2>MLLM กับการประเมินความเสียหาย</h2>
+
+<div class="box box--bad">
+<span class="box__t">ไม่มีงานใดเลยที่ MLLM วัดความกว้างรอยแตกเป็นมิลลิเมตรได้</span>
+MLLM ไม่มี metric scale ในตัว — มันไม่มีทางรู้ว่ารอยแตกที่เห็นคือ 1.6 mm หรือ 3.2 mm ถ้าไม่มีใครป้อนค่าที่วัดมาแล้วให้<br><br>
+<b>สถาปัตยกรรมที่วรรณกรรมชี้ว่าถูกต้อง:</b><br>
+วัดด้วย computer vision → <b>ป้อนตัวเลขเป็นมิลลิเมตรเข้า MLLM</b> → ให้ MLLM ทำ reasoning เทียบเกณฑ์ BMMS/AASHTO → ออก condition state พร้อมเหตุผล<br><br>
+นี่คือจุดที่กรอบ T-BHI ของโปรเจกต์เสียบเข้าได้พอดี และเป็นเหตุผลว่าทำไม<b>งานเรื่องมาตราส่วน (บทที่ 5) จึงเป็นรากฐานที่ขาดไม่ได้ ไม่ใช่รายละเอียดปลีกย่อย</b>
+</div>
+
+<h2>ชุดข้อมูลสาธารณะ</h2>
+
+<table class="tight">
+<thead><tr><th>ชุดข้อมูล</th><th class="num">ขนาด</th><th>ใช้ได้กับอะไร</th></tr></thead>
+<tbody>
+<tr><td><b>OmniCrack30k</b></td><td class="num">30,000 ภาพ</td><td>ครอบคลุม asphalt/ceramic/concrete/masonry/steel — nnU-Net บนชุดนี้ได้ mean clIoU₄ₚₓ = <b>64%</b> ใช้เป็นเกณฑ์เปรียบเทียบตั้งต้นได้ดี</td></tr>
+<tr><td>CrackSeg9k</td><td class="num">9,255 ภาพ</td><td>ขนาด 400×400 เหมาะกับการทำ prototype เร็ว ๆ</td></tr>
+<tr><td>SDNET2018</td><td class="num">—</td><td>ครอบคลุมรอยแตก 0.06–25 mm <b>แต่ไม่มี label ความกว้างเป็นมิลลิเมตร</b> จึงใช้ฝึกการวัดขนาดไม่ได้ ใช้ได้แค่ตรวจจับ</td></tr>
+</tbody>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">contribution ที่ตีพิมพ์ได้จริง แม้ข้อมูลจะไม่มาก</span>
+ชุดข้อมูลภาพเสาตอม่อจาก UAV ที่<b>ทุกภาพมีครบสี่อย่าง</b>: (ก) ระยะกล้อง–วัตถุ (ข) GSD ที่คำนวณและตรวจสอบแล้ว (ค) ความกว้างรอยแตกจริงจาก crack comparator/microscope (ง) ระดับความเสียหาย BMMS 0–5 ที่ผู้ตรวจสอบให้<br><br>
+<b>ต่อให้มีแค่ 200–500 ภาพก็เป็นของใหม่</b> เพราะชุดข้อมูลสาธารณะทุกชุดขาดข้อ (ก)–(ค) — และนี่คือเหตุผลที่ควรวางแผนบันทึกข้อมูลเหล่านี้ตั้งแต่เที่ยวบินแรก ไม่ใช่มาคิดทีหลัง
+</div>
+
+<!-- ============ 10 ============ -->
+<h1>สถาปัตยกรรมระบบและแผนดำเนินงานที่แนะนำ</h1>
+
+<h2>ภาพรวม pipeline</h2>
+
+<figure>
+<svg viewBox="0 0 620 250" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+  <defs><marker id="p1" markerWidth="7" markerHeight="7" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 z" fill="#8b939c"/></marker></defs>
+  <g font-size="9">
+  <text x="8" y="20" font-size="9" font-weight="700" fill="#9a5b00">ภาคสนาม</text>
+  <rect x="8" y="26" width="96" height="40" rx="4" fill="#fdf4e3" stroke="#ecd6a8"/>
+  <text x="56" y="43" text-anchor="middle" font-weight="600">วางแผนบิน</text>
+  <text x="56" y="56" text-anchor="middle" fill="#4a5058">GSD → ระยะ → overlap</text>
+  <rect x="122" y="26" width="96" height="40" rx="4" fill="#fdf4e3" stroke="#ecd6a8"/>
+  <text x="170" y="43" text-anchor="middle" font-weight="600">ติด marker</text>
+  <text x="170" y="56" text-anchor="middle" fill="#4a5058">วัดขนาดจริงด้วยเวอร์เนีย</text>
+  <rect x="236" y="26" width="96" height="40" rx="4" fill="#fdf4e3" stroke="#ecd6a8"/>
+  <text x="284" y="43" text-anchor="middle" font-weight="600">เก็บภาพ</text>
+  <text x="284" y="56" text-anchor="middle" fill="#4a5058">hover + tele, ชัตเตอร์เร็ว</text>
+  <line x1="104" y1="46" x2="120" y2="46" stroke="#8b939c" marker-end="url(#p1)"/>
+  <line x1="218" y1="46" x2="234" y2="46" stroke="#8b939c" marker-end="url(#p1)"/>
+  <line x1="332" y1="46" x2="348" y2="46" stroke="#8b939c" marker-end="url(#p1)"/>
+  <text x="352" y="20" font-size="9" font-weight="700" fill="#14508c">ประมวลผล</text>
+  <rect x="350" y="26" width="96" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="398" y="43" text-anchor="middle" font-weight="600">QC คัดภาพ</text>
+  <text x="398" y="56" text-anchor="middle" fill="#4a5058">Laplacian variance</text>
+  <rect x="464" y="26" width="140" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="534" y="43" text-anchor="middle" font-weight="600">หา scale + rectify</text>
+  <text x="534" y="56" text-anchor="middle" fill="#4a5058">ArUco → mm/px, homography</text>
+  <line x1="446" y1="46" x2="462" y2="46" stroke="#8b939c" marker-end="url(#p1)"/>
+  <path d="M534,66 L534,84 L56,84 L56,102" stroke="#8b939c" fill="none" marker-end="url(#p1)"/>
+  <rect x="8" y="104" width="120" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="68" y="121" text-anchor="middle" font-weight="600">crack segmentation</text>
+  <text x="68" y="134" text-anchor="middle" fill="#4a5058">U-Net / DeepLabV3+</text>
+  <rect x="146" y="104" width="120" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="206" y="121" text-anchor="middle" font-weight="600">วัดความกว้าง/ยาว</text>
+  <text x="206" y="134" text-anchor="middle" fill="#4a5058">skeleton + distance transform</text>
+  <rect x="284" y="104" width="120" height="40" rx="4" fill="#eaf2fa" stroke="#bcd4ea"/>
+  <text x="344" y="121" text-anchor="middle" font-weight="600">map ตำแหน่ง</text>
+  <text x="344" y="134" text-anchor="middle" fill="#4a5058">Element ID + SfM</text>
+  <rect x="422" y="104" width="182" height="40" rx="4" fill="#ecf7f0" stroke="#bfe0cd"/>
+  <text x="513" y="121" text-anchor="middle" font-weight="600">Layer 0 → BMMS → T-BHI</text>
+  <text x="513" y="134" text-anchor="middle" fill="#4a5058">primitive metrics ก่อน แล้วค่อย map</text>
+  <line x1="128" y1="124" x2="144" y2="124" stroke="#8b939c" marker-end="url(#p1)"/>
+  <line x1="266" y1="124" x2="282" y2="124" stroke="#8b939c" marker-end="url(#p1)"/>
+  <line x1="404" y1="124" x2="420" y2="124" stroke="#8b939c" marker-end="url(#p1)"/>
+  <rect x="8" y="168" width="596" height="48" rx="4" fill="#fceded" stroke="#e8bcbc" stroke-dasharray="4 3"/>
+  <text x="20" y="186" font-weight="700" fill="#a02929">ตรวจสอบความถูกต้อง (ห้ามข้าม)</text>
+  <text x="20" y="201" fill="#4a5058">วัดรอยแตกเดียวกันด้วย crack comparator card / feeler gauge บนพื้นดิน → เทียบกับค่าที่ระบบให้</text>
+  <text x="20" y="212" fill="#4a5058">→ รายงาน MAE, RMSE, Bland–Altman แยกตามช่วงความกว้าง</text>
+  <path d="M206,144 L206,166" stroke="#a02929" fill="none" marker-end="url(#p1)" stroke-dasharray="3 3"/>
+  <text x="8" y="238" fill="#4a5058">สีเหลือง = ทำที่หน้างาน · สีฟ้า = ทำในคอมพิวเตอร์ · สีเขียว = ผลลัพธ์ที่ส่งมอบ · เส้นประแดง = ขั้นตอนตรวจสอบ</text>
+  </g>
+</svg>
+<figcaption><b>รูปที่ 5</b> — pipeline ตั้งแต่วางแผนบินจนถึง condition rating จุดที่มักถูกข้ามคือแถบสีแดง — ถ้าไม่มีค่าจริงมาเทียบ ตัวเลขความกว้างรอยแตกที่ได้ก็เป็นแค่ตัวเลข</figcaption>
+</figure>
+
+<h2>ข้อควรระวังในการออกแบบ 3 ข้อ</h2>
+
+<div class="box box--key">
+<span class="box__t">1. Layer 0 ต้องเป็น primitive metrics ตามที่เอกสาร T-BHI ของโปรเจกต์เขียนไว้เอง</span>
+ให้ AI วัดค่าดิบ (mm, m², %) โดยไม่ผูกกับมาตรฐาน แล้วค่อย map เป็นระดับ BMMS 0–5 ในชั้นถัดไป<br>
+<b>ข้อดี:</b> ถ้ากรมทางหลวงแก้เกณฑ์ ไม่ต้องเทรนโมเดลใหม่ และตรวจย้อนกลับได้ว่าทำไม AI ให้ระดับนั้น (audit trail)<br>
+<b>ข้อเสียของการทำนายเลข T-BHI ตรง ๆ:</b> ไม่มีทางอธิบายได้ว่ามาจากไหน ซึ่งจะถูกถามแน่นอนในการสอบ
+</div>
+
+<div class="box box--key">
+<span class="box__t">2. Multi-Path Distress — ต้องคืนค่าเป็นสัดส่วน ไม่ใช่ระดับเดียว</span>
+ถ้าใน element เดียวพบความเสียหายหลายชนิดที่ระดับต่างกัน ให้ใช้<b>ระดับที่แย่ที่สุด</b> และบันทึก<b>สัดส่วน</b>ของแต่ละระดับด้วย เพราะสูตร EHI ต้องการ distribution ไม่ใช่ค่าเดียว<br>
+→ pipeline ต้องคืน "พื้นที่กี่ % อยู่ระดับ 5/4/3/2/1/0" ไม่ใช่ "ระดับ = 3"
+</div>
+
+<div class="box box--key">
+<span class="box__t">3. แยกโหมดวัดกับโหมดสร้างโมเดลออกจากกัน</span>
+ดูรายละเอียดในบทที่ 6 — จำนวนภาพต่างกัน ~5 เท่า การทำรอบเดียวให้ได้ทั้งสองอย่างจะได้ผลแย่ทั้งคู่
+</div>
+
+<h2>เครื่องมือที่แนะนำ</h2>
+
+<table class="tight">
+<thead><tr><th style="width:20%">ขั้นตอน</th><th style="width:26%">เครื่องมือ</th><th class="c" style="width:12%">License</th><th>เหตุผล</th></tr></thead>
+<tbody>
+<tr><td>ตรวจความเบลอ</td><td><code>cv2.Laplacian(img).var()</code></td><td class="c">Apache-2.0</td><td>3 บรรทัด รันหน้างานบนโน้ตบุ๊กได้ ตั้งเกณฑ์จากการทดสอบใน Phase 0</td></tr>
+<tr><td>มาตราส่วน</td><td><code>cv2.aruco</code> + homography</td><td class="c">Apache-2.0</td><td>ให้ทั้ง scale, pose และการแก้ perspective จากของชิ้นเดียว</td></tr>
+<tr><td><b>Crack segmentation</b></td><td><b>segmentation-models-pytorch</b> (U-Net / DeepLabV3+)</td><td class="c"><b>MIT</b></td><td>ดูกล่องคำเตือนด้านล่าง</td></tr>
+<tr><td>Baseline เปรียบเทียบ</td><td>adaptive threshold + morphology + <code>skimage.skeletonize</code></td><td class="c">BSD</td><td><b>ต้องมี</b> — อาจารย์จะถามแน่นอนว่า deep learning ดีกว่าวิธีดั้งเดิมจริงไหม</td></tr>
+<tr><td>วัดความกว้าง</td><td><code>skimage.morphology.medial_axis</code> + distance transform</td><td class="c">BSD</td><td>อยู่ในไลบรารีมาตรฐาน มีงานวิจัยรองรับ</td></tr>
+<tr><td>SfM</td><td>COLMAP</td><td class="c">BSD</td><td>คุณภาพระดับงานวิจัย เขียนสคริปต์ได้ — ต้องเขียน post-scaling เอง</td></tr>
+<tr><td>รายงาน</td><td>Python + Jinja2 + WeasyPrint</td><td class="c">BSD/LGPL</td><td>ออก PDF ภาษาไทยได้</td></tr>
+</tbody>
+</table>
+
+<div class="box box--warn">
+<span class="box__t">ข้อควรระวังเรื่องสัญญาอนุญาต — เรื่องนี้กระทบการต่อยอดจริง</span>
+<b>Ultralytics YOLO เป็น AGPL-3.0</b> ซึ่งบังคับว่าถ้าใช้โค้ด โมเดล หรือน้ำหนักที่ fine-tune แล้ว <b>ต้องเปิดซอร์สทั้งงาน</b> รวมถึงสคริปต์และไฟล์คอนฟิก<br><br>
+สำหรับวิทยานิพนธ์ที่จะเผยแพร่แบบ open-source อยู่แล้วไม่มีปัญหา <b>แต่ถ้ามหาวิทยาลัยหรือ วช. อยากต่อยอดเป็นผลิตภัณฑ์ จะติดทันที</b><br>
+<b>segmentation-models-pytorch เป็น MIT</b> จึงปลอดภัยกว่า และเหมาะกับ semantic segmentation ซึ่งคือสิ่งที่งานรอยแตกต้องการอยู่แล้ว มากกว่า instance segmentation
+</div>
+
+<h2>แผนงานเป็นเฟส</h2>
+
+<table>
+<thead><tr><th class="c" style="width:12%">เฟส</th><th style="width:30%">ทำอะไร</th><th>เกณฑ์ผ่านที่วัดได้</th></tr></thead>
+<tbody>
+<tr>
+<td class="c"><b>Phase 0</b><br><span class="small muted">ในห้อง / ผนังทดสอบ</span></td>
+<td>วาดหรือสร้างรอยแตกจำลองที่รู้ความกว้างจริงบนผนัง ถ่ายด้วยกล้องมือถือหรือโดรนที่ระยะต่าง ๆ ทดสอบ pipeline มาตราส่วนเต็มรูปแบบ</td>
+<td>วัดความกว้างรอยแตกที่รู้ค่าจริงได้คลาดเคลื่อน <b>&lt; 5%</b> ในช่วง 1–5 mm · หา threshold ของ Laplacian variance ที่แยกภาพเบลอออกได้ · ยืนยันว่ามาตราส่วนจาก marker ตรงกับที่คำนวณจาก GSD ภายใน ±5%</td>
+</tr>
+<tr>
+<td class="c"><b>Phase 1</b><br><span class="small muted">เสาเดี่ยวที่เข้าถึงได้</span></td>
+<td>เสาจริงหนึ่งต้นที่เดินเข้าถึงโคนได้ ติด marker ได้ บินได้ในที่โล่ง เก็บภาพครบ 4 หน้า วัดรอยแตกจริงด้วยมือเทียบ</td>
+<td>ตรวจพบรอยแตกที่ผู้ตรวจสอบเห็นด้วยตาได้ครบ (recall) · ความคลาดเคลื่อนของความกว้าง <b>MAE &lt; 0.3 mm</b> ในช่วง &gt;1.6 mm · จำแนกระดับ BMMS ตรงกับผู้ตรวจสอบ <b>≥80%</b></td>
+</tr>
+<tr>
+<td class="c"><b>Phase 2</b><br><span class="small muted">สะพานจริง</span></td>
+<td>ขออนุญาตครบ บินตามแผน เก็บข้อมูลหลายเสา ทดสอบ pipeline เต็มรูปแบบจนถึง T-BHI</td>
+<td>ทำงานได้ครบทุกขั้นโดยไม่ต้องแก้มือ · รายงานผลพร้อม confidence flag · ระบุข้อจำกัดที่พบจริงหน้างานได้ครบ</td>
+</tr>
+</tbody>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">อย่าข้าม Phase 0 ไปสะพานจริงเลย</span>
+ที่สะพานจริงจะเจอปัญหาหลายอย่างพร้อมกัน — GPS หาย แสงไม่พอ ลมแรง marker หลุด ภาพเบลอ โมเดลไม่แม่น — และจะ<b>แยกไม่ออกว่าอะไรทำให้ผลเสีย</b><br>
+Phase 0 ใช้เวลาไม่กี่วันและใช้แค่ผนังกับกล้อง แต่ทำให้รู้ว่าตัว pipeline เองถูกต้องแล้ว ทำให้ทุกปัญหาที่เจอในเฟสถัดไปเป็นปัญหาของ<b>สภาพแวดล้อม</b> ไม่ใช่ของ<b>วิธีการ</b>
+</div>
+
+<h2>การตรวจสอบความถูกต้อง</h2>
+
+<table class="tight">
+<thead><tr><th style="width:24%">หัวข้อ</th><th>รายละเอียด</th></tr></thead>
+<tbody>
+<tr><td>ค่าจริงอ้างอิง</td><td>crack width comparator card (ราคาหลักร้อย) สำหรับงานภาคสนาม · feeler gauge หรือกล้องจุลทรรศน์แบบพกพาสำหรับความละเอียดสูงใน Phase 0</td></tr>
+<tr><td>จำนวนตัวอย่าง</td><td>อย่างน้อย 30 รอยแตกต่อช่วงความกว้าง เพื่อให้สถิติมีความหมาย และต้องกระจายครอบคลุมทุกขอบเขต BMMS ที่จะตัดสิน</td></tr>
+<tr><td>สถิติที่ต้องรายงาน</td><td><b>MAE, RMSE แยกตามช่วงความกว้าง</b> (ไม่ใช่ค่าเฉลี่ยรวม ซึ่งซ่อนปัญหาที่ช่วงรอยแตกเล็กไว้) · <b>Bland–Altman plot</b> เพื่อดู systematic bias · confusion matrix ของระดับ BMMS</td></tr>
+<tr><td>สิ่งที่ห้ามลืม</td><td>รายงานความคลาดเคลื่อน<b>แยกตามช่วง</b> เพราะจากวรรณกรรม ค่าเฉลี่ยรวม 0.09 mm อาจซ่อนความคลาดเคลื่อน 34% ที่ช่วง 0.3 mm ไว้</td></tr>
+</tbody>
+</table>
+
+<h2>ความเสี่ยงและแผนสำรอง</h2>
+
+<table class="tight">
+<thead><tr><th style="width:26%">ความเสี่ยง</th><th>แผนสำรอง</th></tr></thead>
+<tbody>
+<tr><td>ไม่ได้โดรนตามที่หวัง / ไม่มีเลนส์เทเล</td><td>Phase 0 ทำด้วยกล้อง DSLR หรือมือถือบนขาตั้งได้ทั้งหมด — pipeline เหมือนกันทุกประการ เพราะวิธี marker ไม่สนใจว่าภาพมาจากกล้องอะไร</td></tr>
+<tr><td>เข้าไซต์สะพานจริงไม่ได้ / ขออนุญาตไม่ทัน</td><td>ใช้เสาอาคารในมหาวิทยาลัยหรือโครงสร้างคอนกรีตที่เข้าถึงได้ ขอบเขตงานยังสมบูรณ์ เพียงเปลี่ยนกรณีศึกษา</td></tr>
+<tr><td>ฝนตก / ฤดูฝน</td><td>วางแผนเก็บข้อมูลภาคสนามให้จบก่อนฤดูฝน และเผื่อวันสำรองอย่างน้อยเท่าตัว</td></tr>
+<tr><td>โมเดลไม่แม่นพอ</td><td>มี baseline แบบ classical CV ไว้เปรียบเทียบเสมอ — ถ้า deep learning ไม่ดีกว่า นั่นก็เป็นผลการวิจัยที่รายงานได้ ไม่ใช่ความล้มเหลว</td></tr>
+<tr><td>marker หลุดกลางเที่ยวบิน</td><td>ติดหลายตัว ใช้ id ต่างกัน และ<b>ตรวจ QC ภาพก่อนออกจากไซต์</b></td></tr>
+</tbody>
+</table>
+
+
+<!-- ============ 11 ============ -->
+<h1>ข้อจำกัดที่พบเมื่อนำทุกบทมาชนกัน</h1>
+
+<p>บทนี้เกิดจากการตรวจสอบว่าตัวเลขในบทหนึ่งกับข้อสรุปในอีกบทหนึ่งอยู่ด้วยกันได้จริงหรือไม่ — ทุกข้อในบทนี้<b>เปลี่ยนขอบเขตของโปรเจกต์ ไม่ใช่แค่แก้ตัวเลข</b> จึงควรอ่านก่อนวางแผนงานจริง</p>
+
+<h2>11.1 T-BHI คำนวณจากรอยแตกอย่างเดียวไม่ได้</h2>
+
+<div class="box box--bad">
+<span class="box__t">ปัญหา</span>
+สูตรของ T-BHI คือ <code>EHI<sub>e</sub> = Σ(CHI<sub>i</sub> × y<sub>ei</sub>) × 100</code> โดย <code>y<sub>ei</sub></code> คือสัดส่วนของ element ที่อยู่ในสภาพระดับ i
+ซึ่งต้องมาจาก<b>ความเสียหายทุกชนิดบน element นั้น เอาระดับที่แย่ที่สุด</b> ไม่ใช่จากรอยแตกอย่างเดียว<br><br>
+ตาราง BMMS 4-13 (เกณฑ์เสาตอม่อ) มีเกณฑ์อย่างน้อย <b>3 แกน</b> ไม่ใช่แกนเดียว
+</div>
+
+<table>
+<thead><tr><th>เกณฑ์ในตารางเดียวกัน</th><th class="num">ระดับ 3</th><th class="num">ระดับ 2</th><th class="num">ระดับ 1</th><th class="c">UAV RGB วัดได้?</th></tr></thead>
+<tbody>
+<tr><td>ความกว้างรอยแตก</td><td class="num">1.6–3.2 mm</td><td class="num">3.2–4.8 mm</td><td class="num">&gt; 4.8 mm</td><td class="c"><span class="badge badge--ok">ได้</span> — คือทั้งหมดที่รายงานนี้พูดถึง</td></tr>
+<tr><td><b>ความลึกการสึกกร่อน/หลุดร่อน</b></td><td class="num">5–10 mm</td><td class="num">10–20 mm</td><td class="num">&gt; 20 mm</td><td class="c"><span class="badge badge--bad">ไม่ได้</span> — ต้องวัดความลึก</td></tr>
+<tr><td><b>รอยแตกจากแรงเฉือน/แรงดัด</b></td><td class="num">—</td><td class="num">—</td><td class="num"><b>ทุกขนาด = ระดับ 1</b></td><td class="c"><span class="badge badge--bad">ไม่ได้</span> — เป็นงานจำแนก pattern</td></tr>
+</tbody>
+</table>
+
+<p><b>แกนที่ 2 มีตัวเลขชนกันตรง ๆ:</b> ขอบเขตชั้นแรกคือ 5 mm แต่ SfM มีความแม่นเชิงเรขาคณิตระดับ<b>เซนติเมตร</b> (orthophoto RMSE ที่วัดได้จริง: planimetric 0.89 cm / vertical 2.74 cm) — <b>ความไม่แน่นอนของการวัดความลึกใหญ่กว่าขอบเขตชั้นแรกของเกณฑ์ 2–5 เท่า</b> จึงจำแนก spalling ระดับ 3 กับ 2 ไม่ได้เลย</p>
+
+<p><b>แกนที่ 3 อันตรายกว่ามาก:</b> เกณฑ์ "รอยแตกจากแรงเฉือนหรือแรงดัด ทุกขนาด = ระดับ 1 (วิกฤติ)" แปลว่า <b>การวัดความกว้างไม่ได้ตัดสินอะไรเลยในกรณีที่อันตรายที่สุด</b> ระบบต้องจำแนก<i>ชนิด ทิศทาง และตำแหน่ง</i>ของรอยแตก (เฉียง ~45° ใกล้ปลายเสา = shear · ตั้งฉากแนวแรงดัด = flexural · ลายแตกร่างแห = map cracking · ขนานแนวเหล็กเสริม = corrosion-induced) ซึ่งเป็น <b>pattern reasoning ไม่ใช่ metrology</b></p>
+
+<h3>ผลพวงเชิงสถิติจากกฎ override</h3>
+
+<p>ตาราง 4.11 ของ T-BHI ระบุว่า พบระดับ 1 ใน Primary element <b>บังคับ</b>สถานะสะพานเป็นวิกฤติ — <b>false positive เดียวบนเสาต้นเดียวพลิกสถานะทั้งสะพาน</b></p>
+
+<div class="eq">
+P(อย่างน้อยหนึ่ง override ผิด) = 1 − (1 − p)<sup>N</sup>
+<small>p = อัตรา false positive ของ classifier ต่อหน้าเสา · N = จำนวนหน้าเสาทั้งสะพาน</small>
+</div>
+
+<table class="tight">
+<thead><tr><th class="num">p (FPR ต่อหน้าเสา)</th><th class="num">สะพาน 3 ตอม่อ (N = 12)</th><th class="num">สะพาน 10 ตอม่อ (N = 40)</th></tr></thead>
+<tbody>
+<tr><td class="num">5%</td><td class="num">46%</td><td class="num"><b>87%</b></td></tr>
+<tr><td class="num">1%</td><td class="num">11%</td><td class="num"><b>33%</b></td></tr>
+<tr><td class="num">0.4%</td><td class="num">4.7%</td><td class="num">15%</td></tr>
+<tr><td class="num">0.1%</td><td class="num">1.2%</td><td class="num">3.9%</td></tr>
+</tbody>
+<caption>ต้องได้ FPR ≤ ~0.1–0.4% ต่อหน้าเสา จึงจะรายงานสถานะสะพานได้อย่างมีความหมาย — <b>ไม่มี crack classifier ที่ตีพิมพ์ตัวไหนแตะระดับนี้</b> (เทียบ: งานหนึ่งได้ mean IoU 20.6% บนภาพตรวจสอบจริง อีกงานได้ Precision 81.0%)</caption>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">ข้อสรุปที่ต้องเขียนลงเล่มตั้งแต่บทที่ 1 ไม่ใช่ในบทข้อจำกัด</span>
+<b>1. ระบบนี้ต้องออกแบบเป็น screening + human confirm ไม่ใช่ autonomous rater</b> ซึ่งสอดคล้องกับที่ FHWA ระบุว่า UAS ยังไม่แทน hands-on inspection<br>
+<b>2. ตัวชี้วัดที่ต้องรายงานเพิ่ม:</b> FPR ของ shear/flexural classifier ต่อหน้าเสา และ bridge-level confusion matrix ไม่ใช่แค่ per-crack MAE หรือ per-image IoU<br>
+<b>3. รายงาน sensitivity analysis:</b> ถ้าเปลี่ยนผลของ element เดียว สถานะสะพานเปลี่ยนกี่กรณี
+</div>
+
+<h3>ขอบเขตผลลัพธ์ที่ซื่อสัตย์และยังจบได้</h3>
+
+<table class="tight">
+<thead><tr><th>ชั้นผลลัพธ์</th><th class="c">ทำได้ด้วย UAV RGB?</th><th>สถานะในโปรเจกต์</th></tr></thead>
+<tbody>
+<tr><td>Layer 0 — primitive: ความกว้าง (mm), ความยาว (m), ระยะห่าง (m), พื้นที่ %</td><td class="c"><span class="badge badge--ok">ได้</span></td><td><b>deliverable หลัก</b></td></tr>
+<tr><td>Layer 0b — จำแนก pattern (shear / flexural / shrinkage / map / corrosion)</td><td class="c"><span class="badge badge--warn">ได้ถ้ามีผู้ตรวจสอบยืนยัน</span></td><td><b>novelty ที่แนะนำให้ไล่</b></td></tr>
+<tr><td>Layer 1 — BMMS 0–5 เฉพาะแกน cracking</td><td class="c"><span class="badge badge--ok">ได้</span></td><td>deliverable</td></tr>
+<tr><td>Layer 1 — BMMS 0–5 แกน spalling / erosion depth</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>ประกาศเป็นข้อจำกัด + วัดด้วยมือ</td></tr>
+<tr><td>delamination / โพรงภายใน</td><td class="c"><span class="badge badge--bad">ไม่ได้</span></td><td>ต้องใช้ IR หรือ hammer test</td></tr>
+<tr><td>EHI ราย element</td><td class="c"><span class="badge badge--warn">เฉพาะที่ครบทุกแกน</span></td><td>รายงานพร้อม Confidence Flag</td></tr>
+<tr><td><b>T-BHI รวมทั้งสะพาน</b></td><td class="c"><span class="badge badge--bad">ไม่ได้ลำพัง</span></td><td>ต้องผสมข้อมูลจาก manual inspection</td></tr>
+</tbody>
+<caption><b>นี่ไม่ใช่การถอย</b> — เอกสาร T-BHI เขียน Confidence Flag ไว้เองอยู่แล้ว การรายงานความไม่แน่นอนอย่างซื่อสัตย์คือการทำตามสเปก ไม่ใช่ความล้มเหลว</caption>
+</table>
+
+<h2>11.2 งบเวลาประมวลผลไม่ปิด — ต่างจากเกณฑ์ที่ตั้งไว้เอง 13 เท่า</h2>
+
+<p>จากข้อมูลจริงของงานที่ตีพิมพ์: tile 256×256 px, overlap 50%, throughput 26.87 FPS บน RTX 3090 (โมเดล detection ซึ่งเบากว่า segmentation) = <b>37.2 ms ต่อ tile</b> และการทำ overlapping tiling ทำให้ Recall ดีขึ้น ~24% จึงตัดออกไม่ได้</p>
+
+<table class="tight">
+<thead><tr><th>แผน</th><th class="num">ภาพ/เสา</th><th class="num">tiles/เสา</th><th class="num">เวลา inference/เสา</th><th class="c">ผ่านเกณฑ์ 60 นาที?</th></tr></thead>
+<tbody>
+<tr><td>A — wide @3 m</td><td class="num">168</td><td class="num">508,032</td><td class="num">5.2 ชม.</td><td class="c"><span class="badge badge--bad">ไม่ผ่าน</span></td></tr>
+<tr><td>B — tele @8 m (GSD 0.20)</td><td class="num">408</td><td class="num">1,253,376</td><td class="num"><b>13.0 ชม.</b></td><td class="c"><span class="badge badge--bad">เกิน 13 เท่า</span></td></tr>
+<tr><td>C — tele @19 m</td><td class="num">168</td><td class="num">516,096</td><td class="num">5.3 ชม.</td><td class="c"><span class="badge badge--bad">ไม่ผ่าน</span></td></tr>
+<tr><td><b>D — โหมดวัดอย่างเดียว (overlap 30%)</b></td><td class="num"><b>20</b></td><td class="num">60,480</td><td class="num"><b>37 นาที</b></td><td class="c"><span class="badge badge--ok">ผ่าน</span></td></tr>
+</tbody>
+<caption>ยังไม่รวมเวลา SfM ซึ่งงานวิจัยรายงานว่าใช้ประมาณ 5 ชั่วโมงต่อฉาก — <b>มีเพียงแผน D เท่านั้นที่ตัวเลขปิดกันได้</b></caption>
+</table>
+
+<div class="box box--key">
+<span class="box__t">ทางแก้: two-stage inference</span>
+<pre style="margin:2mm 0 0"><code>Stage 1 — SCREEN : ย่อภาพลง 4 เท่า (8192 → 2048) แล้วรัน segmentation
+                   → 192 tiles/ภาพ → ~7 วินาที/ภาพ → 408 ภาพ ≈ 48 นาที/เสา
+                   GSD ตอน screening = 0.077 × 4 = 0.31 mm/px
+                   → รอยแตก 1.6 mm (ขอบล่างของเกณฑ์ BMMS) = 5 px ⇒ ยังตรวจเจอ
+
+Stage 2 — MEASURE : ตัด crop ที่ความละเอียดเต็มเฉพาะบริเวณที่ Stage 1 จุดติด
+                   → วัดความกว้างจริงเฉพาะจุดที่มีรอยแตก</code></pre>
+<b>ข้อควรระวัง:</b> ค่า 37.2 ms/tile มาจาก RTX 3090 + โมเดล detection — นักศึกษาที่ใช้ Colab T4 + โมเดล segmentation ควรคาดว่าจะช้ากว่า <b>3–5 เท่า</b> ⇒ <b>ต้องวัด ms/tile ของเครื่องตัวเองใน Phase 0 ก่อนล็อกจำนวนภาพในแผนบิน</b>
+</div>
+
+<h2>11.3 ความจุการ์ดความจำไม่พอถ้าถ่าย RAW+JPEG</h2>
+
+<p>ไฟล์ DNG ขนาด 48MP ประมาณ 60–90 MB ต่อไฟล์ (ต้องวัดจริง)</p>
+
+<table class="tight">
+<thead><tr><th>กรณี</th><th class="num">จำนวนภาพ</th><th class="num">ความจุที่ต้องใช้</th></tr></thead>
+<tbody>
+<tr><td>ต่อเสา (RAW + JPEG)</td><td class="num">408</td><td class="num"><b>~37 GB</b> → การ์ด 64 GB รับได้ ~1.7 เสา</td></tr>
+<tr><td>ต่อสะพาน 5 ตอม่อ</td><td class="num">2,040</td><td class="num"><b>~184 GB</b> (ไม่ใช่ 40 GB ที่มักประมาณกันจาก JPEG อย่างเดียว)</td></tr>
+</tbody>
+</table>
+
+<p><b>ทางแก้ที่ถูกที่สุด:</b> ถ่าย JPEG อย่างเดียวสำหรับ screening pass และถ่าย RAW เฉพาะ measurement pass (20 ภาพ/เสา) ซึ่งเข้ากับ two-stage ในหัวข้อ 11.2 พอดี — และต้องเพิ่ม "การ์ดสำรอง" กับ "แผนสำรองข้อมูลระหว่างวัน" เข้าไปใน checklist</p>
+
+<h2>11.4 สมมติฐานสำคัญที่สุดที่ยังไม่ได้พิสูจน์ — เซนเซอร์ quad-Bayer</h2>
+
+<div class="box box--bad">
+<span class="box__t">ถ้าข้อนี้เป็นจริง ตารางระยะบินทั้งหมดในรายงานนี้ต้องคูณ 0.5</span>
+เซนเซอร์ 48MP บนโดรนส่วนใหญ่เป็นแบบ <b>quad-Bayer</b> ซึ่งรวม 4 พิกเซลจริงเป็น 1 พิกเซลข้อมูลในโหมดปกติ
+ความละเอียดเชิงแสงที่ได้จริงจึงอาจ<b>แย่กว่าตัวเลขที่ประกาศประมาณ 2 เท่า</b><br><br>
+ตาราง GSD ทุกตารางในรายงานนี้ (และในเอกสารทั่วไปทุกฉบับ) ใช้ค่า nominal ทั้งหมด<br>
+<b>ถ้าความจริงคือ 2 เท่า ข้อสรุปเรือธง "tele ที่ 10 m ดีกว่า wide ที่ 1 m" อาจยังคงจริง (เพราะกระทบทั้งคู่เท่ากัน) แต่ระยะบินที่แนะนำทุกตัวต้องลดลงครึ่งหนึ่ง</b><br><br>
+<b>วิธีปิดข้อสงสัยนี้:</b> ถ่าย slanted-edge chart (ISO 12233) ที่ระยะที่รู้ค่า แล้ววัด MTF50 จริง — ใช้เวลาไม่ถึงหนึ่งวันใน Phase 0 และเป็นผลการวิจัยที่รายงานได้ในตัวเอง
+</div>
+
+<h2>11.5 สมมติฐานที่ยังไม่ยุติ — ต้องวัดเอง ไม่ใช่หาคำตอบจากเอกสาร</h2>
+
+<table>
+<thead><tr><th style="width:26%">ประเด็น</th><th>สถานะ</th></tr></thead>
+<tbody>
+<tr><td><b>รอยแตกต้องกินกี่พิกเซลจึงจะวัดได้</b></td><td>แหล่งอ้างอิงให้ทั้ง <b>3× GSD</b> (อนุรักษ์นิยม) และ <b>0.5× GSD</b> (วิธี sub-pixel) — <b>ต่างกัน 6 เท่า</b> และระยะบินทุกตัวในรายงานนี้ขึ้นกับตัวเลือกนี้ ⇒ <b>ต้องวัดเองใน Phase 0</b> ด้วยแผ่นรอยแตกอ้างอิงที่รู้ความกว้างจริง แล้วรายงานเป็นผลการวิจัย</td></tr>
+<tr><td>ความละเอียดเชิงแสงจริงของ quad-Bayer</td><td>ดูหัวข้อ 11.4 — ต้องวัดด้วย slanted-edge chart</td></tr>
+<tr><td>ทิศบนของ obstacle sensing (M4 series)</td><td>DJI ไม่ประกาศ — ต้องเปิดคู่มือผู้ใช้ของรุ่นที่จะใช้จริง</td></tr>
+<tr><td>ระยะจาก laser rangefinder ติดมากับ EXIF หรือไม่</td><td>ไม่พบเอกสารยืนยัน — ทดสอบเองด้วย <code>exiftool -a -G1 IMG.JPG</code> ใช้เวลา 5 นาที ถ้ามีจะประหยัดงานได้มาก</td></tr>
+<tr><td>payload ส่งค่าระยะกลับเข้า flight controller ได้ไหม</td><td>ต้องตรวจในเอกสาร PSDK หมวด data subscription ก่อนออกแบบระบบ closed-loop</td></tr>
+</tbody>
+</table>
+
+<h2>11.6 คำถามที่ไม่มีใครถาม — ต้องใช้โดรนจริงหรือ</h2>
+
+<div class="box box--key">
+<span class="box__t">ผิวเสาตอม่อกี่เปอร์เซ็นต์ที่มองไม่เห็นจากพื้น</span>
+รายงานนี้ทั้งฉบับ (และการตั้งโจทย์ตั้งต้น) สมมติว่า "ต้องใช้โดรน" โดยไม่เคยตรวจสอบสมมติฐานนี้เลย
+</div>
+
+<table class="tight">
+<thead><tr><th>ส่วนของโครงสร้าง</th><th class="c">เห็นจากพื้น + เลนส์ 200 mm บนขาตั้ง?</th><th class="c">ต้องใช้โดรน?</th></tr></thead>
+<tbody>
+<tr><td>หน้าเสาตอม่อด้านที่เข้าถึงได้ (บนบก)</td><td class="c"><span class="badge badge--ok">เห็นเกือบหมด</span></td><td class="c">ไม่ต้อง</td></tr>
+<tr><td>หน้าเสาด้านที่ติดคลอง/แม่น้ำ</td><td class="c"><span class="badge badge--bad">ไม่เห็น</span></td><td class="c">ต้อง</td></tr>
+<tr><td><b>ท้องสะพาน (soffit)</b></td><td class="c"><span class="badge badge--bad">ไม่เห็น</span></td><td class="c">ต้อง — <b>แต่ GPS ตาย</b></td></tr>
+<tr><td>pier cap / bearing</td><td class="c"><span class="badge badge--warn">มุมเฉียงมาก</span></td><td class="c">ต้อง</td></tr>
+<tr><td>ตอม่อกลางน้ำ</td><td class="c"><span class="badge badge--bad">ไม่เห็น</span></td><td class="c">ต้อง</td></tr>
+</tbody>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">การตัดสินใจเชิงขอบเขตที่ควรอยู่ในบทที่ 1</span>
+โดรนมีค่าเฉพาะสามกรณี: <b>(ก) ท้องสะพาน (ข) เสากลางน้ำ (ค) เสาสูงเกินเอื้อม</b><br>
+ส่วนที่เหลือใช้<b>กล้องบนขาตั้งที่พื้น + เลนส์เทเล</b> จะ <b>นิ่งกว่า ถูกกว่า และไม่ต้องขออนุญาต CAAT</b><br><br>
+ข้อดีที่สำคัญที่สุดของการยอมรับข้อนี้: <b>Phase 0 และ Phase 1 เดินหน้าได้แม้ยืมโดรนไม่ได้</b> และตัวเลข validation ทั้งหมดยังเก็บได้ครบ — ลดความเสี่ยงที่ใหญ่ที่สุดของโปรเจกต์ลงทันที
+</div>
+
+<h2>11.7 สิ่งที่ต้องแก้ก่อนนำตัวเลขในรายงานนี้ไปใช้</h2>
+
+<table class="tight">
+<thead><tr><th style="width:30%">ประเด็นที่เคยเข้าใจผิด</th><th>ข้อยุติ</th></tr></thead>
+<tbody>
+<tr><td>ใช้ laser rangefinder ของโดรนทำมาตราส่วนได้</td><td><b>ไม่ได้</b> — ตัวเลข "±2.15%" ที่ดูดีนั้นคำนวณที่ระยะ 10 m ซึ่งไกลกว่าระยะทำงานจริง ที่ 2–3 m สเปกคือ system error &lt; 0.3 m = 10–15% ⇒ <b>ใช้ได้แค่เพื่อความปลอดภัยและรักษาระยะ</b></td></tr>
+<tr><td>ใช้โดรน consumer รุ่นท็อปได้</td><td><b>ไม่ได้ถ้าจะเขียนโปรแกรมการบิน</b> — MSDK V5 รองรับ consumer แค่ Mini 3 / Mini 3 Pro / Mini 4 Pro และรุ่น consumer ไม่มี laser rangefinder ⇒ ต้องเป็น M4E/M4T</td></tr>
+<tr><td>เป้าหมายคือวัดรอยแตก 0.2 mm ให้ได้</td><td><b>ตั้งจากงานวิจัยต่างประเทศ ไม่ใช่จากมาตรฐานที่โปรเจกต์นี้ต้องส่งมอบ</b> — เกณฑ์ไทยขอบล่างคือ 1.6 mm ⇒ เป้าที่สมเหตุสมผลคือ <b>0.5 mm ที่ POD ≥ 90%</b></td></tr>
+<tr><td>Matrice 4 Series ทำ waypoint ผ่าน MSDK ไม่ได้</td><td><b>ทำได้</b> — README ของ MSDK 5.18.0 ระบุ Matrice 4 Enterprise Series ไว้ชัดเจน</td></tr>
+</tbody>
+</table>
+
+
+<h1 class="nonum">ภาคผนวก ก. — โค้ดหามาตราส่วนและวัดความกว้างรอยแตก</h1>
+
+<p class="small muted">ไฟล์นี้รันจริงและผ่าน self-check ทุกข้อ (ผลการทดสอบอยู่ในตารางบทที่ 5) ทดสอบบน Python 3.13 / OpenCV 4.13.0 / NumPy 2.5.0 — บันทึกเป็น <code>crack_scale.py</code> แล้วรัน <code>python crack_scale.py</code> เพื่อตรวจว่าสภาพแวดล้อมทำงานถูกต้องก่อนใช้กับภาพจริง</p>
+
+<pre><code>"""crack_scale.py — หามาตราส่วน mm/pixel จาก ArUco marker แล้ววัดความกว้างรอยแตก
+ไม่ต้องรู้ระยะ ไม่ต้องรู้ focal length ไม่ต้อง calibrate กล้อง
+"""
+import cv2
+import numpy as np
+
+MARKER_MM = 200.0  # ขนาดจริงของ marker ที่พิมพ์ออกมา — วัดด้วยเวอร์เนีย ไม่ใช่ค่าที่สั่งพิมพ์
+DICT = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+_detector = cv2.aruco.ArucoDetector(DICT)
+
+
+def find_marker(img):
+    """คืน 4 มุมของ marker ตัวแรกที่เจอ (เรียง TL,TR,BR,BL) หรือ None ถ้าไม่เจอ"""
+    corners, ids, _ = _detector.detectMarkers(img)
+    return None if ids is None else corners[0][0]
+
+
+def scale_mm_per_px(img):
+    """มาตราส่วนเฉลี่ยจากด้านทั้ง 4 ของ marker
+    ใช้ได้เมื่อกล้องเกือบตั้งฉากกับผิว (เอียงไม่เกิน ~15 องศา)"""
+    c = find_marker(img)
+    if c is None:
+        return None
+    side = np.mean([np.linalg.norm(c[i] - c[(i + 1) % 4]) for i in range(4)])
+    return MARKER_MM / side
+
+
+def rectify(img, px_per_mm=2.0, margin_mm=20.0):
+    """แก้ภาพเอียงให้กลับเป็นระนาบตรง (fronto-parallel)
+    คืน (ภาพที่แก้แล้ว, mm/px ซึ่งคงที่เท่ากันทั้งภาพ)
+
+    margin_mm: เว้นขอบขาวรอบ marker ในภาพผลลัพธ์ — ห้ามตั้งเป็น 0
+    ArUco ต้องมี quiet zone รอบตัว ถ้า warp ให้ marker ชิดขอบภาพพอดี
+    จะ detect ไม่เจออีกเลย และโค้ดที่ตัด marker ออกจาก mask จะพลาดทั้งก้อน
+    """
+    c = find_marker(img)
+    if c is None:
+        return None, None
+    s = MARKER_MM * px_per_mm
+    m = margin_mm * px_per_mm
+    dst = np.float32([[m, m], [m + s, m], [m + s, m + s], [m, m + s]])
+    H = cv2.getPerspectiveTransform(c.astype(np.float32), dst)
+    h, w = img.shape[:2]
+    # borderValue = สีพื้นกระดาษ ไม่ใช่ดำ — ไม่งั้นขอบดำจะถูกนับเป็น "รอยแตก" ตอน threshold
+    out = cv2.warpPerspective(img, H, (w, h), borderValue=(235, 235, 235))
+    return out, 1.0 / px_per_mm
+
+
+def crack_width_px(mask):
+    """ความกว้างรอยแตกเป็น pixel จาก binary mask
+
+    distance transform คืน 'ระยะถึงพิกเซลพื้นหลังที่ใกล้ที่สุด' ไม่ใช่ 'ระยะถึงขอบ'
+    แถบกว้าง W พิกเซลจะได้ค่าสูงสุด (W+1)/2  =>  W = 2*maxdist - 1
+    ถ้าลืมลบ 1 จะได้ความกว้างเกินจริง 1 px เสมอ (ที่ GSD 0.2 mm/px = เกิน 0.2 mm)
+    """
+    dist = cv2.distanceTransform((mask &gt; 0).astype(np.uint8), cv2.DIST_L2, 5)
+    return 2.0 * float(dist.max()) - 1.0
+
+
+def crack_width_mm(mask, mm_per_px):
+    return crack_width_px(mask) * mm_per_px
+</code></pre>
+
+<h2 class="nonum" style="margin-top:6mm">ตัวอย่างการเรียกใช้กับภาพจริง</h2>
+
+<pre><code>import cv2
+from crack_scale import rectify, scale_mm_per_px, crack_width_mm
+
+img = cv2.imread("DJI_0123.JPG")
+
+# 1) แก้มุมเอียงก่อนเสมอถ้าไม่มั่นใจว่าถ่ายตั้งฉาก
+flat, mm_per_px = rectify(img)
+if flat is None:
+    raise SystemExit("ไม่เจอ marker ในภาพนี้ — ทิ้งภาพหรือถ่ายใหม่")
+
+# 2) หา mask ของรอยแตก — ในงานจริงใช้โมเดล segmentation ที่เทรนไว้ แทนบรรทัดนี้
+mask = your_crack_segmentation_model(flat)          # -&gt; uint8 0/255
+
+# 3) แปลงเป็นหน่วยจริง
+print(f"ความกว้างสูงสุด {crack_width_mm(mask, mm_per_px):.2f} mm")
+print(f"ความยาวรวม     {int((mask &gt; 0).sum()) * mm_per_px:.0f} mm (โดยประมาณ)")
+</code></pre>
+
+<h1 class="nonum">ภาคผนวก ข. — สร้างไฟล์ marker ขนาดจริงสำหรับสั่งพิมพ์</h1>
+
+<p class="small muted">สร้างเป็น SVG ที่ระบุหน่วยเป็นมิลลิเมตรจริง ทำให้สั่งพิมพ์ได้ตรงขนาด (ต้องปิดตัวเลือก "Fit to page" ตอนพิมพ์) และคมชัดทุกขนาดเพราะเป็นเวกเตอร์ — ใช้ id ต่างกันต่อเสาแต่ละต้น/แต่ละหน้า เพื่อให้ระบบ map ภาพกลับไปยังตำแหน่งบนโครงสร้างได้เอง</p>
+
+<pre><code>"""make_marker.py — สร้างไฟล์ SVG ของ ArUco marker ขนาดจริงเป็นมิลลิเมตร
+    python make_marker.py 0 140 marker0.svg
+"""
+import sys, cv2
+
+mid = int(sys.argv[1]) if len(sys.argv) &gt; 1 else 0
+mm  = float(sys.argv[2]) if len(sys.argv) &gt; 2 else 140.0
+out = sys.argv[3] if len(sys.argv) &gt; 3 else f"aruco_{mid}_{int(mm)}mm.svg"
+
+N = 6                                   # 4x4 + ขอบดำ 1 ช่อง
+bits = cv2.aruco.generateImageMarker(
+    cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50), mid, N)
+cell  = mm / N
+quiet = cell                            # quiet zone ขาว 1 ช่อง — ห้ามตัดทิ้ง
+total = mm + 2 * quiet
+
+rects = "".join(
+    f'&lt;rect x="{quiet + c*cell:.4f}" y="{quiet + r*cell:.4f}" '
+    f'width="{cell:.4f}" height="{cell:.4f}" fill="#000"/&gt;'
+    for r in range(N) for c in range(N) if bits[r, c] == 0
+)
+
+open(out, "w", encoding="utf-8").write(
+    f'&lt;svg xmlns="http://www.w3.org/2000/svg" width="{total}mm" height="{total + 8}mm" '
+    f'viewBox="0 0 {total} {total + 8}"&gt;'
+    f'&lt;rect width="{total}" height="{total + 8}" fill="#fff"/&gt;{rects}'
+    f'&lt;text x="{total/2}" y="{total + 5.5}" font-family="Arial" font-size="4" '
+    f'text-anchor="middle"&gt;ArUco DICT_4X4_50 id={mid} | ด้านดำ = {mm:.1f} mm | '
+    f'วัดจริงก่อนใช้&lt;/text&gt;&lt;/svg&gt;'
+)
+print(f"{out}  ด้านดำ {mm} mm, quiet zone {quiet:.1f} mm, กระดาษรวม {total:.1f} mm")
+</code></pre>
+
+<div class="box box--key">
+<span class="box__t">ขั้นตอนใช้งานจริง 5 ขั้น</span>
+<ol style="margin-bottom:0">
+<li>รัน <code>python make_marker.py 0 140</code> (เปลี่ยน id ตามเสา) → ได้ SVG</li>
+<li>พิมพ์บนสติกเกอร์กันน้ำหรือกระดาษหนา <b>ปิด "Fit to page"</b> แล้วเคลือบพลาสติกกันฝน</li>
+<li><b>วัดด้านดำด้วยเวอร์เนีย</b> จดค่าที่วัดได้ เช่น 139.6 mm แล้วเอาไปใส่ <code>MARKER_MM</code></li>
+<li>แปะบนหน้าเสาที่จะตรวจ ให้ marker แนบผิวสนิทและอยู่ระนาบเดียวกับบริเวณที่จะวัด</li>
+<li>ถ่ายให้ marker กับรอยแตกอยู่ในเฟรมเดียวกัน — ถ้ารอยแตกยาวเกินหนึ่งเฟรม ให้แปะ marker หลายตัวไล่ไป</li>
+</ol>
+</div>
+
+
+<h1 class="nonum">ภาคผนวก ค. — แหล่งอ้างอิง</h1>
+<p class="small muted">รวบรวมจากการค้นคว้าทางอินเทอร์เน็ตในเดือนสิงหาคม 2569 รวม <b>405 แหล่ง</b> จัดกลุ่มตามประเภทและเรียงตามตัวอักษร — <b>ไม่ใช่เอกสารใน <code>rawdata/01 Literature Review/</code></b> ก่อนนำไปอ้างในเล่มวิทยานิพนธ์ต้องตรวจสอบกับเอกสารต้นฉบับตามกฎข้อ 3 และ 4 ของ <code>rule_of_tune.md</code><br>บันทึกการค้นคว้าฉบับเต็มพร้อมบริบทของแต่ละแหล่งอยู่ใน <code>research_notes/</code></p>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">เอกสารทางการของ DJI — สเปกฮาร์ดแวร์ <span class="muted small">(28)</span></h2>
+<ul class="refs">
+<li><span style="font-size:7.9pt">https://enterprise-insights.dji.com/blog/automated-data-capture-for-slope-surfaces-and-building-facades</span></li>
+<li><span style="font-size:7.9pt">https://enterprise-insights.dji.com/blog/dji-drone-self-unlock-nfz-geo-zone</span></li>
+<li><span style="font-size:7.9pt">https://enterprise-insights.dji.com/blog/dji-flighthub-2-latest-update-ai-copilot-2026</span></li>
+<li><span style="font-size:7.9pt">https://enterprise-insights.dji.com/blog/dji-flighthub-2-on-premises-officially-released</span></li>
+<li><span style="font-size:7.9pt">https://enterprise-insights.dji.com/blog/dji-sdk-guide</span></li>
+<li><span style="font-size:7.9pt">https://enterprise-insights.dji.com/blog/ground-sample-distance</span></li>
+<li><span style="font-size:7.9pt">https://enterprise-insights.dji.com/blog/march-2023-enterprise-firmware-update</span></li>
+<li><span style="font-size:7.9pt">https://enterprise-insights.dji.com/blog/top-features-of-the-matrice-4-series</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/dji-terra/faq</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/inspection/bridge-inspection</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/matrice-30/specs</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/matrice-350-rtk/specs</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/matrice-4-series/downloads</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/matrice-4-series/specs</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/matrice-400/specs</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/mavic-3-enterprise/specs</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/zenmuse-h20-series/specs</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/zenmuse-h30-series</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/zenmuse-h30-series/specs</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/zenmuse-l2/specs</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/zenmuse-l3/specs</span></li>
+<li><span style="font-size:7.9pt">https://enterprise.dji.com/zenmuse-s1</span></li>
+<li><span style="font-size:7.9pt">https://www.dji.com/global/mavic-4-pro/specs</span></li>
+<li><span style="font-size:7.9pt">https://www.dji.com/media-center/announcements/dji-release-zenmuse-l3</span></li>
+<li><span style="font-size:7.9pt">https://www.dji.com/mini-4-pro/specs</span></li>
+<li><span style="font-size:7.9pt">https://www.dji.com/support/product/matrice-4-series</span></li>
+<li><span style="font-size:7.9pt">https://www.dji.com/support/product/mavic-2</span></li>
+<li><span style="font-size:7.9pt">https://www.dji.com/support/product/zenmuse-l1</span></li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">เอกสารนักพัฒนา DJI — SDK และ API <span class="muted small">(46)</span></h2>
+<ul class="refs">
+<li><span style="font-size:7.9pt">https://developer.dji.com/api-reference-v5/android-api/Components/IKeyManager/Key_Camera_CameraKey.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/api-reference-v5/android-api/Components/IPerceptionManager/IPerceptionManager.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/api-reference-v5/android-api/Components/IPerceptionManager/IPerceptionManager_ObstacleData.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/api-reference-v5/android-api/Components/IPerceptionManager/IPerceptionManager_PerceptionInfo.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/api-reference-v5/android-api/Components/ISimulatorManager/ISimulatorManager.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/api-reference-v5/android-api/Components/IVirtualStickManager/IVirtualStickManager.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/api-reference-v5/android-api/Components/IWaypointMissionManager/IWaypointMissionManager.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/api-reference/android-api/Components/Camera/DJICamera_DJICameraLaserMeasureInformation.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/cloud-api-tutorial/en/api-reference/dock-to-cloud/mqtt/dock/dock2/wayline.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/edge-sdk-tutorial/en/basic-intro/whats-esdk.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/mobile-sdk-tutorial/en/</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/mobile-sdk-tutorial/en/tutorials/perception.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/mobile-sdk-tutorial/en/tutorials/virtual-stick.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/mobile-sdk-tutorial/en/tutorials/waypoint.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/payload-sdk-api-reference/en/</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/payload-sdk-tutorial/en/</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/payload-sdk-tutorial/en/advanced-function/perception-data.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/payload-sdk-tutorial/en/development-preparation/development-platform-overview/development-kit-overview.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/payload-sdk-tutorial/en/model-instruction/choose-hardware-platform.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/doc/payload-sdk-tutorial/en/quick-start/quick-guide/E-Port%20V2.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/mobile-sdk/</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/mobile-sdk/documentation/application-development-workflow/workflow-register.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/mobile-sdk/documentation/quick-start/index.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/onboard-sdk/documentation/appendix/releaseNotes.html</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/payload-sdk/</span></li>
+<li><span style="font-size:7.9pt">https://developer.dji.com/policies/eula/</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Cloud-API-Doc/blob/master/docs/en/10.overview/20.product-architecture.md</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Cloud-API-Doc/blob/master/docs/en/60.api-reference/00.dji-wpml/20.template-kml.md</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Cloud-API-Doc/blob/master/docs/en/80.faq.md</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Edge-SDK</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Edge-SDK-V2-Tutorial</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Mobile-SDK-Android-V5</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Mobile-SDK-Android-V5/blob/dev-sdk-main/README.md</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Mobile-SDK-Android-V5/issues</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Mobile-SDK-Android-V5/issues/368</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Mobile-SDK-Android-V5/issues/638</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Mobile-SDK-Android-V5/tree/dev-sdk-main/SampleCode-V5/android-sdk-v5-sample/src/main/java/dji/sampleV5/aircraft/pages</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Mobile-UXSDK-Android</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Onboard-SDK</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Payload-SDK</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Payload-SDK/releases</span></li>
+<li><span style="font-size:7.9pt">https://github.com/dji-sdk/Windows-SDK</span></li>
+<li><span style="font-size:7.9pt">https://sdk-forum.dji.net/hc/en-us/articles/25552010279961-What-devices-does-Mobile-SDK-V5-support</span></li>
+<li><span style="font-size:7.9pt">https://sdk-forum.dji.net/hc/en-us/articles/25786229596057-Part-of-DJI-SDK-stops-updating-announcement</span></li>
+<li><span style="font-size:7.9pt">https://sdk-forum.dji.net/hc/en-us/articles/4418315942169-How-to-get-the-visual-obstacle-avoidance-data</span></li>
+<li><span style="font-size:7.9pt">https://sdk-forum.dji.net/hc/en-us/articles/9882785690009-Chapter-16-Visual-obstacle-avoidance-system</span></li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">งานตีพิมพ์และคลังเอกสารวิชาการ <span class="muted small">(76)</span></h2>
+<ul class="refs">
+<li><span style="font-size:7.9pt">https://arxiv.org/abs/2503.01113</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/abs/2505.21089</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/abs/2507.14107</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/abs/2509.17345</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/abs/2510.00603</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/abs/2603.26770</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/html/2504.20040</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/1707.06292</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/2108.02800</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/2204.10070</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/2309.10919</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/2404.19242</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/2501.09203</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/2504.14138</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/2506.05195</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/2509.21496</span></li>
+<li><span style="font-size:7.9pt">https://arxiv.org/pdf/2605.29452</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.1016/j.autcon.2023.105145</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/app122010651</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/buildings15142489</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/drones6030064</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/drones7060342</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/infrastructures10070161</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/jimaging4080099</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/s17092052</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/s18061881</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/s20185358</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/s22124469</span></li>
+<li><span style="font-size:7.9pt">https://doi.org/10.3390/s23146271</span></li>
+<li><span style="font-size:7.9pt">https://ieeexplore.ieee.org/document/9583237/</span></li>
+<li><span style="font-size:7.9pt">https://isprs-archives.copernicus.org/articles/XLIII-B2-2022/1025/2022/isprs-archives-XLIII-B2-2022-1025-2022.html</span></li>
+<li><span style="font-size:7.9pt">https://isprs-archives.copernicus.org/articles/XLIII-B2-2022/141/2022/isprs-archives-XLIII-B2-2022-141-2022.pdf</span></li>
+<li><span style="font-size:7.9pt">https://isprs-archives.copernicus.org/articles/XLVIII-2-W11-2025/139/2025/isprs-archives-XLVIII-2-W11-2025-139-2025.pdf</span></li>
+<li><span style="font-size:7.9pt">https://kth.diva-portal.org/smash/get/diva2:1858916/FULLTEXT03.pdf</span></li>
+<li><span style="font-size:7.9pt">https://link.springer.com/article/10.1007/s10846-020-01307-9</span></li>
+<li><span style="font-size:7.9pt">https://onlinelibrary.wiley.com/doi/10.1002/suco.70702</span></li>
+<li><span style="font-size:7.9pt">https://onlinelibrary.wiley.com/doi/10.1111/mice.13344</span></li>
+<li><span style="font-size:7.9pt">https://onlinelibrary.wiley.com/doi/10.1111/mice.70118</span></li>
+<li><span style="font-size:7.9pt">https://onlinelibrary.wiley.com/doi/10.1111/mice.70145</span></li>
+<li><span style="font-size:7.9pt">https://openaccess.thecvf.com/content/CVPR2024W/VAND/papers/Benz_OmniCrack30k_A_Benchmark_for_Crack_Segmentation_and_the_Reasonable_Effectiveness_CVPRW_2024_paper.pdf</span></li>
+<li><span style="font-size:7.9pt">https://pmc.ncbi.nlm.nih.gov/articles/PMC10007411/</span></li>
+<li><span style="font-size:7.9pt">https://pmc.ncbi.nlm.nih.gov/articles/PMC10459964/</span></li>
+<li><span style="font-size:7.9pt">https://pmc.ncbi.nlm.nih.gov/articles/PMC10881319/</span></li>
+<li><span style="font-size:7.9pt">https://pmc.ncbi.nlm.nih.gov/articles/PMC12300741/</span></li>
+<li><span style="font-size:7.9pt">https://pmc.ncbi.nlm.nih.gov/articles/PMC12900104/</span></li>
+<li><span style="font-size:7.9pt">https://pmc.ncbi.nlm.nih.gov/articles/PMC5621440/</span></li>
+<li><span style="font-size:7.9pt">https://pmc.ncbi.nlm.nih.gov/articles/PMC6022134/</span></li>
+<li><span style="font-size:7.9pt">https://pmc.ncbi.nlm.nih.gov/articles/PMC8004059/</span></li>
+<li><span style="font-size:7.9pt">https://pmc.ncbi.nlm.nih.gov/articles/PMC9227050/</span></li>
+<li><span style="font-size:7.9pt">https://pubmed.ncbi.nlm.nih.gov/27838682/</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/1424-8220/23/16/7159</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/1424-8220/25/14/4325</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/1424-8220/26/3/1031</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/2072-4292/18/11/1806</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/2075-5309/12/11/1869</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/2313-433X/4/8/99</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/2504-446X/10/2/144</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/2504-446X/10/2/91</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/2504-446X/10/7/552</span></li>
+<li><span style="font-size:7.9pt">https://www.mdpi.com/2504-446X/7/6/342</span></li>
+<li><span style="font-size:7.9pt">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5940778/</span></li>
+<li><span style="font-size:7.9pt">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7588988/</span></li>
+<li><span style="font-size:7.9pt">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9227050/</span></li>
+<li><span style="font-size:7.9pt">https://www.researchgate.net/publication/355829686_Feasibility_Study_for_the_Fine_Crack_Width_Estimation_of_Concrete_Structures_Based_on_Fiducial_Markers</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/abs/pii/S0262885618300799</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/abs/pii/S0926580517311366</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/abs/pii/S0926580523001899</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/abs/pii/S0926580524005818</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/abs/pii/S0926580526000154</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/pii/S0886779824005972</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/pii/S0924271624002065</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/pii/S0926580525001414</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/pii/S0926580526003663</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/pii/S1093968726025995</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/pii/S2352340918314082</span></li>
+<li><span style="font-size:7.9pt">https://www.sciencedirect.com/science/article/pii/S2666165922000229</span></li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">กฎหมายและระเบียบไทย <span class="muted small">(13)</span></h2>
+<ul class="refs">
+<li><span style="font-size:7.9pt">https://droneth.or.th/caat-no-16-update-2026/</span></li>
+<li><span style="font-size:7.9pt">https://droneth.or.th/en/drone-laws-thailand-specific-category-2026-update/</span></li>
+<li><span style="font-size:7.9pt">https://droneth.or.th/en/dronepermit/</span></li>
+<li><span style="font-size:7.9pt">https://droneth.or.th/en/drones-in-thailand/</span></li>
+<li><span style="font-size:7.9pt">https://droneth.or.th/en/how-to-register-your-drone-in-thailand-as-a-foreigner/</span></li>
+<li><span style="font-size:7.9pt">https://droneth.or.th/specific-category-caat-2569/</span></li>
+<li><span style="font-size:7.9pt">https://droneth.or.th/thailand-nbtc-drone-regulation-2026/</span></li>
+<li><span style="font-size:7.9pt">https://droneth.or.th/who-got-impact-drone-law-thailand-2026/</span></li>
+<li><span style="font-size:7.9pt">https://uasportal.caat.or.th</span></li>
+<li><span style="font-size:7.9pt">https://www.bangkokbiznews.com/news/news-update/1233797</span></li>
+<li><span style="font-size:7.9pt">https://www.caat.or.th</span></li>
+<li><span style="font-size:7.9pt">https://www.dji13store.com/blog/drone-law</span></li>
+<li><span style="font-size:7.9pt">https://www.pdrc.co.th/en/blog/9125/</span></li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">มาตรฐานและคู่มือตรวจสอบสะพาน <span class="muted small">(6)</span></h2>
+<ul class="refs">
+<li><span style="font-size:7.9pt">https://highways.dot.gov/sites/fhwa.dot.gov/files/FHWA-HRT-21-083.pdf</span></li>
+<li><span style="font-size:7.9pt">https://itskrs.its.dot.gov/node/209836</span></li>
+<li><span style="font-size:7.9pt">https://www.fhwa.dot.gov/innovation/everydaycounts/edc_5/docs/uas-factsheet.pdf</span></li>
+<li><span style="font-size:7.9pt">https://www.fhwa.dot.gov/publications/research/infrastructure/structures/bridge/21086/21086.pdf</span></li>
+<li><span style="font-size:7.9pt">https://www.fhwa.dot.gov/publications/research/infrastructure/structures/bridge/21086/index.cfm</span></li>
+<li><span style="font-size:7.9pt">https://www.fhwa.dot.gov/uas/resources/hif19056.pdf</span></li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">ซอฟต์แวร์ ไลบรารี ชุดข้อมูล และฮาร์ดแวร์อื่น <span class="muted small">(83)</span></h2>
+<ul class="refs">
+<li><span style="font-size:7.9pt">https://agisoft.freshdesk.com/support/solutions/articles/31000148855-coded-targets-and-scale-bars</span></li>
+<li><span style="font-size:7.9pt">https://agisoft.freshdesk.com/support/solutions/articles/31000154049-orthomosaic-generation-planar-projection-</span></li>
+<li><span style="font-size:7.9pt">https://agisoft.freshdesk.com/support/solutions/articles/31000161735-dji-with-rtk-coordinates-data-processing</span></li>
+<li><span style="font-size:7.9pt">https://ardupilot.org/copter/docs/common-lightware-sf10-lidar.html</span></li>
+<li><span style="font-size:7.9pt">https://colmap.github.io/faq.html</span></li>
+<li><span style="font-size:7.9pt">https://community.opendronemap.org/t/vertical-facade-mapping/16890</span></li>
+<li><span style="font-size:7.9pt">https://coptrz.com/shop/drones/flyability-elios-3/</span></li>
+<li><span style="font-size:7.9pt">https://coptrz.com/shop/payloads-and-attachments/flyability-elios-3-surveying-payload/</span></li>
+<li><span style="font-size:7.9pt">https://developer.parrot.com/</span></li>
+<li><span style="font-size:7.9pt">https://docs.opencv.org/4.13.0/da/d13/tutorial_aruco_calibration.html</span></li>
+<li><span style="font-size:7.9pt">https://docs.opencv.org/4.x/d1/dcd/structcv_1_1aruco_1_1DetectorParameters.html</span></li>
+<li><span style="font-size:7.9pt">https://docs.opencv.org/4.x/d2/d1a/classcv_1_1aruco_1_1ArucoDetector.html</span></li>
+<li><span style="font-size:7.9pt">https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html</span></li>
+<li><span style="font-size:7.9pt">https://docs.opencv.org/4.x/d9/d6a/group__aruco.html</span></li>
+<li><span style="font-size:7.9pt">https://docs.opencv.org/4.x/da/d58/deprecated.html</span></li>
+<li><span style="font-size:7.9pt">https://docs.opendronemap.org/arguments/</span></li>
+<li><span style="font-size:7.9pt">https://docs.opendronemap.org/flying/</span></li>
+<li><span style="font-size:7.9pt">https://docs.opendronemap.org/tutorials/</span></li>
+<li><span style="font-size:7.9pt">https://en.benewake.com/TF03/index.html</span></li>
+<li><span style="font-size:7.9pt">https://en.benewake.com/TFLuna/index.html</span></li>
+<li><span style="font-size:7.9pt">https://en.benewake.com/TFminiPlus/index.html</span></li>
+<li><span style="font-size:7.9pt">https://en.benewake.com/TFminiS/index.html</span></li>
+<li><span style="font-size:7.9pt">https://github.com/Dhananjay42/crackseg9k</span></li>
+<li><span style="font-size:7.9pt">https://github.com/Karl1109/SCSegamba</span></li>
+<li><span style="font-size:7.9pt">https://github.com/PX4/PX4-Avoidance</span></li>
+<li><span style="font-size:7.9pt">https://github.com/ben-z-original/omnicrack30k</span></li>
+<li><span style="font-size:7.9pt">https://github.com/colmap/colmap/issues/1653</span></li>
+<li><span style="font-size:7.9pt">https://github.com/cuilimeng/CrackForest-dataset</span></li>
+<li><span style="font-size:7.9pt">https://github.com/engcang/vins-application</span></li>
+<li><span style="font-size:7.9pt">https://github.com/opencv/opencv/releases</span></li>
+<li><span style="font-size:7.9pt">https://github.com/qinnzou/DeepCrack</span></li>
+<li><span style="font-size:7.9pt">https://github.com/ultralytics/ultralytics/issues/19390</span></li>
+<li><span style="font-size:7.9pt">https://github.com/yhlleo/DeepCrack</span></li>
+<li><span style="font-size:7.9pt">https://github.com/zsiki/Find-GCP</span></li>
+<li><span style="font-size:7.9pt">https://lightwarelidar.com/collections/lidar-rangefinders</span></li>
+<li><span style="font-size:7.9pt">https://lightwarelidar.com/shop/sf11-c-100-m2/</span></li>
+<li><span style="font-size:7.9pt">https://lightwarelidar.com/wp-content/uploads/2025/07/SF11-Laser-Altimeter-Manual-Rev-10.pdf</span></li>
+<li><span style="font-size:7.9pt">https://mfe-is.com/product/voliro-t-ultrasonic-ndt-drone/</span></li>
+<li><span style="font-size:7.9pt">https://opencv.org/opencv-5/</span></li>
+<li><span style="font-size:7.9pt">https://opendronemap.org/findgcp/</span></li>
+<li><span style="font-size:7.9pt">https://robostore.com/products/livox-mid-360-lidar</span></li>
+<li><span style="font-size:7.9pt">https://robotomated.com/explore/drone/flyability-elios-3</span></li>
+<li><span style="font-size:7.9pt">https://support.skydio.com/hc/en-us/articles/27602226175259-Skydio-X10D-INTL-v34-1-114-11-June-2024</span></li>
+<li><span style="font-size:7.9pt">https://voliro.com/</span></li>
+<li><span style="font-size:7.9pt">https://www.agisoft.com/buy/online-store/</span></li>
+<li><span style="font-size:7.9pt">https://www.agisoft.com/buy/online-store/educational-license/</span></li>
+<li><span style="font-size:7.9pt">https://www.agisoftmetashape.com/how-to-add-a-scale-bar-in-agisoft-metashape-step-by-step-guide/</span></li>
+<li><span style="font-size:7.9pt">https://www.agisoftmetashape.com/how-to-place-markers-in-agisoft-metashape-a-step-by-step-guide/</span></li>
+<li><span style="font-size:7.9pt">https://www.agisoftmetashape.com/how-to-set-the-scale-in-agisoft-metashape-complete-guide/</span></li>
+<li><span style="font-size:7.9pt">https://www.agisoftmetashape.com/metashape-rtk-ppk-drones-how-to-maximize-accuracy-with-geotagged-photos/</span></li>
+<li><span style="font-size:7.9pt">https://www.cnx-software.com/2026/06/10/opencv-5-release-new-dnn-engine-with-enhanced-onnx-and-llm-vlm-support-intel-arm-and-risc-v-hardware-optimizations/</span></li>
+<li><span style="font-size:7.9pt">https://www.dfrobot.com/product-2725.html</span></li>
+<li><span style="font-size:7.9pt">https://www.digikey.com/en/products/detail/lightware-lidar-inc/SF30-D/15848663</span></li>
+<li><span style="font-size:7.9pt">https://www.dronenerds.com/products/parrot-anafi-ai-drone</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/blog/atti</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/blog/autonomous-indoor-drone</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/blog/gps-denied-drone</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/company-page/</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/distributors</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/elios-3</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/elios-3-price</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/elios-3-surveying-payload</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/news/elios-3-launch</span></li>
+<li><span style="font-size:7.9pt">https://www.flyability.com/trenchlessasia</span></li>
+<li><span style="font-size:7.9pt">https://www.livoxtech.com/mid-360/specs</span></li>
+<li><span style="font-size:7.9pt">https://www.originofbots.com/robot/anafi-usa-by-parrot-details-specifications-rating</span></li>
+<li><span style="font-size:7.9pt">https://www.parrot.com/en/open-source-drone-software</span></li>
+<li><span style="font-size:7.9pt">https://www.parrot.com/en/sdk-program</span></li>
+<li><span style="font-size:7.9pt">https://www.parrot.com/fr/drones/anafi-ai/technical-documentation/sdk</span></li>
+<li><span style="font-size:7.9pt">https://www.skydio.com/authorized-resellers</span></li>
+<li><span style="font-size:7.9pt">https://www.skydio.com/blog/drones-transform-bridge-inspections</span></li>
+<li><span style="font-size:7.9pt">https://www.skydio.com/blog/introducing-skydio-3d-scan</span></li>
+<li><span style="font-size:7.9pt">https://www.skydio.com/developer-tools</span></li>
+<li><span style="font-size:7.9pt">https://www.skydio.com/legal/supplier-code-of-conduct</span></li>
+<li><span style="font-size:7.9pt">https://www.skydio.com/software/3d-scan</span></li>
+<li><span style="font-size:7.9pt">https://www.skydio.com/software/extend-integrations/faq</span></li>
+<li><span style="font-size:7.9pt">https://www.skydio.com/solutions/bridge-inspection</span></li>
+<li><span style="font-size:7.9pt">https://www.skydio.com/x10/technical-specs</span></li>
+<li><span style="font-size:7.9pt">https://www.thedronegirl.com/2022/05/19/elios-3-drone-flyability/</span></li>
+<li><span style="font-size:7.9pt">https://www.ultralytics.com/license</span></li>
+<li><span style="font-size:7.9pt">https://www.unmannedsystemstechnology.com/company/voliro/voliro-t-uas/</span></li>
+<li><span style="font-size:7.9pt">https://www.unmannedsystemstechnology.com/feature/a-guide-to-ultrasonic-testing-with-voliro-t-drones/</span></li>
+<li><span style="font-size:7.9pt">https://zbotic.in/aruco-marker-detection-pose-estimation-with-opencv-python/</span></li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">แหล่งอื่น ๆ (บล็อก ผู้จำหน่าย และแหล่งทุติยภูมิ) <span class="muted small">(153)</span></h2>
+<ul class="refs">
+<li><span style="font-size:7.9pt">http://www.aerialroboticscompetition.org/assets/downloads/AprilTag_Identifiers.pdf</span></li>
+<li><span style="font-size:7.9pt">https://acroname.com/sites/default/files/assets/tf03_datasheet_v0.4_en.pdf</span></li>
+<li><span style="font-size:7.9pt">https://advexure.com/blogs/news/dji-matrice-4d-series-a-definitive-guide-for-enterprise-drone-operators</span></li>
+<li><span style="font-size:7.9pt">https://advexure.com/blogs/news/dji-zenmuse-h30t-everything-you-need-to-know</span></li>
+<li><span style="font-size:7.9pt">https://advexure.com/products/dji-matrice-4d-series-obstacle-sensing-module</span></li>
+<li><span style="font-size:7.9pt">https://ardupilot.org/copter/docs/common-vio-tracking-camera.html</span></li>
+<li><span style="font-size:7.9pt">https://ardupilot.org/dev/docs/ros-vio-tracking-camera.html</span></li>
+<li><span style="font-size:7.9pt">https://ascconline.org/Portals/ASCC/Files/Position%20Statements/PS-33_CracksInStructuralConcrete_09-11_Web_SC.pdf</span></li>
+<li><span style="font-size:7.9pt">https://ascelibrary.org/doi/10.1061/JAEEEZ.ASENG-6567</span></li>
+<li><span style="font-size:7.9pt">https://bmms.doh.go.th</span></li>
+<li><span style="font-size:7.9pt">https://calibvision.com/blog/charuco-camera-calibration-boards-complete-guide-best-practices-for-2025/</span></li>
+<li><span style="font-size:7.9pt">https://central.sonatype.com/artifact/com.dji/dji-sdk-v5-aircraft</span></li>
+<li><span style="font-size:7.9pt">https://certifiedmtp.com/crack-comparator-card/</span></li>
+<li><span style="font-size:7.9pt">https://certifiedmtp.com/crack-width-gauge-card-for-concrete/</span></li>
+<li><span style="font-size:7.9pt">https://checkthat.ai/brands/pix4d/pricing</span></li>
+<li><span style="font-size:7.9pt">https://copters.com/aero/ground_effect.html</span></li>
+<li><span style="font-size:7.9pt">https://coptrz.com/blog/from-ios-to-android-why-dji-dropped-ios-support-for-developers/</span></li>
+<li><span style="font-size:7.9pt">https://covertdrones.com/products/dji-al1-spotlight-for-matrice-4-series-enterprise-drone</span></li>
+<li><span style="font-size:7.9pt">https://culturalheritageimaging.org/What_We_Offer/Gear/Scale_Bars/ScaleBars_UG_v3.pdf</span></li>
+<li><span style="font-size:7.9pt">https://d-nb.info/1258959674/34</span></li>
+<li><span style="font-size:7.9pt">https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/EGIEBY</span></li>
+<li><span style="font-size:7.9pt">https://deepwiki.com/dji-sdk/Payload-SDK</span></li>
+<li><span style="font-size:7.9pt">https://digitalcommons.usu.edu/all_datasets/48/</span></li>
+<li><span style="font-size:7.9pt">https://dl.acm.org/doi/10.1007/s10846-020-01307-9</span></li>
+<li><span style="font-size:7.9pt">https://dl.acm.org/doi/10.1145/3731715.3733299</span></li>
+<li><span style="font-size:7.9pt">https://dl.djicdn.com/downloads/Matrice_400/DJI_E_Port_V2_Development_Kit_Product_Information.pdf</span></li>
+<li><span style="font-size:7.9pt">https://dl.djicdn.com/downloads/dji-terra/20240118/DJI_Terra_User_Manual_v4.0__EN.pdf</span></li>
+<li><span style="font-size:7.9pt">https://docs.modalai.com/voxl-dev-drones/</span></li>
+<li><span style="font-size:7.9pt">https://docs.openvins.com/</span></li>
+<li><span style="font-size:7.9pt">https://docs.px4.io/main/en/computer_vision/path_planning_interface</span></li>
+<li><span style="font-size:7.9pt">https://docs.px4.io/main/en/sensor/rangefinders</span></li>
+<li><span style="font-size:7.9pt">https://doh.go.th/uploads/tinymce/service/bid/doc_bid/bridge&amp;box.pdf</span></li>
+<li><span style="font-size:7.9pt">https://drone-laws.com/drone-laws-in-thailand/</span></li>
+<li><span style="font-size:7.9pt">https://dronedj.com/2023/11/30/dji-ios-sdk-android-app/</span></li>
+<li><span style="font-size:7.9pt">https://droneflyingpro.com/what-is-drone-atti-mode/</span></li>
+<li><span style="font-size:7.9pt">https://dronelife.com/2024/10/15/sph-engineering-unveils-circlegrammetry-a-new-approach-to-drone-photogrammetry/</span></li>
+<li><span style="font-size:7.9pt">https://dronesgator.com/how-to-unlock-dji-geofencing</span></li>
+<li><span style="font-size:7.9pt">https://eureka.patsnap.com/article/handling-textureless-surfaces-in-photogrammetry-pattern-projection-techniques</span></li>
+<li><span style="font-size:7.9pt">https://everse.in/blogs/DJI-Introduction-to-the-Aircraft-Obstacle-Avoidance-System</span></li>
+<li><span style="font-size:7.9pt">https://f1000research.com/articles/13-1479</span></li>
+<li><span style="font-size:7.9pt">https://fh.dji.com/user-manual/en/release-notes/release-notes-private.html</span></li>
+<li><span style="font-size:7.9pt">https://forum.dji.com/thread-116825-1-1.html</span></li>
+<li><span style="font-size:7.9pt">https://forum.flylitchi.com/t/can-someone-confirm-these-specs-for-teh-dji-mini-4-pro/16512</span></li>
+<li><span style="font-size:7.9pt">https://framos.com/news/intel-realsense-discontinues-lidar-fa-and-tracking-product-lines-focuses-on-stereo-vision/</span></li>
+<li><span style="font-size:7.9pt">https://globaldronehq.com/products/dji-e-port-development-kit</span></li>
+<li><span style="font-size:7.9pt">https://help.dronedeploy.com/hc/en-us/articles/1500004861241-Vertical-Facade-Flight</span></li>
+<li><span style="font-size:7.9pt">https://help.dronedeploy.com/hc/en-us/articles/1500004964882-Safety-Considerations-and-Avoiding-Flyaways</span></li>
+<li><span style="font-size:7.9pt">https://help.dronedeploy.com/hc/en-us/articles/34166031393559-Understanding-Obstacle-Avoidance</span></li>
+<li><span style="font-size:7.9pt">https://help.propelleraero.com/hc/en-us/articles/19384415429911-How-to-Plan-a-3D-Oblique-Mission-with-DJI-Pilot-2</span></li>
+<li><span style="font-size:7.9pt">https://help.propelleraero.com/hc/en-us/articles/19384545634711-How-to-Plan-a-Linear-Mission-Using-DJI-Pilot-2</span></li>
+<li><span style="font-size:7.9pt">https://help.propelleraero.com/hc/en-us/articles/19384883356439-How-to-Plan-a-Terrain-Follow-Mission-with-DJI-Pilot-2</span></li>
+<li><span style="font-size:7.9pt">https://innolitics.com/articles/bland-altman-analysis-best-practices-faqs-and-examples/</span></li>
+<li><span style="font-size:7.9pt">https://inspirepilots.com/threads/indoor-flight-stability-issues.1836/</span></li>
+<li><span style="font-size:7.9pt">https://iopscience.iop.org/article/10.1088/1361-6501/ae65c2</span></li>
+<li><span style="font-size:7.9pt">https://irlock.com/products/tf03-lidar-rangefinder-180m</span></li>
+<li><span style="font-size:7.9pt">https://it24hrs.com/2026/drone-regulation-2569/</span></li>
+<li><span style="font-size:7.9pt">https://journals.sagepub.com/doi/10.1177/14759217251348275</span></li>
+<li><span style="font-size:7.9pt">https://km.doh.go.th/km-web/public/infographic/7ovmUJclKb</span></li>
+<li><span style="font-size:7.9pt">https://lcrig.org.uk/2025/10/22/confined-space-drone-technology-used-for-bridge-soffit-and-cross-bracing-inspections/</span></li>
+<li><span style="font-size:7.9pt">https://manuals-ugcs.sphengineering.com/docs/circlegrammetry-area</span></li>
+<li><span style="font-size:7.9pt">https://manuals-ugcscompanion.sphengineering.com/docs/obstacle-avoidance</span></li>
+<li><span style="font-size:7.9pt">https://metricop.com/collections/reflective-survey-targets</span></li>
+<li><span style="font-size:7.9pt">https://mydroneauthority.com/what-to-do-when-you-get-a-compass-error-in-the-middle-of-a-flight/</span></li>
+<li><span style="font-size:7.9pt">https://petapixel.com/2023/11/29/dji-mini-4-pro-review-ultra-light-without-compromises/</span></li>
+<li><span style="font-size:7.9pt">https://phantompilots.com/threads/how-to-fly-under-bridge-or-thru-tunnel-with-no-gps.152888/</span></li>
+<li><span style="font-size:7.9pt">https://reboot-hub.com/blogs/support-learning/dji-obstacle-avoidance-guide</span></li>
+<li><span style="font-size:7.9pt">https://repair.dji.com/help/content?customId=01700005092&amp;spaceId=17&amp;re=US&amp;lang=en&amp;documentType=&amp;paperDocType=ARTICLE</span></li>
+<li><span style="font-size:7.9pt">https://roboticsknowledgebase.com/wiki/sensing/fiducial-markers/</span></li>
+<li><span style="font-size:7.9pt">https://seed-net.org/development-of-upgrading-systems-for-structural-performances-of-existing-concrete-bridges-in-thailand/</span></li>
+<li><span style="font-size:7.9pt">https://shop.coptrz.com/blogs/news/dji-enterprise-app-v2-5-3-pilot-2-app-v17-1-5-14-update</span></li>
+<li><span style="font-size:7.9pt">https://shop.luxonis.com/products/oak-d-pro-w</span></li>
+<li><span style="font-size:7.9pt">https://skydiopilots.com/threads/skydio-sdk-access-has-anyone-got-trialed-it.567/</span></li>
+<li><span style="font-size:7.9pt">https://stepgrad.aggf.unibl.org/article/145/pdf</span></li>
+<li><span style="font-size:7.9pt">https://store.dji.com/product/dji-skyport-adapter-set-v2</span></li>
+<li><span style="font-size:7.9pt">https://store.hp-drones.com/en/dji-matrice-300-rtk/1900-D961945-6941565961945.html</span></li>
+<li><span style="font-size:7.9pt">https://studylib.net/doc/27964637/aci-224r-01</span></li>
+<li><span style="font-size:7.9pt">https://support.dji.com/help/content?customId=01700000763&amp;documentType=&amp;lang=en&amp;paperDocType=ARTICLE&amp;re=US&amp;spaceId=17</span></li>
+<li><span style="font-size:7.9pt">https://support.dji.com/help/content?customId=en-us03400004973&amp;spaceId=34&amp;re=US&amp;lang=en&amp;documentType=artical&amp;paperDocType=paper</span></li>
+<li><span style="font-size:7.9pt">https://support.dronelink.com/hc/en-us/articles/26107953807507-Obstacle-Avoidance-Support-and-Commands</span></li>
+<li><span style="font-size:7.9pt">https://support.dronelink.com/hc/en-us/articles/4411563374099-Basic-Facades-Vertical-Mapping-Facade-Mission-Component</span></li>
+<li><span style="font-size:7.9pt">https://support.dronesmadeeasy.com/hc/en-us/articles/208235483-Motion-Blur-and-Automatic-Light-based-Speed-Adjustment</span></li>
+<li><span style="font-size:7.9pt">https://support.geocue.com/determine-shutter-interval/</span></li>
+<li><span style="font-size:7.9pt">https://support.pix4d.com/hc/en-us/articles/202557459</span></li>
+<li><span style="font-size:7.9pt">https://support.pix4d.com/hc/en-us/articles/202559889</span></li>
+<li><span style="font-size:7.9pt">https://support.pix4d.com/hc/en-us/articles/205319155</span></li>
+<li><span style="font-size:7.9pt">https://t2d2.ai/blog/harnessing-photogrammetry-revolutionizing-building-facade-inspection-with-drones</span></li>
+<li><span style="font-size:7.9pt">https://uavcoach.com/bridge-drone/</span></li>
+<li><span style="font-size:7.9pt">https://uavcoach.com/elios-3/</span></li>
+<li><span style="font-size:7.9pt">https://unisvalbard.github.io/Geo-SfM/content/lessons/georeferencing/markers.html</span></li>
+<li><span style="font-size:7.9pt">https://wiki.opensourceecology.org/images/8/8c/ACI_224R-01_Control_of_Cracking_in_Concrete_Structures_f224R(01)Chap3.pdf</span></li>
+<li><span style="font-size:7.9pt">https://www.3m.com/3M/en_US/vhb-tapes-us/</span></li>
+<li><span style="font-size:7.9pt">https://www.academia.edu/78561276/Development_of_Computer_Applications_for_Bridge_Management_System</span></li>
+<li><span style="font-size:7.9pt">https://www.amazon.com/LKTOP-Enterprise-Accessories-Anti-Collision-Searchlight/dp/B0FC31GMQX</span></li>
+<li><span style="font-size:7.9pt">https://www.amazon.com/MiiElAOD-RealSense-Depth-Camera-D555/dp/B0FXFT9G9G</span></li>
+<li><span style="font-size:7.9pt">https://www.buildera.com/crackmon-224r-crack-width-comparator</span></li>
+<li><span style="font-size:7.9pt">https://www.cambridge.org/core/journals/aeronautical-journal/article/abs/thrust-variations-in-small-rotors-due-to-corner-and-vertex-effects-on-the-ground-side/8911E46BD8E206E9AEDD05B21A0E34A9</span></li>
+<li><span style="font-size:7.9pt">https://www.concrete.org/Portals/0/Files/PDF/224R_01Ch3.pdf</span></li>
+<li><span style="font-size:7.9pt">https://www.concrete.org/frequentlyaskedquestions.aspx?faqid=855</span></li>
+<li><span style="font-size:7.9pt">https://www.djibangkok.com/shop/dji-matrice-4e/</span></li>
+<li><span style="font-size:7.9pt">https://www.doh.go.th/</span></li>
+<li><span style="font-size:7.9pt">https://www.dronepilotgroundschool.com/dji-unlocking-geofence/</span></li>
+<li><span style="font-size:7.9pt">https://www.dslrpros.com/blogs/drone-trends/all-about-the-dji-mavic-3-enterprise-series</span></li>
+<li><span style="font-size:7.9pt">https://www.ebay.com/itm/306463591074</span></li>
+<li><span style="font-size:7.9pt">https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-650/subpart-C</span></li>
+<li><span style="font-size:7.9pt">https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/05311.pdf</span></li>
+<li><span style="font-size:7.9pt">https://www.flexfireleds.com/other-accessories/3m-vhb-adhesive-mounting-tape-for-aluminum-3m-brand-5915</span></li>
+<li><span style="font-size:7.9pt">https://www.geocadra.com/en/standards/fhwa-nbis-snbi</span></li>
+<li><span style="font-size:7.9pt">https://www.gim-international.com/content/article/oblique-airborne-photogrammetry-2</span></li>
+<li><span style="font-size:7.9pt">https://www.globalgilson.com/blog/concrete-cracking</span></li>
+<li><span style="font-size:7.9pt">https://www.hammermissions.com/post/overlap-in-drone-mapping</span></li>
+<li><span style="font-size:7.9pt">https://www.hammermissions.com/post/preventing-motion-blur-in-drone-photogrammetry-flights</span></li>
+<li><span style="font-size:7.9pt">https://www.heliguy.com/blogs/posts/automatic-gcp-marking-workflow-in-dji-terra/</span></li>
+<li><span style="font-size:7.9pt">https://www.heliguy.com/blogs/posts/dji-mavic-4-pro-review/</span></li>
+<li><span style="font-size:7.9pt">https://www.heliguy.com/blogs/posts/dji-x-port-opening-the-door-to-fast-payload-to-drone-integration/</span></li>
+<li><span style="font-size:7.9pt">https://www.heliguy.com/blogs/posts/transform-3d-modelling-with-dji-matrice-4e/</span></li>
+<li><span style="font-size:7.9pt">https://www.imavs.org/papers/2024/37.pdf</span></li>
+<li><span style="font-size:7.9pt">https://www.intel.com/content/www/us/en/content-details/807360/select-intel-realsense-tracking-camera-t265-intel-realsense-id-solution-f450-intel-realsense-lidar-camera-l515-intel-realsense-id-solution-f455-pcn-807360-01-product-discontinuance-end-of-life.html</span></li>
+<li><span style="font-size:7.9pt">https://www.intelrealsense.com/intel-realsense-d455-depth-camera/</span></li>
+<li><span style="font-size:7.9pt">https://www.jouav.com/blog/ground-sample-distance.html</span></li>
+<li><span style="font-size:7.9pt">https://www.jstage.jst.go.jp/article/jsceiii/6/3/6_479/_article/-char/en</span></li>
+<li><span style="font-size:7.9pt">https://www.jstage.jst.go.jp/article/jsceiii/6/3/6_976/_article/-char/en</span></li>
+<li><span style="font-size:7.9pt">https://www.medcalc.org/en/manual/bland-altman-plot.php</span></li>
+<li><span style="font-size:7.9pt">https://www.modalai.com/pages/vio-drone</span></li>
+<li><span style="font-size:7.9pt">https://www.modalai.com/products/starling-2-max</span></li>
+<li><span style="font-size:7.9pt">https://www.modalai.com/products/voxl-2</span></li>
+<li><span style="font-size:7.9pt">https://www.nationthailand.com/news/general/40066155</span></li>
+<li><span style="font-size:7.9pt">https://www.nature.com/articles/s41598-026-50880-w</span></li>
+<li><span style="font-size:7.9pt">https://www.ntnu.no/blogger/richard-hann/2021/10/07/preventing-motion-blur-in-drone-mapping/</span></li>
+<li><span style="font-size:7.9pt">https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/nano-super-developer-kit</span></li>
+<li><span style="font-size:7.9pt">https://www.oregon.gov/odot/Programs/ResearchDocuments/SPR787_Eyes_in_the_Sky.pdf</span></li>
+<li><span style="font-size:7.9pt">https://www.pix-pro.com/blog/vertical-photogrammmetry</span></li>
+<li><span style="font-size:7.9pt">https://www.pix4d.com/blog/3d-models-choose-angle-between-images-circular-missions</span></li>
+<li><span style="font-size:7.9pt">https://www.pix4d.com/blog/facade-inspection-pix4dmapper-orthoplane</span></li>
+<li><span style="font-size:7.9pt">https://www.pix4d.com/pricing/pix4dmapper/</span></li>
+<li><span style="font-size:7.9pt">https://www.planetcomm.com/news/planet-skydio-drontech24/</span></li>
+<li><span style="font-size:7.9pt">https://www.propelleraero.com/blog/quality-drone-data-part-3-walls-faces-overhangs/</span></li>
+<li><span style="font-size:7.9pt">https://www.quadrotor.co.uk/store-all/p/dji-payload-sdk-skyport-20</span></li>
+<li><span style="font-size:7.9pt">https://www.realityscan.com/license</span></li>
+<li><span style="font-size:7.9pt">https://www.realsenseai.com/news-insights/news/realsense-completes-spin-out-from-intel-raises-50-million-to-accelerate-ai-powered-vision-for-robotics-and-biometrics/</span></li>
+<li><span style="font-size:7.9pt">https://www.skyebrowse.com/news/posts/ground-sample-distance</span></li>
+<li><span style="font-size:7.9pt">https://www.skyebrowse.com/news/posts/gsd-calculator</span></li>
+<li><span style="font-size:7.9pt">https://www.space.com/technology/drones/obstacle-avoidance-what-is-it-how-to-use-it-effectively-and-when-it-might-fail</span></li>
+<li><span style="font-size:7.9pt">https://www.structuremag.org/article/fracture-critical-bridge-inspection/</span></li>
+<li><span style="font-size:7.9pt">https://www.techradar.com/cameras/drones/goodbye-dji-us-army-makes-biggest-ever-single-order-of-3-000-skydio-drones-worth-usd52-million-and-theres-one-obvious-reason-why</span></li>
+<li><span style="font-size:7.9pt">https://www.terrestrialimaging.com/blogs/news/dji-terra-in-2026-versions-pricing-and-whats-new</span></li>
+<li><span style="font-size:7.9pt">https://www.thailanddroneinsurance.com/fly-legally-in-thailand/drone-laws-2026</span></li>
+<li><span style="font-size:7.9pt">https://www.thedroneu.com/blog/tips-and-tricks-that-will-help-you-avoid-a-drone-crash/</span></li>
+<li><span style="font-size:7.9pt">https://www.thefuture3d.com/software/dji-terra/</span></li>
+<li><span style="font-size:7.9pt">https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-launches-new-usd249-ai-development-board-that-does-67-tops</span></li>
+<li><span style="font-size:7.9pt">https://www.toolivance.com/guides/how-to-print-actual-size</span></li>
+<li><span style="font-size:7.9pt">https://www.unrealengine.com/en-US/blog/we-are-updating-unreal-engine-twinmotion-and-realitycapture-pricing-in-late-april</span></li>
+<li><span style="font-size:7.9pt">https://www.yotathai.com/yotanews/check-bridge55</span></li>
+<li><span style="font-size:7.9pt">https://zju3dv.github.io/DetectorFreeSfM/</span></li>
+</ul>
+
+<h1 class="nonum">ภาคผนวก ง. — คำถามที่ยังไม่มีคำตอบ</h1>
+<p class="small muted">รายการนี้คือสิ่งที่ค้นแล้วยังยืนยันไม่ได้ในรอบนี้ — บันทึกไว้เพื่อไม่ให้ถูกลืม และเพื่อไม่ให้ใครเข้าใจผิดว่าเอกสารนี้ตอบครบทุกข้อ ทุกข้อระบุว่าต้องไปตรวจสอบที่ไหน</p>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">การวัดระยะ <span class="muted small">(16 ข้อ)</span></h2><ul class="small">
+<li>Update rate (Hz) ของ laser rangefinder บน Zenmuse H20/H20T/H20N, H30/H30T และ M30/M30T — DJI ไม่ระบุในหน้า spec สาธารณะ ต้องขอ OEM datasheet จาก DJI Enterprise support หรือดูคู่มือ PDF จากหน้า Downloads ของแต่ละ payload</li>
+<li>Beam divergence ของ LRF บน Matrice 4 series และ Zenmuse H20 series — มีเฉพาะ H30 ที่ประกาศ spot size (50×450 mm @100 m) ส่วน H20 ให้แค่ reference aperture 18×18 mm ซึ่งไม่ใช่ divergence</li>
+<li>สเปก LRF ที่แท้จริงของ Matrice 4D/4TD (measurement range, blind zone, accuracy formula, update rate) — หน้า enterprise.dji.com/matrice-4d-series/specs redirect เสียตอนค้น (ส.ค. 2026) ตัวเลข 1,800 m มาจากแหล่งขาย ไม่ใช่ DJI โดยตรง</li>
+<li>อัตราอัปเดต (Hz) จริงของ ObstacleData และ PerceptionInfo listener ใน MSDK V5 — เอกสาร API ไม่ระบุเลย ต้องวัดเองด้วยการนับ callback บนเครื่องจริง (ใช้ PerceptionFragment.kt ใน SampleCode-V5)</li>
+<li>Accuracy ของ vision obstacle sensing (binocular) ทุกรุ่น — DJI ไม่เคยประกาศ มีแต่ range/FOV ต้องทำ characterization เองเทียบกับ total station หรือ reference rangefinder</li>
+<li>GitHub issue #368: targetPoint (0–1000) ของ laser API ไม่ทำให้ค่าระยะเปลี่ยน และ default เป็น (50,50) ไม่ใช่ (500,500) — ยังไม่มีคำตอบจาก DJI ต้องทดสอบเองว่าเลเซอร์เล็งตาม targetPoint ได้จริงหรือเล็งกลาง gimbal เสมอ</li>
+<li>PSDK มี channel ให้ payload ป้อนค่าระยะกลับเข้า flight controller เพื่อทำ closed-loop standoff hold หรือไม่ (แบบ rangefinder ของ PX4/ArduPilot) — ต้องตรวจใน PSDK API reference หมวด data subscription + flight control ก่อนตัดสินใจซื้อฮาร์ดแวร์</li>
+<li>Minimum focus distance ของกล้อง zoom บน Zenmuse H30/H30T ที่ระยะโฟกัสสุด (809.3 mm equiv) — ถ้าโฟกัสใกล้สุดไกลกว่า 10 m แผนถ่ายที่ 10–20 m ต้องปรับใหม่</li>
+<li>ผลกระทบจริงของ quad-Bayer บนเซ็นเซอร์ 48 MP ขนาด 1/1.3&quot; และ 1/1.5&quot; ต่อ effective resolution — คาดว่าใกล้ 12 MP มากกว่า 48 MP ทำให้ GSD ใช้งานจริงแย่กว่าที่คำนวณราว 2 เท่า ต้องทดสอบด้วย resolution chart (USAF 1951 / Siemens star) ที่ 3, 5, 10 m</li>
+<li>Minimum detection range ของ Zenmuse L1 และ Zenmuse L3 — หน้า spec โหลดไม่ครบ (L2 ระบุชัดที่ 3 m)</li>
+<li>ยืนยันตัวเลข &quot;RTK fix ล้มเหลวในระยะ 0–5 m จากสิ่งกีดขวาง และ re-fix 9–13 วินาที&quot; ในเปเปอร์ต้นฉบับ (น่าจะอยู่ใน Drones 2026, 10(2), 91) ก่อนอ้างในเล่มวิทยานิพนธ์ — ปัจจุบันมาจากบทสรุปการค้น ไม่ใช่ full text</li>
+<li>ยืนยันตัวเลข &quot;error &lt; 10% สำหรับรอยแตกบางกว่า 0.2 mm&quot; ของงาน four-point laser (Automation in Construction 2026, Vol.182) — paywall ต้องเข้าถึงผ่านห้องสมุด ม.เกษตรฯ พร้อมดูว่าใช้ laser รุ่นอะไร ระยะบินเท่าไหร่ กล้องอะไร</li>
+<li>Accuracy, resolution, beam divergence และน้ำหนักของ Benewake TF03 และ LightWare SF30/C, SF30/D, LW20/C — datasheet PDF อ่านอัตโนมัติไม่ได้ ต้องเปิดเอง</li>
+<li>ราคาปัจจุบันของ DJI X-Port และ E-Port V2 ในไทย และ compatibility กับ M400 / M4 series — ต้องถามตัวแทนจำหน่าย DJI Enterprise</li>
+<li>ข้อความข้อจำกัด obstacle sensing (texture, แสง, ผิวสะท้อน) ที่อ้างในรายงานนี้มาจากแหล่งสรุปที่สาม ไม่ใช่คู่มือ DJI ตัวจริง — ต้องตรวจซ้ำในคู่มือ PDF ของแต่ละรุ่นก่อนอ้างในเล่ม</li>
+<li>Payload capacity ของ Matrice 4 series คือ 200 g — LightWare SF11/C 4 ตัว = 140 g บวก mounting/สายไฟ/คอมพิวเตอร์ อาจเกินพิกัด ต้องชั่งจริงหรือย้ายไปแพลตฟอร์ม M350/M400</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">แพลตฟอร์มทางเลือก <span class="muted small">(15 ข้อ)</span></h2><ul class="small">
+<li>DJI Matrice 4E/4T เขียนค่า laser rangefinder distance ลงใน XMP metadata ของไฟล์ภาพหรือไม่ (field ประมาณ drone-dji:LRFTargetDistance / LRFStatus) — หาเอกสารยืนยันไม่เจอ วิธีเช็คที่เร็วที่สุดคือถ่ายภาพจริงแล้วรัน `exiftool -a -G1 IMG.JPG | grep -i lrf` ข้อนี้ตัดสินทิศทางทั้งโปรเจกต์ ควรทำเป็นอย่างแรก</li>
+<li>ราคา Skydio X10 (ไม่ใช่ X10D) แบบ enterprise 1 ลำสำหรับสถาบันการศึกษาไทยเท่าไหร่ และขายให้มหาวิทยาลัยไทยได้หรือไม่ ติดข้อจำกัด EAR/ITAR อะไรบ้าง lead time เท่าไหร่ — ต้องถาม PlanetComm โดยตรง</li>
+<li>Skydio Skills SDK เปิดให้สถาบันการศึกษาเข้าถึงในรูปแบบใดได้บ้าง (academic/research license) — แหล่งเดียวที่มีคือฟอรัมผู้ใช้ ความน่าเชื่อถือต่ำ ต้องถาม Skydio ยืนยัน</li>
+<li>Flyability ไม่ประกาศตัวเลข position hold accuracy, SLAM drift (เช่น m ต่อ 100 m) หรือระยะรักษาจากผนังของ Elios 3 เลย — ถ้าจะอ้างเชิงวิชาการต้องขอ accuracy report จาก Flyability หรือหางานวิจัยอิสระที่ทดสอบ Elios 3</li>
+<li>ราคาจริงของ Elios 3 จากแหล่งปฐมภูมิ — ตัวเลข $25,000 มาจากเว็บรีวิวทุติยภูมิ Flyability เองไม่ประกาศราคา</li>
+<li>Skydio 3D Scan ใช้ minimum standoff distance เท่าไหร่จริง และ scan volume สูงสุดเท่าไหร่ — ไม่ระบุในหน้าเว็บใด ๆ ต้องขอ datasheet</li>
+<li>สถานะสายผลิตภัณฑ์ Parrot ANAFI Ai ปี 2025–2026 (ยังผลิต/ซัพพอร์ตอยู่หรือไม่) ข้อมูลที่หาได้ส่วนใหญ่เป็นของปี 2021–2022 — ต้องถาม Parrot โดยตรง</li>
+<li>ราคา Parrot ANAFI Ai / ANAFI USA — Parrot ห้ามผู้ขายโฆษณาราคาออนไลน์ ต้อง login ถึงเห็น และไม่พบตัวแทนในไทย</li>
+<li>ราคา Voliro T แบบซื้อขาดหรือค่าเช่าต่อเดือน/ปี — ไม่เปิดเผยสาธารณะเลย ต้องขอใบเสนอราคาโดยตรง</li>
+<li>ราคาจริงของ Livox Mid-360 — RoboStore ประกาศ $4,275 ซึ่งสูงผิดปกติเทียบราคาที่พูดถึงกันทั่วไป ควรเทียบอย่างน้อย 3 ร้าน + สอบถามตัวแทน Livox</li>
+<li>ราคาปัจจุบันของ Intel/RealSense D455 — store.intelrealsense.com เข้าไม่ได้ตอนค้น (timeout) ต้องเช็คที่ store.realsenseai.com หรือ Mouser/DigiKey</li>
+<li>ModalAI ส่ง Starling 2 Max มาไทยได้หรือไม่ ติด export control อะไรบ้าง (เป็นสินค้า NDAA-compliant ผลิตในสหรัฐ) — ต้องถาม ModalAI sales ก่อนตั้งงบ</li>
+<li>อัตราแลกเปลี่ยน THB/USD และภาษีนำเข้า + VAT 7% สำหรับโดรน/กล้อง/LiDAR เข้าไทย — ยังไม่ได้ตรวจสอบ กระทบงบประมาณโดยตรง</li>
+<li>โดรนที่ ม.เกษตร / ทีมวิจัยมีอยู่จริงคือรุ่นอะไร มีกล้อง tele หรือไม่ มี laser rangefinder หรือไม่ — ข้อนี้เปลี่ยนคำแนะนำทั้งหมด ควรตรวจสอบก่อนตัดสินใจซื้ออะไร</li>
+<li>สะพาน/เสาตอม่อที่จะใช้ทดลองอยู่ในรัศมี 9 km จากสนามบินหรือไม่ และต้องขออนุญาต CAAT แบบ Specific Category หรือไม่ (กฎใหม่มีผล 17 พ.ค. 2026)</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">DJI SDK <span class="muted small">(11 ข้อ)</span></h2><ul class="small">
+<li>Bandwidth จริงของ E-Port / E-Port V2 / SkyPort V3 (Mbps) — ไม่พบตัวเลขทางการ ต้องเปิด https://developer.dji.com/doc/payload-sdk-tutorial/en/model-instruction/choose-hardware-platform.html ในเบราว์เซอร์จริง (หน้า render ด้วย JS ดึงผ่าน HTTP ธรรมดาไม่ได้) หรือถาม DJI SDK support โดยตรง</li>
+<li>ราคา E-Port V2 Development Kit / SkyPort V2 Adapter Set / X-Port — ผู้ขายส่วนใหญ่ไม่ประกาศราคาสาธารณะ (บางรายระบุว่า DJI ห้ามโฆษณาราคา) ต้องติดต่อ dealer ที่ได้รับอนุญาตในไทย</li>
+<li>minSdkVersion / JDK / Gradle version ที่ MSDK 5.18.0 ต้องใช้ — README ไม่ระบุ ต้องดู build.gradle ใน SampleCode-V5/android-sdk-v5-sample/</li>
+<li>ชื่อคลาสจริงของ RTK manager, LiveStream manager, Media manager ใน MSDK V5 — URL API reference ที่เดาไว้ตอบ 404 ต้องเปิดจากซอร์ส RTKCenterFragment.kt / LiveFragment.kt / MediaFragment.kt ใน repo</li>
+<li>LiveStream protocol ที่ MSDK V5 รองรับจริง (RTMP / RTSP / GB28181 / Agora) — ยังไม่ได้ยืนยันจากเอกสารทางการในรอบนี้</li>
+<li>MSDK V5 เปิด raw GNSS observables (pseudorange / carrier phase) สำหรับทำ PPK เองหรือไม่ — เชื่อว่าไม่ แต่ยังไม่ยืนยัน ต้องตรวจใน RTKCenterFragment.kt</li>
+<li>มาตรฐาน C ที่ PSDK V3 ต้องการ (C99 / C11) — ต้องดู CMakeLists.txt ใน repo dji-sdk/Payload-SDK</li>
+<li>กระบวนการ certification / partner agreement สำหรับผลิต PSDK payload เชิงพาณิชย์ — ไม่พบเอกสารสาธารณะ ต้องติดต่อ DJI SDK support</li>
+<li>sensor pixel pitch และ focal length ของกล้อง M4E/M3E เพื่อคำนวณ GSD — ต้องดึงจาก spec sheet ทางการของแต่ละรุ่นโดยตรง อย่าใช้ตัวเลขประมาณ</li>
+<li>ระยะบินขั้นต่ำที่ปลอดภัยจริงสำหรับตรวจรอยแตกเสาตอม่อ และ GSD ที่ต้องการต่อความกว้างรอยแตกตามเกณฑ์ BMMS/T-BHI — ไม่มีค่ามาตรฐานอ้างอิงได้ ต้อง validate ด้วย dataset ของโครงการเอง (น่าจะเป็น contribution หนึ่งของ thesis)</li>
+<li>กฎหมายไทย: การบินใกล้โครงสร้างสาธารณะ/สะพาน ต้องขออนุญาต กสทช. + CAAT อย่างไร และมี restricted zone ทับซ้อนหรือไม่ — อยู่นอกขอบเขตการค้นรอบนี้ ต้องตรวจกับ CAAT ก่อนบินจริง</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">marker / มาตราส่วน <span class="muted small">(10 ข้อ)</span></h2><ul class="small">
+<li>เกณฑ์ความกว้างรอยแตก (mm) และจำนวนระดับ condition rating ใน &#x27;คู่มือการสำรวจและตรวจสอบสะพาน&#x27; ของกรมทางหลวง (382 หน้า จัดทำโดย ม.เกษตรศาสตร์) — โหลดไม่ได้ผ่านเว็บ ต้องดาวน์โหลด PDF เอง นี่คือช่องว่างใหญ่ที่สุดสำหรับบริบทไทย และจำเป็นต่อการ map ค่า mm ที่วัดได้ -&gt; T-BHI</li>
+<li>DJI ระบุ FOV ของ Matrice 4T แค่ &#x27;82 องศา&#x27; โดยไม่บอกว่าเป็น DFOV หรือ HFOV — ตาราง GSD ใน §3.4 คำนวณโดยสมมติเป็น DFOV ถ้าเป็น HFOV ค่าจะผิด ~25% วิธีตรวจ: ถ่ายไม้บรรทัดที่ระยะวัดจริง 2.00 m แล้วนับ pixel</li>
+<li>Matrice 4 Series รองรับ Waypoint 3.0 ผ่าน Mobile SDK v5 หรือไม่ — เอกสาร DJI ที่ค้นเจอระบุรองรับเฉพาะ Matrice 30 Series / Mavic 3 Enterprise Series / Matrice 3D-3TD ถ้า M4 ยังไม่รองรับ ต้องพิจารณา Mavic 3E แทนสำหรับงานเขียนโปรแกรมบินเอง</li>
+<li>รายละเอียดตัวเลขของ Germanese et al. 2018 (J. Imaging 4(8) 99) — ขนาด marker เป็น mm, รุ่น UAV, ระยะบิน, และ error ที่รายงาน — MDPI คืน HTTP 403 ตอน fetch ต้องโหลด PDF open-access เอง</li>
+<li>ตัวเลข error เป็น % ของ Yoon et al. &#x27;Feasibility Study for the Fine Crack Width Estimation of Concrete Structures Based on Fiducial Markers&#x27; (IEEE 9583237) — paywall ต้องเข้าผ่าน IEEE Xplore ของ ม.เกษตร งานนี้สำคัญเพราะสรุปว่า &#x27;จำนวน pixel สำคัญกว่า GSD&#x27;</li>
+<li>ตัวเลขเปรียบเทียบ ChArUco vs checkerboard (repeatability +/-0.03 mm vs +/-0.08 mm, ใช้ภาพน้อยกว่า 50%) มาจาก blog ของผู้ขายกระดาน calibration ไม่ใช่ peer-reviewed — อย่าอ้างในเล่มจบโดยไม่ทดลองเอง</li>
+<li>ตัวเลขจาก arXiv:2509.17345 (marker 100mm -&gt; detect ได้ 3.5 m ฯลฯ) สกัดจาก PDF 9MB ด้วยโมเดลเล็ก และ abstract ไม่ยืนยัน — ต้องเปิด PDF อ่านตารางจริงก่อนอ้าง</li>
+<li>lens distortion ที่ขอบภาพของ Matrice 4T (ประมาณไว้ 2-5%) ไม่มีแหล่งอ้างอิงเฉพาะรุ่น — ต้อง calibrate เองแล้วคำนวณ r_distorted/r ที่ขอบภาพจากค่า k1/k2</li>
+<li>รายละเอียด four-point laser metric calibration (Automation in Construction S0926580526000154) — ScienceDirect คืน 403 ยังไม่ทราบความแม่นที่รายงาน ทั้งที่เป็นทางเลือกโดยตรงของ marker เมื่อติด marker ไม่ได้</li>
+<li>overlap ที่เหมาะสมสำหรับ stitching ระยะใกล้บนผิวคอนกรีต (ผมใช้ค่าทั่วไป 80% forward / 60% side) ยังไม่มีแหล่งอ้างอิงเฉพาะงาน crack inspection — งบ WebSearch หมดก่อนค้นได้</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">pipeline <span class="muted small">(12 ข้อ)</span></h2><ul class="small">
+<li>Effective resolution จริงของโหมด 48 MP บนเซนเซอร์ quad-Bayer ของ DJI ยังไม่ยืนยัน — ต้องวัดเองด้วย Siemens star / USAF 1951 target ใน Phase 0 ตัวเลข GSD ทั้งหมดในรายงานนี้เป็น nominal ถ้า effective ต่ำกว่า nominal 1.4x ต้องคูณระยะบิน D ด้วย 1/1.4</li>
+<li>Actual focal length ของ DJI Mini 4 Pro (6.72 mm) และ Mavic 4 Pro ทุกเลนส์ ยังไม่ยืนยัน — DJI ไม่ประกาศในหน้า specs (ตรวจสอบแล้ว) ตัวเลข 6.72 mm มาจากฟอรัม/รีวิว จึงใช้ฟอร์ม FOV แทนในรายงานนี้ ถ้าต้องการยืนยันให้อ่านจาก EXIF ของภาพจริง (FocalLength tag)</li>
+<li>ขนาดเซนเซอร์เป็น mm ของฟอร์แมต 1/1.3&quot; และ 1/1.5&quot; ยังไม่ยืนยัน — แหล่งอ้างอิงให้ค่าขัดกัน (9.6x7.2 vs 9.8x7.3 mm) ต้องดู datasheet ของเซนเซอร์รุ่นจริง (น่าจะเป็น Sony IMX ตระกูลหนึ่ง) หรือคำนวณย้อนจาก EXIF FocalLengthIn35mmFilm</li>
+<li>DJI Matrice 4E/4T ไม่ประกาศ FOV ของกล้อง wide ในหน้า specs ที่ดึงมา — ต้องเปิดหน้า specs เต็มหรือคู่มือผู้ใช้เพื่อคำนวณ GSD ของรุ่นนี้</li>
+<li>กฎ &#x27;รอยแตกเล็กสุด = 3 x GSD&#x27; ยังไม่ยืนยันแหล่งปฐมภูมิ — พบใน secondary source ต้องหา primary reference (น่าจะเป็นงาน photogrammetry detectability หรือ Nyquist-based argument) ก่อนอ้างในวิทยานิพนธ์</li>
+<li>ตาราง 4.9 ของ T-BHI (ค่าน้ำหนัก W_e ของแต่ละ element และการแบ่ง Primary/Secondary) ยังไม่ได้ดึงมาครบในรอบนี้ — ต้องเปิดหน้า 51-53 ของ PDF เพื่อได้ตารางเต็มก่อนเขียนโค้ดคำนวณ T-BHI</li>
+<li>ค่า q_e (ปริมาณของแต่ละ element) มาจากไหน — ถ้าไม่มีแบบก่อสร้างสะพาน ต้องรังวัดเอง หรือประมาณจาก SfM model ยังไม่ได้ตัดสินใจ มีผลโดยตรงต่อความเป็นไปได้ของ Phase 2</li>
+<li>ประกาศ CAAT ฉบับ 6 ก.พ. 2569 ฉบับเต็ม ยังไม่ได้อ่าน — ข้อมูลในรายงานมาจาก secondary source (บล็อกกฎหมายโดรน) ต้องเช็ค caat.or.th โดยตรง โดยเฉพาะเงื่อนไขการบินใกล้/เหนือโครงสร้างสาธารณะ ระยะห่างจากคน และการบินในเขตควบคุม</li>
+<li>โดรนรุ่นที่ทีมจะใช้จริงคือรุ่นไหน — ตัวเลขระยะบิน/จำนวนภาพ/shutter ทั้งหมดต้องคำนวณใหม่ตามรุ่นจริง สคริปต์คำนวณอยู่ในภาคผนวก B</li>
+<li>ยังไม่ได้ตรวจสอบว่ารายงานวิจัย วช. ปีงบ 68 (rawdata/00_บริบทโครงการ/รายงานวิจัยฉบับสมบูรณ์_วช68.pdf) มีชุดภาพ/ข้อมูลภาคสนามที่ใช้เป็น dataset ตั้งต้นได้หรือไม่ — ถ้ามี จะลดความเสี่ยง R1/R2 ลงมาก ควรเปิดอ่านก่อนเขียน proposal</li>
+<li>License ของ nnU-Net (ที่ OmniCrack30k ใช้) ยังไม่ยืนยัน — ต้องเช็คก่อนตัดสินใจใช้ pretrained weights</li>
+<li>ยังไม่ได้ยืนยันว่า Mavic 3 Pro / Mavic 3 Enterprise (รุ่นที่หาง่ายและถูกกว่าในไทย) มีสเปกเลนส์เทเลเพียงพอหรือไม่ — ควรเช็คก่อนตัดสินใจซื้อ/ยืม เพราะอาจได้ GSD ที่ต้องการในราคาถูกกว่า Mavic 4 Pro มาก</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">photogrammetry <span class="muted small">(15 ข้อ)</span></h2><ul class="small">
+<li>Metashape Standard ($179 / $59 educational) มี marker, scale bar และ planar-projection orthomosaic หรือไม่ — ต้องเช็คตาราง feature comparison ที่ agisoft.com/features/compare ก่อนตัดสินใจซื้อ เพราะเป็นตัวชี้ขาดว่าจะต้องจ่าย $549 (Pro edu) หรือ $59 (Standard edu)</li>
+<li>ราคา DJI Terra Standard/Flagship ปี 2026 ที่แท้จริง — แหล่งที่ค้นได้ขัดแย้งกัน (thefuture3d ให้ Pro $1,299/yr แต่ terrestrialimaging บอกว่าเปลี่ยนชื่อเป็น Standard/Flagship แล้วไม่ระบุราคา) ต้องถามตัวแทน DJI Enterprise โดยตรง</li>
+<li>DJI Terra รับภาพที่ไม่มี geotag (non-geotagged) มาทำ reconstruction ได้หรือไม่ และมี workflow scale-bar-only (ไม่มี GCP พิกัด) หรือไม่ — ไม่พบการกล่าวถึงในเอกสารทั้งหมดที่ค้น ต้องดู DJI Terra User Manual v4.0 หมวด GCP Management</li>
+<li>Gimbal tilt range (เงยขึ้นได้กี่องศา) ของ Mavic 3E และ Matrice 4E — หน้า spec ที่ดึงมาไม่ระบุ ตัวเลขนี้ตัดสินว่าถ่ายท้องสะพานตรง ๆ ได้หรือไม่</li>
+<li>DJI Matrice 350 RTK รองรับการติด gimbal แบบหงายขึ้น (upward mount) หรือไม่ และมี payload ใดบ้างที่ใช้ได้ — สำคัญมากสำหรับงานท้องสะพาน</li>
+<li>Laser rangefinder ของ Mavic 3T มีระยะ 200 m หรือ 1,200 m — แหล่งข้อมูลขัดแย้งกัน</li>
+<li>Max image size และ FOV ที่แท้จริงของกล้อง tele บน Matrice 4E (สมมติ 8000×6000 ในการคำนวณ GSD) และ minimum focus distance ของเลนส์ tele — ต้องทดสอบด้วยการถ่ายเป้าที่รู้ขนาดจริงในสนาม</li>
+<li>เกณฑ์ความกว้างรอยแตกร้าวและ condition rating ที่ BMMS ของกรมทางหลวง/กรมทางหลวงชนบทใช้จริง — ไม่พบเอกสารออนไลน์ ต้องขอคู่มือตรวจสอบสะพานฉบับจริง</li>
+<li>สูตรและเกณฑ์ของ T-BHI (Thailand Bridge Health Index) — ต้องอ้างอิงจากรายงานวิจัยทุน วช. ปีงบ 68 ต้นทางโดยตรง เพื่อกำหนดว่าต้องการปริมาณความเสียหายต่อชิ้นส่วนในรูปแบบใด (ซึ่งเป็นตัวชี้ว่าต้อง stitch หรือไม่)</li>
+<li>ราคาและความเป็นไปได้ในการเข้าถึง Flyability Elios 3 / Skydio X10 สำหรับงานใต้สะพาน (GPS-denied) — น่าจะเกินงบโปรเจกต์ ป.ตรี แต่ควรอ้างอิงเป็นข้อเสนอแนะในเล่ม</li>
+<li>DJI WPML (KMZ waypoint file) schema เวอร์ชันล่าสุด ถ้าจะเขียน generator เส้นทางบินเอง — ดูที่ developer.dji.com</li>
+<li>ราคาและความสามารถของ Dronelink / UgCS / Hammer Missions สำหรับ facade mission — ยังไม่ได้ค้นราคา</li>
+<li>ข้อกำหนดทางกฎหมายในการบินโดรนใกล้สะพาน/เหนือทางหลวงในไทย (CAAT, กสทช., การขออนุญาตจากกรมทางหลวง) — ยังไม่ได้ค้นเลย ต้องทำก่อนออกสนามจริง</li>
+<li>เงื่อนไขการทดลองของงานที่รายงานว่าตรวจจับรอยแตก &lt;0.2 mm ได้ (ScienceDirect S0926580523001899) — ระยะถ่าย กล้อง และการประมวลผลคืออะไร ก่อนจะอ้างตัวเลขนี้ในเล่ม</li>
+<li>ตัวเลขเชิงปริมาณของผลการเติม artificial texture ต่อความแม่นของโมเดล (F1000Research 13:1479) — เว็บบล็อกการดึงเนื้อหา ต้องเข้าไปอ่านเอง</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">ความปลอดภัยและกฎหมาย <span class="muted small">(13 ข้อ)</span></h2><ul class="small">
+<li>FHWA มีตัวเลข minimum standoff distance สำหรับ UAS กับสะพานจริงหรือไม่ — PDF ทั้ง 3 ฉบับ (HRT-21-086, HIF-19-056, HRT-21-083) ดึงข้อความไม่ได้ในรอบนี้ ต้องเปิดอ่านเอง โดยเฉพาะตาราง sensor performance requirements</li>
+<li>Ceiling effect เชิงปริมาณ (ระยะเริ่มมีผล + ขนาดแรงดูดขึ้น) — สำคัญที่สุดสำหรับการบินใต้ท้องสะพาน แต่เปเปอร์อยู่หลัง paywall (ASCE J. Aerospace Eng. 39(3)) ต้องใช้ access ของ ม.เกษตร</li>
+<li>Wall effect: ระยะที่เริ่มมีผลเป็นตัวเลข (กี่ rotor radii) — เปเปอร์ arXiv 2509.21496 มีข้อมูลแต่ PDF parse ไม่ได้</li>
+<li>ข้อกำหนด &#x27;ระยะห่าง 30 เมตรจากบุคคล/อาคาร/ทรัพย์สินผู้อื่น&#x27; ยังบังคับใช้อยู่หรือไม่หลังประกาศ CAAT ฉบับที่ 16 — ถ้ายังใช้ การบิน standoff 1-2 m จากเสาตอม่อคือการฝ่าฝืนโดยตรง ต้องเช็คตัวประกาศจริงและขอหนังสือยินยอมจากกรมทางหลวง</li>
+<li>บทลงโทษที่ถูกต้อง — แหล่งข้อมูลระบุ 40,000 / 50,000 / 100,000 บาท ไม่ตรงกัน ต้องเปิด พ.ร.บ.การเดินอากาศ พ.ศ. 2497 มาตราที่เกี่ยวข้อง</li>
+<li>กรมทางหลวง / กรมทางหลวงชนบท / รฟท. มีระเบียบเฉพาะเรื่องการบินโดรนใกล้สะพานหรือไม่ — ไม่พบเอกสารเผยแพร่สาธารณะ ต้องทำหนังสือถามสำนักบำรุงทางโดยตรง</li>
+<li>ระยะตรวจจับสิ่งกีดขวางทิศ upward ของ Matrice 4 Series — หน้า spec ไม่ระบุแยก ทั้งที่เป็นทิศสำคัญที่สุดสำหรับการบินใต้ท้องสะพาน</li>
+<li>Pixel pitch และ focal length จริง (ไม่ใช่ equivalent) ของกล้อง M4T/M4E ทั้ง 3 ตัว — ต้องได้จาก spec sheet ฉบับเต็มหรือสอบเทียบเอง</li>
+<li>ค่า lux จริงของ DJI AL1 ที่ระยะ 2-5 m — ตัวเลขในรายงานนี้เป็นการอนุมานด้วย inverse-square law จาก 17 lux @ 50 m ซึ่ง extrapolate 25 เท่า ต้องวัดจริงด้วย lux meter</li>
+<li>เกณฑ์ T-BHI (Thailand Bridge Health Index) ฉบับทางการ และวิธี map ผลตรวจจับจากภาพ UAV เป็น condition rating ตาม NBI/AASHTO — ไม่พบเอกสารสาธารณะ ต้องดูรายงานทุน วช. ปีงบ 68 ที่เป็นต้นทางของโครงงาน</li>
+<li>สถานะการรับรอง ATO ของหลักสูตรอบรม Specific Category — DroneTH ระบุว่ายังรอ CAAT รับรอง ใบรับรองจะมีผลทางกฎหมายเมื่ออนุมัติแล้วเท่านั้น</li>
+<li>ช่วงค่าที่ setObstacleAvoidanceBrakingDistance() ยอมรับจริงในแต่ละรุ่น (clamp ที่เท่าไร) — แหล่งบุคคลที่สามระบุ warning distance 1.6-16 m แต่ยังไม่ยืนยันกับ M4 Series</li>
+<li>การใช้ mmWave radar เสริมเข้าข่ายต้องรับรอง กสทช. ตามร่างประกาศฉบับที่ 2 หรือไม่ในกรณีติดตั้งเพื่อการวิจัย (ไม่ได้จำหน่าย)</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">ทบทวนวรรณกรรม <span class="muted small">(14 ข้อ)</span></h2><ul class="small">
+<li>Sensors 2022 (s22124469) รายงาน spatial resolution เป็น mm/pixel ไว้เท่าไหร่กันแน่ — ค่าที่ text-extraction ดึงได้ (0.582 mm/px @1 m) เป็น 2 เท่าของค่าที่คำนวณจากสเปกกล้องที่ paper ระบุเอง (0.294 mm/px) ต้องเปิด PDF ตัวจริงจาก MDPI (WebFetch โดน 403) เพื่อยืนยัน</li>
+<li>Sensors 2022: รอยแตกเล็กสุดที่ระบบวัดได้จริงคือ 0.1 mm (ตาม abstract) หรือ 0.25 mm (ตามเนื้อความที่อ้าง Kim et al.) — และ &#x27;92% accuracy ในการวัดความยาว&#x27; เป็นผลของ paper นี้เองหรือของงานที่อ้างถึง (Tian et al.)</li>
+<li>Automation in Construction 182:106774 (2026, four-point laser + Mamba) — ตัวเลข measurement error (mm/%), ช่วงความกว้างที่วัดได้, ระยะบิน และ segmentation metrics ยังเข้าไม่ถึง (paywall) นี่คืองานที่ตรงโจทย์ที่สุดในโลกตอนนี้ ต้องดึงผ่านห้องสมุด มก.</li>
+<li>Ding et al. 2023 (AutCon 152:104929) — ตัวเลข MAE/MAPE ที่แท้จริงของ IBR-Former + laser rangefinder และระยะบินที่ใช้ ยังไม่ยืนยัน (paywall, abstract ไม่มีใน Semantic Scholar)</li>
+<li>Applied Sciences 12(20):10651 (U-Net + Canny + laser rangefinder) — สเปก rangefinder, ระยะทำงาน, ความแม่นเป็น mm ยังไม่ยืนยัน (MDPI 403)</li>
+<li>ACI 224R-01 Table 4.1 — ยืนยันค่า 0.016/0.012/0.007/0.006/0.004 in จากต้นฉบับ Ch.4 โดยตรง (ขณะนี้ยืนยันผ่านแหล่งทุติยภูมิ ASCC PS-33 เท่านั้น; concrete.org เผยแพร่เฉพาะ Ch.3 ฟรี)</li>
+<li>AASHTO MBEI defect 1130 ฉบับต้นทาง — ยืนยันว่าตัวเลข 0.3/1.3 mm ที่เอกสาร T-BHI สังเคราะห์ไว้ ตรงกับ 0.012 in / 0.05 in ในต้นฉบับหรือไม่ (มีไฟล์ VDOT Supplement + FHWA Element Condition State handout อยู่ใน rawdata แล้ว ยังไม่ได้เปิดตรวจในรอบนี้)</li>
+<li>คู่มือ BMMS กรมทางหลวงฉบับปัจจุบัน — ตารางที่ 4-13 ที่ดึงมายังเป็นฉบับล่าสุดหรือไม่ (km.doh.go.th ปฏิเสธ connection จาก environment นี้)</li>
+<li>CODEBRIM: จำนวนภาพและจำนวน annotated defect box ที่แน่นอน — ยังไม่ยืนยัน ต้องเช็ค zenodo record ต้นทาง</li>
+<li>Bridge Crack Library (BCL) — ค้นไม่พบแหล่งหลักในรอบนี้ ยังไม่ยืนยันว่ามีอยู่จริงในชื่อนี้</li>
+<li>DJI Matrice 4E laser rangefinder: ระยะวัดต่ำสุด (minimum working distance) คือเท่าไหร่ สเปกระบุเฉพาะ accuracy &#x27;beyond 3 m&#x27; — ถ้าบินที่ 3 m จะยังอ่านค่าได้หรือไม่ ต้องทดสอบจริงหรือดู user manual</li>
+<li>DJI SDK: MSDK v5 / PSDK รองรับ Matrice 4E หรือไม่ และเปิด API อ่านค่า laser rangefinder แบบ real-time ได้หรือไม่ — ยังไม่ยืนยัน ต้องดู developer.dji.com compatibility matrix</li>
+<li>ยังไม่มี benchmark ใดในวรรณกรรมที่รายงาน weighted Cohen&#x27;s kappa ระหว่าง AI กับ inspector มนุษย์บน condition rating scale — ค่า baseline ที่ควรตั้งเป็นเป้าจึงยังไม่มีข้อมูลอ้างอิง</li>
+<li>ยังไม่พบ public dataset ใดที่มี label ความกว้างรอยแตกเป็น mm พร้อม GSD/ระยะกล้องกำกับ — ถ้ามีอยู่แล้วจะลดงานสร้าง dataset ของโปรเจกต์ได้มาก ควรค้นเพิ่มด้วยคำว่า &#x27;crack width regression dataset&#x27; / &#x27;metric crack dataset&#x27;</li>
+</ul>
+
+
+</body>
+</html>

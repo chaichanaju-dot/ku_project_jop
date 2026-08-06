@@ -1,0 +1,188 @@
+/* report.css — สไตล์รายงานภาษาไทยสำหรับพิมพ์ A4
+   ฟอนต์ใช้ของที่ติดมากับ Windows เท่านั้น (Leelawadee UI / Cascadia Mono) — ไม่พึ่งเน็ต */
+
+:root {
+  --ink: #16181d;
+  --ink-soft: #4a5058;
+  --line: #d8dce2;
+  --line-soft: #edf0f3;
+  --accent: #14508c;
+  --accent-soft: #eaf2fa;
+  --warn: #9a5b00;
+  --warn-soft: #fdf4e3;
+  --ok: #1c6b3f;
+  --ok-soft: #ecf7f0;
+  --bad: #a02929;
+  --bad-soft: #fceded;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Leelawadee UI', 'Sarabun', Tahoma, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.62;
+  color: var(--ink);
+  margin: 0;
+  counter-reset: sec;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ---------- ปก ---------- */
+.cover {
+  height: 247mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  page-break-after: always;
+}
+.cover__tag {
+  font-size: 9pt; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent); font-weight: 700;
+}
+.cover__title {
+  font-size: 27pt; line-height: 1.28; font-weight: 700; margin: 6mm 0 4mm;
+  letter-spacing: -.01em;
+}
+.cover__sub { font-size: 13pt; color: var(--ink-soft); line-height: 1.55; font-weight: 400; }
+.cover__rule { height: 4px; background: var(--accent); width: 46mm; margin: 7mm 0; }
+.cover__meta { font-size: 9.5pt; color: var(--ink-soft); border-top: 1px solid var(--line); padding-top: 4mm; }
+.cover__meta table { width: 100%; border: 0; }
+.cover__meta td { border: 0; padding: 1.1mm 0; vertical-align: top; }
+.cover__meta td:first-child { width: 34mm; color: var(--ink); font-weight: 600; }
+.cover__q {
+  background: var(--accent-soft); border-left: 4px solid var(--accent);
+  padding: 5mm 6mm; font-size: 10.5pt; border-radius: 0 3px 3px 0;
+}
+.cover__q b { color: var(--accent); }
+
+/* ---------- สารบัญ ---------- */
+.toc { page-break-after: always; }
+.toc ol { list-style: none; padding: 0; margin: 0; counter-reset: toc; }
+.toc > ol > li {
+  counter-increment: toc; padding: 2.2mm 0; border-bottom: 1px dotted var(--line);
+  font-weight: 600;
+}
+.toc > ol > li::before { content: counter(toc) ". "; color: var(--accent); }
+.toc ol ol { margin: 1.2mm 0 0 7mm; counter-reset: toc2; }
+.toc ol ol li {
+  counter-increment: toc2; font-weight: 400; font-size: 9.8pt;
+  color: var(--ink-soft); border: 0; padding: .7mm 0;
+}
+.toc ol ol li::before { content: counter(toc) "." counter(toc2) "  "; color: var(--ink-soft); }
+
+/* ---------- หัวข้อ ---------- */
+h1 {
+  counter-increment: sec; counter-reset: sub;
+  font-size: 17pt; line-height: 1.3; margin: 0 0 5mm;
+  padding-bottom: 2.5mm; border-bottom: 2.5px solid var(--accent);
+  page-break-before: always; page-break-after: avoid;
+}
+h1::before {
+  content: counter(sec); display: inline-block; min-width: 11mm;
+  color: var(--accent); font-weight: 700;
+}
+h1.nonum::before { content: none; }
+h1.nonum { counter-increment: none; }
+h2 {
+  counter-increment: sub; counter-reset: subsub;
+  font-size: 12.5pt; margin: 8mm 0 3mm; page-break-after: avoid;
+  color: var(--accent);
+}
+h2::before { content: counter(sec) "." counter(sub) "  "; color: var(--ink-soft); font-weight: 600; }
+h2.nonum::before { content: none; }
+h2.nonum { counter-increment: none; }
+h3 {
+  font-size: 11pt; margin: 5mm 0 2mm; page-break-after: avoid;
+  color: var(--ink);
+}
+p { margin: 0 0 3mm; orphans: 3; widows: 3; }
+ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+li { margin-bottom: 1.2mm; }
+a { color: var(--accent); text-decoration: none; word-break: break-all; }
+strong { font-weight: 700; }
+
+/* ---------- ตาราง ---------- */
+table {
+  width: 100%; border-collapse: collapse; margin: 3mm 0 5mm;
+  font-size: 9.2pt; page-break-inside: avoid;
+}
+thead { background: var(--accent); color: #fff; }
+th {
+  text-align: left; padding: 2mm 2.4mm; font-weight: 600;
+  border: 1px solid var(--accent); font-size: 9pt;
+}
+td { padding: 1.8mm 2.4mm; border: 1px solid var(--line); vertical-align: top; }
+tbody tr:nth-child(even) { background: #fafbfc; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.c, th.c { text-align: center; }
+table.tight { font-size: 8.6pt; }
+table.tight td, table.tight th { padding: 1.3mm 1.8mm; }
+caption {
+  caption-side: bottom; font-size: 8.6pt; color: var(--ink-soft);
+  text-align: left; padding-top: 1.5mm;
+}
+
+/* ---------- โค้ด ---------- */
+pre {
+  background: #f7f8fa; border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  padding: 3mm 4mm; font-family: 'Cascadia Mono', Consolas, monospace;
+  font-size: 8.2pt; line-height: 1.5; overflow-x: auto; white-space: pre-wrap;
+  border-radius: 0 3px 3px 0; margin: 2mm 0 4mm; page-break-inside: avoid;
+}
+code {
+  font-family: 'Cascadia Mono', Consolas, monospace; font-size: .9em;
+  background: var(--line-soft); padding: .3mm 1.1mm; border-radius: 2px;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+/* ---------- กล่องข้อความ ---------- */
+.box {
+  padding: 3.5mm 4.5mm; margin: 3mm 0 4mm; border-radius: 3px;
+  page-break-inside: avoid; font-size: 9.8pt;
+}
+.box > :last-child { margin-bottom: 0; }
+.box__t { font-weight: 700; display: block; margin-bottom: 1.5mm; font-size: 10pt; }
+.box--key  { background: var(--accent-soft); border-left: 4px solid var(--accent); }
+.box--key .box__t { color: var(--accent); }
+.box--warn { background: var(--warn-soft); border-left: 4px solid var(--warn); }
+.box--warn .box__t { color: var(--warn); }
+.box--ok   { background: var(--ok-soft); border-left: 4px solid var(--ok); }
+.box--ok .box__t { color: var(--ok); }
+.box--bad  { background: var(--bad-soft); border-left: 4px solid var(--bad); }
+.box--bad .box__t { color: var(--bad); }
+
+/* ---------- สูตร ---------- */
+.eq {
+  text-align: center; font-family: 'Cascadia Mono', Consolas, monospace;
+  font-size: 10.5pt; padding: 3mm; background: #f7f8fa;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  margin: 3mm 0 4mm; page-break-inside: avoid;
+}
+.eq small { display: block; font-family: 'Leelawadee UI', Tahoma, sans-serif;
+  font-size: 8.6pt; color: var(--ink-soft); margin-top: 1.5mm; }
+
+/* ---------- รูป ---------- */
+figure { margin: 4mm 0 5mm; page-break-inside: avoid; text-align: center; }
+figure svg { max-width: 100%; height: auto; }
+figcaption {
+  font-size: 8.8pt; color: var(--ink-soft); margin-top: 2mm; text-align: left;
+}
+
+/* ---------- อื่น ๆ ---------- */
+.badge {
+  display: inline-block; font-size: 7.6pt; font-weight: 700; padding: .3mm 1.6mm;
+  border-radius: 2px; vertical-align: middle; letter-spacing: .02em;
+}
+.badge--ok   { background: var(--ok-soft); color: var(--ok); border: 1px solid #bfe0cd; }
+.badge--warn { background: var(--warn-soft); color: var(--warn); border: 1px solid #ecd6a8; }
+.badge--bad  { background: var(--bad-soft); color: var(--bad); border: 1px solid #e8bcbc; }
+.badge--info { background: var(--accent-soft); color: var(--accent); border: 1px solid #bcd4ea; }
+
+.muted { color: var(--ink-soft); }
+.small { font-size: 9pt; }
+.refs { font-size: 8.6pt; line-height: 1.5; }
+.refs li { margin-bottom: 1.5mm; }
+.nobreak { page-break-inside: avoid; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 6mm 0; }

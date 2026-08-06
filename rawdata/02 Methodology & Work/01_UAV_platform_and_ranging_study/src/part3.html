@@ -1,0 +1,265 @@
+<!-- ============ 6 ============ -->
+<h1>การรวมภาพและ photogrammetry สำหรับผิวแนวดิ่ง</h1>
+
+<div class="box box--key">
+<span class="box__t">คำถามที่ต้องตอบก่อนลงมือ: จำเป็นต้องรวมภาพจริงหรือ</span>
+โจทย์ตั้งต้นบอกว่า "เอาภาพมารวมกัน" แต่ต้องแยกให้ชัดว่ารวมไปเพื่ออะไร<br><br>
+<b>ถ้าเพื่อให้ AI เห็นรอยแตกชัดขึ้น → ไม่จำเป็นเลย</b> โมเดล segmentation ทำงานบน tile ขนาด 256×256 หรือ 512×512 pixel อยู่แล้ว การรวมภาพไม่ได้เพิ่มข้อมูลใหม่ มีแต่ทำให้เสียรายละเอียดจากการ resample<br><br>
+<b>สิ่งที่การรวมภาพมีไว้เพื่อ:</b> (1) ระบุตำแหน่งว่ารอยแตกอยู่ตรงไหนของโครงสร้าง (2) ไม่นับรอยแตกเดียวกันซ้ำจากหลายภาพ (3) คิดปริมาณความเสียหายเป็นพื้นที่/สัดส่วนเพื่อเข้าเกณฑ์ T-BHI<br><br>
+<b>กฎที่ควรยึด: วัดความกว้างรอยแตกบนภาพเดี่ยว วัดความยาว/พื้นที่/ตำแหน่งบน orthomosaic</b> — เพราะ ortho ผ่าน resampling มาแล้ว ความคลาดเคลื่อนของความกว้างสูงมาก
+</div>
+
+<h2>ทำไม lawnmower จากด้านบนใช้กับงานนี้ไม่ได้</h2>
+
+<p>งานทำแผนที่แนวราบ (nadir grid) กล้องมองลงตั้งฉากกับพื้น ระยะกล้อง–วัตถุคงที่เกือบทั้งภาพ ผลคือ GSD คงที่ baseline ตั้งฉากกับแนวมอง และฉากมี texture ธรรมชาติเยอะ งานผิวแนวดิ่งเปลี่ยนทั้งสามข้อพร้อมกัน:</p>
+
+<ul>
+<li><b>ระยะไม่คงที่</b> ถ้าผิวไม่เรียบสนิท (เสาโค้ง ตอม่อมีบัว คานมี haunch) → GSD ต่างกันภายในภาพเดียว → ค่าที่วัดได้ผิดถ้าไม่แก้ perspective</li>
+<li><b>มุมตกกระทบเฉียง</b> ถ้าเก็บด้วย nadir จะกลายเป็น grazing angle → ความคลาดเคลื่อนของ depth ระเบิด</li>
+<li><b>ฉากไม่มี texture</b> คอนกรีตทาสีหรือผิวแบบเรียบเป็นสีเทาทั้งแผ่น → feature detector หา keypoint ไม่ได้</li>
+</ul>
+
+<h2>Overlap ที่ต้องใช้</h2>
+
+<table>
+<thead><tr><th>ประเภทงาน</th><th class="num">Forward overlap</th><th class="num">Side overlap</th></tr></thead>
+<tbody>
+<tr><td>Mapping แนวราบทั่วไป</td><td class="num">70–80%</td><td class="num">60–70%</td></tr>
+<tr><td>เมืองและ facade (double grid)</td><td class="num">75%</td><td class="num">60%</td></tr>
+<tr><td><b>Facade / ผิวแนวดิ่ง (แนะนำ)</b></td><td class="num"><b>80–90%</b></td><td class="num"><b>~80%</b></td></tr>
+<tr><td>ขั้นต่ำที่ยัง reconstruct สำเร็จ (จากงานวิจัยสะพานจริง)</td><td class="num">66%</td><td class="num">—</td></tr>
+</tbody>
+<caption>บนผนัง <b>forward overlap</b> = ทับซ้อนในแนวดิ่ง (ตามทิศที่โดรนไต่ขึ้น) และ <b>side overlap</b> = ทับซ้อนในแนวนอนระหว่าง strip ข้างเคียง</caption>
+</table>
+
+<div class="box box--ok">
+<span class="box__t">ผลการวิจัยที่ควรใส่ในบทระเบียบวิธีวิจัย</span>
+งานวิจัยสะพานจริง (Sensors 23(16):7159) พบว่า <i>"conducting multiple flight paths improved local geometric accuracy <b>better than increasing the overlapping rate</b>"</i>
+โดยการรวม route แบบ overall + partial ให้คุณภาพโมเดลดีกว่า route เดียวถึง <b>46.7%</b><br><br>
+<b>แปลว่า:</b> ถ้าเลือกได้ระหว่าง "เพิ่ม overlap จาก 80% เป็น 90%" กับ "บินเพิ่มอีกหนึ่ง route ที่มุมต่างกัน" — <b>เลือกบินเพิ่ม route คุ้มกว่า</b>
+</div>
+
+<h2>ปัญหาผิวคอนกรีตไม่มี texture</h2>
+
+<p>นี่คือกรณีที่แย่ที่สุดของ SfM และเป็นความเสี่ยงจริงของโปรเจกต์ ไม่ใช่ปัญหาทางทฤษฎี วิธีแก้เรียงตามความคุ้มค่า:</p>
+
+<ol>
+<li><b>ติด marker / coded target บนผิว</b> — แก้ได้ทั้งปัญหา texture และปัญหามาตราส่วนพร้อมกัน (ดูบทที่ 5) เป็นวิธีที่คุ้มที่สุด</li>
+<li><b>เพิ่ม overlap และเพิ่มจำนวน route</b> ที่มุมต่างกัน</li>
+<li><b>ถ่ายวันฟ้าปิด</b> — แสงกระจายสม่ำเสมอ ลดเงาจัดที่ทำให้ feature matching สับสนระหว่าง route</li>
+<li><b>ปรับพารามิเตอร์ซอฟต์แวร์</b> (เพิ่ม min features / ลด threshold) — ช่วยได้น้อยที่สุด แก้ที่ปลายเหตุ</li>
+</ol>
+
+<h2>ซอฟต์แวร์</h2>
+
+<table class="tight">
+<thead><tr><th>ซอฟต์แวร์</th><th class="c">ราคา</th><th class="c">scale bar ในตัว</th><th>เหมาะ / ไม่เหมาะ</th></tr></thead>
+<tbody>
+<tr><td><b>Agisoft Metashape Professional</b> (Educational)</td><td class="c">~$549</td><td class="c">✓</td><td>มีทั้ง scale bar และ planar-projection ortho ซึ่งเป็นสองอย่างที่จำเป็นสำหรับผิวแนวดิ่ง — <b>คุ้มที่สุดถ้ามีงบ</b></td></tr>
+<tr><td><b>COLMAP</b></td><td class="c">ฟรี (BSD)</td><td class="c">✗</td><td>คุณภาพระดับงานวิจัย เขียนสคริปต์ได้ <b>แต่ไม่มีฟังก์ชัน scaling ในตัว</b> ต้องเขียน post-scaling เอง — ซึ่งเป็นข้อดีสำหรับวิทยานิพนธ์เพราะได้อธิบายวิธีในบทระเบียบวิธีวิจัยแทนที่จะเป็นกล่องดำ</td></tr>
+<tr><td>ODM / WebODM</td><td class="c">ฟรี (AGPL)</td><td class="c">GCP</td><td>มี GCP workflow พร้อม เหมาะถ้าต้องการ orthophoto ของหน้าเสา</td></tr>
+<tr><td>RealityScan / RealityCapture</td><td class="c">ฟรี (มีเงื่อนไข)</td><td class="c">✓</td><td>ลองก่อนได้ เร็วมาก</td></tr>
+<tr><td>DJI Terra</td><td class="c">มีค่าลิขสิทธิ์</td><td class="c">✗</td><td><b>ไม่รองรับ planar-projection ortho สำหรับผนัง</b> — ไม่เหมาะกับงานนี้</td></tr>
+</tbody>
+</table>
+
+<h2>รูปแบบการบินที่ถูกต้อง</h2>
+
+<figure>
+<svg viewBox="0 0 620 210" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+  <defs><marker id="f1" markerWidth="7" markerHeight="7" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 z" fill="#14508c"/></marker></defs>
+  <g font-size="9">
+  <text x="100" y="14" text-anchor="middle" font-weight="700" fill="#a02929">(ก) lawnmower จากด้านบน — ใช้ไม่ได้</text>
+  <rect x="55" y="34" width="90" height="150" fill="#e6e9ed" stroke="#b9c0c8"/>
+  <text x="100" y="196" text-anchor="middle" fill="#4a5058">เสา (มองด้านข้าง)</text>
+  <path d="M20,24 L180,24" stroke="#a02929" stroke-width="1.4" stroke-dasharray="5 3"/>
+  <circle cx="40" cy="24" r="4" fill="#a02929"/><circle cx="100" cy="24" r="4" fill="#a02929"/><circle cx="160" cy="24" r="4" fill="#a02929"/>
+  <text x="100" y="112" text-anchor="middle" fill="#a02929" font-size="10" font-weight="700">เห็นแต่หัวเสา</text>
+  <text x="100" y="126" text-anchor="middle" fill="#a02929" font-size="10" font-weight="700">ผิวข้างไม่โดนถ่ายเลย</text>
+
+  <text x="400" y="14" text-anchor="middle" font-weight="700" fill="#1c6b3f">(ข) vertical strip + orbit — ถูกต้อง</text>
+  <rect x="355" y="34" width="90" height="150" fill="#e6e9ed" stroke="#b9c0c8"/>
+  <text x="400" y="196" text-anchor="middle" fill="#4a5058">ถ่ายทีละหน้า ไล่จากล่างขึ้นบน แล้ววนรอบ 4 หน้า</text>
+  <g fill="#14508c">
+    <circle cx="315" cy="170" r="4"/><circle cx="315" cy="140" r="4"/><circle cx="315" cy="110" r="4"/>
+    <circle cx="315" cy="80" r="4"/><circle cx="315" cy="50" r="4"/>
+  </g>
+  <path d="M315,178 L315,44" stroke="#14508c" stroke-width="1.2" marker-end="url(#f1)"/>
+  <g stroke="#8b939c" stroke-width=".8" stroke-dasharray="2 2">
+    <line x1="319" y1="170" x2="353" y2="170"/><line x1="319" y1="140" x2="353" y2="140"/>
+    <line x1="319" y1="110" x2="353" y2="110"/><line x1="319" y1="80" x2="353" y2="80"/><line x1="319" y1="50" x2="353" y2="50"/>
+  </g>
+  <path d="M470,60 A62,62 0 0 1 470,158" stroke="#1c6b3f" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#f1)"/>
+  <text x="500" y="112" fill="#1c6b3f">วนไปหน้าถัดไป</text>
+  <line x1="315" y1="110" x2="353" y2="110" stroke="#14508c" stroke-width="1.2"/>
+  <text x="250" y="112" fill="#14508c" font-weight="600">D คงที่</text>
+  <text x="245" y="124" fill="#4a5058">ขยับ 0.37 m/ช็อต</text>
+  <text x="245" y="136" fill="#4a5058">(overlap 80%)</text>
+  </g>
+</svg>
+<figcaption><b>รูปที่ 4</b> — รูปแบบการบินสำหรับผิวแนวดิ่ง ระยะ D ต้องคงที่ตลอด strip ไม่งั้น GSD เปลี่ยนไปทุกภาพและมาตราส่วนไม่ตรงกัน</figcaption>
+</figure>
+
+<div class="box box--key">
+<span class="box__t">แยกสองรอบบิน อย่าประนีประนอมเป็นรอบเดียว</span>
+<b>รอบที่ 1 — โหมดวัด (metrology):</b> เลนส์เทเล ระยะไกล hover ทีละจุด marker อยู่ในเฟรม overlap แค่ 20–30% ก็พอ (ขอแค่ครอบคลุมผิว) เพราะแต่ละภาพหามาตราส่วนของตัวเองได้<br>
+<b>รอบที่ 2 — โหมดสร้างโมเดล (geometry):</b> เลนส์ wide overlap 80/80 หลาย route เพื่อสร้าง 3D และ orthomosaic สำหรับระบุตำแหน่ง<br><br>
+จำนวนภาพของสองโหมดต่างกันประมาณ <b>5 เท่า</b> — การพยายามทำรอบเดียวให้ได้ทั้งสองอย่างจะได้ผลแย่ทั้งคู่
+</div>
+
+<!-- ============ 7 ============ -->
+<h1>ทางเลือกแพลตฟอร์มอื่นนอกเหนือจาก DJI</h1>
+
+<p>โจทย์จริงมี 3 ชั้น และมีเพียงชั้นเดียวที่ต้องใช้โดรนพิเศษ — การแยกให้ออกก่อนช่วยประหยัดงบได้มาก</p>
+
+<table>
+<thead><tr><th class="c" style="width:8%">ชั้น</th><th style="width:38%">โจทย์จริง</th><th>ต้องซื้อโดรนใหม่ไหม</th></tr></thead>
+<tbody>
+<tr><td class="c">1</td><td>ความละเอียดภาพพอไหม (GSD) — เห็นรอยแตก 0.2 mm</td><td><b>ไม่ต้อง</b> — แก้ด้วยเลนส์เทเล + ระยะยืนที่คำนวณจากบทที่ 4</td></tr>
+<tr><td class="c">2</td><td>รู้มาตราส่วนเพื่อแปลง pixel เป็น mm</td><td><b>ไม่ต้อง</b> — แก้ด้วย marker ในบทที่ 5</td></tr>
+<tr><td class="c">3</td><td>บินใต้สะพาน / ที่อับสัญญาณ GPS ได้ไหม</td><td><b>ต้อง</b> — นี่คือชั้นเดียวที่ DJI ทำได้ไม่ดี</td></tr>
+</tbody>
+</table>
+
+<h2>ตารางเปรียบเทียบแพลตฟอร์ม</h2>
+
+<table class="tight">
+<thead><tr><th>แพลตฟอร์ม</th><th class="c">บิน GPS-denied</th><th class="c">ควบคุมได้ลึก</th><th class="c">งบประมาณ</th><th>ข้อจำกัดสำคัญ</th></tr></thead>
+<tbody>
+<tr><td><b>DJI Matrice 4E / 4T</b></td><td class="c"><span class="badge badge--warn">จำกัด</span></td><td class="c">MSDK / PSDK</td><td class="c">หลายแสน</td><td>vision positioning ล้มเหลวกับผนังคอนกรีตเรียบ ทิศบนอ่อนที่สุด</td></tr>
+<tr><td><b>Skydio X10 / X10D</b></td><td class="c"><span class="badge badge--ok">ดีมาก</span></td><td class="c">จำกัด</td><td class="c">สูงมาก</td><td>ระบบ visual navigation 6 กล้องไม่พึ่ง GPS + 3D Scan บินรอบโครงสร้างอัตโนมัติ <b>แต่ข้อจำกัดการส่งออกของสหรัฐทำให้จัดหาในไทยยากมาก</b></td></tr>
+<tr><td><b>Flyability Elios 3</b></td><td class="c"><span class="badge badge--ok">ดีที่สุด</span></td><td class="c">จำกัด</td><td class="c">สูงมาก</td><td>โครงกรงชนได้ + LiDAR SLAM ออกแบบมาสำหรับพื้นที่อับสัญญาณโดยเฉพาะ — ตัวแทนจำหน่ายในไทยต้องตรวจสอบ</td></tr>
+<tr><td>Voliro T</td><td class="c"><span class="badge badge--ok">ดี</span></td><td class="c">จำกัด</td><td class="c">สูงมาก</td><td>ออกแบบมาสำหรับ contact inspection (สัมผัสผิวโดยตรง) เกินความจำเป็นของงานนี้</td></tr>
+<tr><td>Parrot Anafi Ai</td><td class="c"><span class="badge badge--warn">ปานกลาง</span></td><td class="c"><b>Air SDK บนตัวเครื่อง</b></td><td class="c">ปานกลาง</td><td>เป็นเจ้าเดียวที่ให้รันโค้ดบนตัวโดรนได้จริง แต่กล้องด้อยกว่า DJI มาก</td></tr>
+<tr><td><b>สร้างเอง</b> (PX4/ArduPilot + Jetson + depth camera/LiDAR)</td><td class="c"><span class="badge badge--ok">ทำได้ทุกอย่าง</span></td><td class="c"><b>เต็มที่</b></td><td class="c">หลักหมื่น–แสน</td><td><b>ใช้เวลาทั้งปีไปกับการทำให้บินได้ ไม่เหลือเวลาทำ AI ซึ่งเป็นแก่นของโปรเจกต์</b></td></tr>
+</tbody>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">คำเตือนเรื่องการสร้างโดรนเอง</span>
+การประกอบ PX4/ArduPilot + companion computer + VIO/SLAM ให้บินในที่อับสัญญาณได้อย่างเสถียร เป็นงานระดับวิทยานิพนธ์ปริญญาโทด้านหุ่นยนต์ทั้งเล่มด้วยตัวมันเอง<br>
+<b>ถ้าเป้าหมายของโปรเจกต์คือ AI ตรวจจับและประเมินความเสียหาย การไปเสียเวลากับ flight control คือการทำโปรเจกต์ผิดเรื่อง</b> — ให้เลือกขอบเขตงานที่โดรนซึ่งมีอยู่แล้วบินได้ (เสาตอม่อที่มองเห็นฟ้า) แทนการเปลี่ยนโดรนให้เข้ากับขอบเขตงานที่ยากขึ้น
+</div>
+
+<h2>ข้อเสนอตามงบประมาณ</h2>
+
+<table>
+<thead><tr><th style="width:22%">สถานการณ์</th><th>ควรทำอะไร</th></tr></thead>
+<tbody>
+<tr><td><b>งบ 0 บาท</b> (ใช้โดรนที่ทีมวิจัย/ภาควิชามีอยู่)</td><td>ตรวจว่ามีเลนส์เทเลหรือไม่ → คำนวณระยะยืนจากตารางบทที่ 4 → ติด marker → เริ่มเก็บข้อมูลได้ทันที ค่าใช้จ่ายเพิ่มเติมมีเพียงค่าพิมพ์ marker และ crack comparator card ไม่เกินหลักร้อยบาท</td></tr>
+<tr><td><b>งบหลักหมื่น</b></td><td>ซื้อ crack width gauge/microscope ที่ดีสำหรับทำ ground truth + สติกเกอร์ marker กันน้ำ + ไฟเสริมสำหรับใต้ท้องสะพาน — ลงทุนที่ <b>ความน่าเชื่อถือของข้อมูล</b> ไม่ใช่ที่ตัวโดรน</td></tr>
+<tr><td><b>งบหลักแสน (ทุน วช.)</b></td><td>Matrice 4T (มีทั้งเลนส์เทเล 168 mm, laser rangefinder และรองรับ MSDK) เป็นตัวเลือกที่สมเหตุสมผลที่สุด — ไม่ควรเอางบไปลง LiDAR payload เพราะพิสูจน์แล้วว่าวัดรอยแตกไม่ได้</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 8 ============ -->
+<h1>ความปลอดภัย กฎหมาย และข้อจำกัดหน้างาน</h1>
+
+<h2>ความเสี่ยงอันดับหนึ่งไม่ใช่กฎหมาย แต่คือผนังคอนกรีตเรียบ</h2>
+
+<div class="box box--bad">
+<span class="box__t">ระบบสองอย่างล้มพร้อมกันด้วยสาเหตุเดียว</span>
+<b>obstacle avoidance</b> และ <b>vision positioning</b> ใช้กล้อง binocular <b>ชุดเดียวกัน</b> และต้องการเงื่อนไขเดียวกันคือ ผิวต้องมี texture และแสงต้องพอ<br><br>
+ผิวคอนกรีตทาสีเรียบใต้เงาสะพานทำให้ทั้งสองระบบล้มเหลว<b>ในคราวเดียวกัน</b> — โดรนจะทั้งมองไม่เห็นผนังและลอยนิ่งไม่ได้พร้อมกัน<br>
+<b>นี่คือความเสี่ยงหลักของโปรเจกต์นี้ ไม่ใช่เรื่องใบอนุญาต</b>
+</div>
+
+<h2>ถ้าอยากบินใกล้กว่าระยะเบรก — อย่าปิดระบบ ให้ย่นระยะเบรกแทน</h2>
+
+<p>คำแนะนำที่พบทั่วไปคือ "ปิด obstacle avoidance" ซึ่งเป็นคำตอบที่หยาบเกินไป วิธีที่ถูกต้องคือ:</p>
+
+<pre><code>// ★ วิธีที่ควรใช้ — ยังมีระบบเบรกเป็นตาข่ายกันตาย แค่ขยับเส้นเข้ามาใกล้ผนัง
+setObstacleAvoidanceBrakingDistance(distance, PerceptionDirection.HORIZONTAL, callback);
+setObstacleAvoidanceWarningDistance(distance, PerceptionDirection.HORIZONTAL, callback);
+
+// ปิดเฉพาะทิศที่หันเข้าผนัง ไม่ใช่ปิดหมด
+setObstacleAvoidanceEnabled(false, PerceptionDirection.HORIZONTAL, callback);
+
+// ทางเลือกสุดท้ายเท่านั้น เมื่อระยะเป้าหมาย &lt; ระยะตรวจจับต่ำสุด (0.4 m)
+setObstacleAvoidanceType(ObstacleAvoidanceType.CLOSE, callback);
+// BRAKE  = ลอยค้างเมื่อเจอสิ่งกีดขวาง (ค่าเริ่มต้น)
+// BYPASS = หลบเอง
+// CLOSE  = ไม่เบรกไม่หลบ</code></pre>
+
+<div class="box box--warn">
+<span class="box__t">สามข้อที่ต้องรู้</span>
+<b>1.</b> ระยะตรวจจับต่ำสุดของ M4 series คือ 0.4 m (หน้า/หลัง), 0.5 m (ข้าง), 0.3 m (ล่าง) — <b>ถ้าตั้งใจบินใกล้กว่านี้ เซนเซอร์บอดอยู่แล้ว ปิดหรือไม่ปิดก็ไม่ต่างกัน</b> ความเสี่ยงเกิดตั้งแต่ตัดสินใจเข้าโซนบอดแล้ว<br>
+<b>2. ห้ามใช้โหมด Sport (S) ใกล้โครงสร้างเด็ดขาด</b> — โหมดนี้ปิด obstacle avoidance อัตโนมัติ และเพิ่มความเร็ว/ความไวไปพร้อมกัน เป็นส่วนผสมที่แย่ที่สุด<br>
+<b>3.</b> ทิศ <b>บน</b> เป็นทิศที่เซนเซอร์อ่อนที่สุดของโดรนทุกยี่ห้อ ซึ่งเป็นทิศที่ต้องใช้เมื่อบินใต้ท้องสะพานพอดี — ข้อมูลช่วงระยะทิศบนของ M4 series <span class="badge badge--warn">ยังไม่ยืนยัน</span> ต้องเปิดคู่มือผู้ใช้ของรุ่นที่จะใช้จริง</p>
+</div>
+
+<h2>ข้อจำกัดของฮาร์ดแวร์ที่มักถูกลืมสองข้อ</h2>
+
+<div class="box box--key">
+<span class="box__t">1. เลนส์เทเลโฟกัสใกล้กว่า 3 เมตรไม่ได้</span>
+Matrice 4E/4T: เลนส์ wide โฟกัสได้ตั้งแต่ <b>1 m ถึงระยะอนันต์</b> แต่ <b>medium tele และ tele โฟกัสได้ตั้งแต่ 3 m เท่านั้น</b><br>
+แปลว่าแม้จะบินเข้าไปใกล้ 1 m ได้ ก็ถ่ายด้วยเลนส์เทเลไม่ได้อยู่ดี — ภาพจะเบลอทั้งใบ<br>
+ข้อนี้บังคับเส้นทางการออกแบบโดยตรง และเป็นอีกเหตุผลที่การ "ถอยออกแล้วซูม" เป็นทางเดียวที่ใช้ได้จริง
+</div>
+
+<div class="box box--key">
+<span class="box__t">2. มุมเงยของ gimbal — ตัวชี้ขาดว่าถ่ายท้องสะพานได้หรือไม่</span>
+<table class="tight" style="margin:2mm 0 0">
+<thead><tr><th>รุ่น</th><th class="num">ช่วงเชิงกล</th><th class="num">ช่วงที่ควบคุมได้จริง</th><th class="c">เงยขึ้นได้</th><th class="c">ถ่ายท้องสะพาน</th></tr></thead>
+<tbody>
+<tr><td><b>Matrice 4T</b></td><td class="num">−140° ถึง 113°</td><td class="num"><b>−90° ถึง +70°</b></td><td class="c">+70°</td><td class="c"><span class="badge badge--ok">พอ</span></td></tr>
+<tr><td>Matrice 4E</td><td class="num">−140° ถึง 50°</td><td class="num">−90° ถึง +35°</td><td class="c">+35°</td><td class="c"><span class="badge badge--bad">ไม่พอ</span></td></tr>
+<tr><td>Mavic 3E / 3T</td><td class="num">—</td><td class="num">−135° ถึง +35°</td><td class="c">+35°</td><td class="c"><span class="badge badge--bad">ไม่พอ</span></td></tr>
+</tbody>
+</table>
+<b>ข้อนี้เปลี่ยนคำแนะนำเรื่องการเลือกรุ่นโดยตรง</b> — ถ้าขอบเขตงานรวมท้องสะพาน (soffit) <b>M4T เป็นรุ่นเดียวในสามรุ่นนี้ที่เงยกล้องได้พอ</b> ส่วน M4E และ Mavic 3E/3T เงยได้แค่ 35° ซึ่งไม่พอ<br>
+ถ้าขอบเขตงานเป็นเสาตอม่อในแนวดิ่งอย่างเดียว ทั้งสามรุ่นใช้ได้หมด
+</div>
+
+<h2>ปัญหาแสงและ motion blur</h2>
+
+<p>ใต้ท้องสะพานมีทั้งเงามืดจัดและแสงจ้าจากด้านนอกในภาพเดียวกัน ซึ่งเป็นกรณีที่แย่ที่สุดสำหรับทั้ง dynamic range ของกล้องและ vision positioning การบินกลางคืนในไทยเข้าข่าย Specific Category ต้องขออนุญาต จึงควร <b>เก็บงานใต้ท้องสะพานในเวลากลางวันโดยใช้ไฟเสริมสู้เงา</b> แทนการบินกลางคืนจริง เพราะภาระทางกฎหมายต่างกันมาก</p>
+
+<p>จากตารางในบทที่ 4 ที่ GSD 0.2 mm/px และความเร็ว 0.5 m/s ต้องใช้ชัตเตอร์ 1/2500 s ซึ่งใต้สะพานที่แสงน้อยเป็นไปไม่ได้ → <b>ต้องใช้วิธี hover แล้วถ่าย (stop-and-shoot) ไม่ใช่บินผ่านแล้วถ่ายรัว</b></p>
+
+<h2>กฎหมายไทย — เปลี่ยนมากในปี 2569</h2>
+
+<div class="box box--warn">
+<span class="box__t">ข้อมูลส่วนนี้เปลี่ยนเร็วมาก ต้องตรวจสอบกับ CAAT โดยตรงก่อนบินจริง</span>
+มีประกาศใหม่สองฉบับในปี 2569 และแหล่งข้อมูลที่ค้นได้ยังขัดแย้งกันในบางประเด็น รายการด้านล่างเป็นจุดตั้งต้นสำหรับไปตรวจสอบ <b>ไม่ใช่คำแนะนำทางกฎหมาย</b>
+</div>
+
+<table class="tight">
+<thead><tr><th style="width:28%">เรื่อง</th><th>ข้อกำหนด</th></tr></thead>
+<tbody>
+<tr><td>ประกาศ CAAT ฉบับใหม่</td><td>มีผล <b>17 พฤษภาคม 2569</b> — ครอบคลุมอากาศยานไร้คนขับไม่เกิน 25 kg</td></tr>
+<tr><td>ประกาศ CAAT ฉบับที่ 16</td><td>มีผล <b>26 มิถุนายน 2569</b> (ยกเลิกฉบับที่ 15 ทั้งฉบับ) — ผ่อนคลายทั่วประเทศ ยกเว้น 28 อำเภอชายแดน</td></tr>
+<tr><td>ขึ้นทะเบียนผู้บังคับ</td><td>ต้องผ่านการอบรมที่ CAAT รับรอง อายุใบอนุญาต <b>5 ปี</b> (เดิม 2 ปี)</td></tr>
+<tr><td>ขึ้นทะเบียนตัวอากาศยาน</td><td>ต้องติดหมายเลขรูปแบบ <code>XX-NN-NN-NNNN</code> บนลำตัว ตัวอักษรสูง ≥0.3 cm ตัดกับสีพื้น</td></tr>
+<tr><td>ทะเบียนวิทยุคมนาคม</td><td>ขึ้นทะเบียนกับ <b>กสทช.</b> ค่าธรรมเนียม 200 บาท ต้องขึ้นทะเบียนทันทีที่ครอบครอง</td></tr>
+<tr><td>ประกันภัย</td><td>บุคคลที่สาม <b>≥1,000,000 บาท</b> ต่อครั้ง</td></tr>
+<tr><td>แผนการบิน</td><td>ยื่นออนไลน์ผ่าน CAAT UAS Portal <b>ทุกเที่ยวบิน</b></td></tr>
+<tr><td>สะพาน</td><td>เป็นโครงสร้างพื้นฐานสำคัญ → <b>เข้าข่าย Specific Category เกือบแน่นอน</b> ต้องขออนุญาตเป็นกรณี</td></tr>
+<tr><td>บทลงโทษ</td><td>ไม่ขึ้นทะเบียน: ปรับไม่เกิน 50,000 บาท · บินในเขตหวงห้าม: ปรับไม่เกิน 100,000 บาท</td></tr>
+</tbody>
+</table>
+
+<div class="box box--key">
+<span class="box__t">ข้อกฎหมายที่กระทบการเลือกเซนเซอร์โดยตรง</span>
+ประกาศ กสทช. กำหนดมาตรฐานเรดาร์และระบบหลบสิ่งกีดขวาง (ย่าน 24 GHz, 57–64 GHz, 76–77 GHz) โดยผู้นำเข้า/ผู้ขายต้องได้รับการรับรองก่อนขาย<br><br>
+<b>ถ้าคิดจะติดเซนเซอร์วัดระยะเพิ่มเอง:</b> อุปกรณ์ที่ปล่อยคลื่นวิทยุ (mmWave radar) <b>เข้าข่ายต้องผ่านการรับรอง กสทช.</b> แต่ <b>LiDAR/ToF ที่ใช้แสงอินฟราเรด (905/940 nm) ไม่ใช่คลื่นวิทยุ จึงไม่เข้าข่าย</b><br>
+— เป็นเหตุผลเพิ่มเติมที่ควรเลือก LiDAR/ToF แทน mmWave radar สำหรับโครงงานนักศึกษา
+</div>
+
+<h2>Checklist ก่อนออกภาคสนาม</h2>
+
+<table class="tight">
+<thead><tr><th style="width:22%">หมวด</th><th>รายการ</th></tr></thead>
+<tbody>
+<tr><td><b>เอกสาร</b></td><td>ใบขึ้นทะเบียนผู้บังคับ (CAAT) · ทะเบียนตัวอากาศยาน + หมายเลขติดลำตัว · ทะเบียน กสทช. · กรมธรรม์ประกันภัย ≥1 ล้านบาท · แผนบินที่ยื่นผ่าน UAS Portal แล้ว · หนังสือขออนุญาตจากเจ้าของโครงสร้าง</td></tr>
+<tr><td><b>อุปกรณ์</b></td><td>marker พิมพ์แล้ว <b>วัดขนาดจริงด้วยเวอร์เนียแล้ว</b> · เทปกาว/สติกเกอร์กันน้ำ · crack comparator card สำหรับ ground truth · ไฟเสริม · แบตเตอรี่สำรอง · โน้ตบุ๊กสำหรับ QC ภาพหน้างาน</td></tr>
+<tr><td><b>ซอฟต์แวร์</b></td><td><b>activate App Key ของ MSDK จากที่ทำงานก่อน</b> (ต้องมีเน็ต) · ทดสอบ mission ใน Simulator ก่อนบินจริง · เตรียมสคริปต์ตรวจความเบลอไว้รันหน้างาน</td></tr>
+<tr><td><b>การบิน</b></td><td>ห้ามใช้โหมด Sport · ตั้ง braking distance แทนการปิดระบบ · บินแบบ hover-and-shoot · ตรวจว่า marker อยู่ในเฟรมทุกภาพ · <b>QC ภาพก่อนออกจากไซต์</b> ไม่ใช่กลับไปดูที่บ้าน</td></tr>
+</tbody>
+</table>
+
+<div class="box box--bad">
+<span class="box__t">ข้อผิดพลาดที่ทำให้ต้องกลับไปบินใหม่ทั้งชุด</span>
+<b>ไม่ตรวจสอบคุณภาพภาพก่อนออกจากไซต์</b> — กลับถึงบ้านแล้วพบว่าภาพเบลอทั้งชุด หรือ marker หลุดเฟรม หรือ marker หลุดจากผนังกลางทาง<br>
+ทางแก้ราคาถูก: เขียนสคริปต์ 3 บรรทัด <code>cv2.Laplacian(img, cv2.CV_64F).var()</code> รันบนโน้ตบุ๊กหน้างาน คัดภาพที่ค่าต่ำกว่าเกณฑ์ออก แล้วบินซ้ำเฉพาะจุดนั้นทันที
+</div>

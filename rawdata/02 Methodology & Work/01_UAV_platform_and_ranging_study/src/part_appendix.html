@@ -1,0 +1,134 @@
+<h1 class="nonum">ภาคผนวก ก. — โค้ดหามาตราส่วนและวัดความกว้างรอยแตก</h1>
+
+<p class="small muted">ไฟล์นี้รันจริงและผ่าน self-check ทุกข้อ (ผลการทดสอบอยู่ในตารางบทที่ 5) ทดสอบบน Python 3.13 / OpenCV 4.13.0 / NumPy 2.5.0 — บันทึกเป็น <code>crack_scale.py</code> แล้วรัน <code>python crack_scale.py</code> เพื่อตรวจว่าสภาพแวดล้อมทำงานถูกต้องก่อนใช้กับภาพจริง</p>
+
+<pre><code>"""crack_scale.py — หามาตราส่วน mm/pixel จาก ArUco marker แล้ววัดความกว้างรอยแตก
+ไม่ต้องรู้ระยะ ไม่ต้องรู้ focal length ไม่ต้อง calibrate กล้อง
+"""
+import cv2
+import numpy as np
+
+MARKER_MM = 200.0  # ขนาดจริงของ marker ที่พิมพ์ออกมา — วัดด้วยเวอร์เนีย ไม่ใช่ค่าที่สั่งพิมพ์
+DICT = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+_detector = cv2.aruco.ArucoDetector(DICT)
+
+
+def find_marker(img):
+    """คืน 4 มุมของ marker ตัวแรกที่เจอ (เรียง TL,TR,BR,BL) หรือ None ถ้าไม่เจอ"""
+    corners, ids, _ = _detector.detectMarkers(img)
+    return None if ids is None else corners[0][0]
+
+
+def scale_mm_per_px(img):
+    """มาตราส่วนเฉลี่ยจากด้านทั้ง 4 ของ marker
+    ใช้ได้เมื่อกล้องเกือบตั้งฉากกับผิว (เอียงไม่เกิน ~15 องศา)"""
+    c = find_marker(img)
+    if c is None:
+        return None
+    side = np.mean([np.linalg.norm(c[i] - c[(i + 1) % 4]) for i in range(4)])
+    return MARKER_MM / side
+
+
+def rectify(img, px_per_mm=2.0, margin_mm=20.0):
+    """แก้ภาพเอียงให้กลับเป็นระนาบตรง (fronto-parallel)
+    คืน (ภาพที่แก้แล้ว, mm/px ซึ่งคงที่เท่ากันทั้งภาพ)
+
+    margin_mm: เว้นขอบขาวรอบ marker ในภาพผลลัพธ์ — ห้ามตั้งเป็น 0
+    ArUco ต้องมี quiet zone รอบตัว ถ้า warp ให้ marker ชิดขอบภาพพอดี
+    จะ detect ไม่เจออีกเลย และโค้ดที่ตัด marker ออกจาก mask จะพลาดทั้งก้อน
+    """
+    c = find_marker(img)
+    if c is None:
+        return None, None
+    s = MARKER_MM * px_per_mm
+    m = margin_mm * px_per_mm
+    dst = np.float32([[m, m], [m + s, m], [m + s, m + s], [m, m + s]])
+    H = cv2.getPerspectiveTransform(c.astype(np.float32), dst)
+    h, w = img.shape[:2]
+    # borderValue = สีพื้นกระดาษ ไม่ใช่ดำ — ไม่งั้นขอบดำจะถูกนับเป็น "รอยแตก" ตอน threshold
+    out = cv2.warpPerspective(img, H, (w, h), borderValue=(235, 235, 235))
+    return out, 1.0 / px_per_mm
+
+
+def crack_width_px(mask):
+    """ความกว้างรอยแตกเป็น pixel จาก binary mask
+
+    distance transform คืน 'ระยะถึงพิกเซลพื้นหลังที่ใกล้ที่สุด' ไม่ใช่ 'ระยะถึงขอบ'
+    แถบกว้าง W พิกเซลจะได้ค่าสูงสุด (W+1)/2  =>  W = 2*maxdist - 1
+    ถ้าลืมลบ 1 จะได้ความกว้างเกินจริง 1 px เสมอ (ที่ GSD 0.2 mm/px = เกิน 0.2 mm)
+    """
+    dist = cv2.distanceTransform((mask &gt; 0).astype(np.uint8), cv2.DIST_L2, 5)
+    return 2.0 * float(dist.max()) - 1.0
+
+
+def crack_width_mm(mask, mm_per_px):
+    return crack_width_px(mask) * mm_per_px
+</code></pre>
+
+<h2 class="nonum" style="margin-top:6mm">ตัวอย่างการเรียกใช้กับภาพจริง</h2>
+
+<pre><code>import cv2
+from crack_scale import rectify, scale_mm_per_px, crack_width_mm
+
+img = cv2.imread("DJI_0123.JPG")
+
+# 1) แก้มุมเอียงก่อนเสมอถ้าไม่มั่นใจว่าถ่ายตั้งฉาก
+flat, mm_per_px = rectify(img)
+if flat is None:
+    raise SystemExit("ไม่เจอ marker ในภาพนี้ — ทิ้งภาพหรือถ่ายใหม่")
+
+# 2) หา mask ของรอยแตก — ในงานจริงใช้โมเดล segmentation ที่เทรนไว้ แทนบรรทัดนี้
+mask = your_crack_segmentation_model(flat)          # -&gt; uint8 0/255
+
+# 3) แปลงเป็นหน่วยจริง
+print(f"ความกว้างสูงสุด {crack_width_mm(mask, mm_per_px):.2f} mm")
+print(f"ความยาวรวม     {int((mask &gt; 0).sum()) * mm_per_px:.0f} mm (โดยประมาณ)")
+</code></pre>
+
+<h1 class="nonum">ภาคผนวก ข. — สร้างไฟล์ marker ขนาดจริงสำหรับสั่งพิมพ์</h1>
+
+<p class="small muted">สร้างเป็น SVG ที่ระบุหน่วยเป็นมิลลิเมตรจริง ทำให้สั่งพิมพ์ได้ตรงขนาด (ต้องปิดตัวเลือก "Fit to page" ตอนพิมพ์) และคมชัดทุกขนาดเพราะเป็นเวกเตอร์ — ใช้ id ต่างกันต่อเสาแต่ละต้น/แต่ละหน้า เพื่อให้ระบบ map ภาพกลับไปยังตำแหน่งบนโครงสร้างได้เอง</p>
+
+<pre><code>"""make_marker.py — สร้างไฟล์ SVG ของ ArUco marker ขนาดจริงเป็นมิลลิเมตร
+    python make_marker.py 0 140 marker0.svg
+"""
+import sys, cv2
+
+mid = int(sys.argv[1]) if len(sys.argv) &gt; 1 else 0
+mm  = float(sys.argv[2]) if len(sys.argv) &gt; 2 else 140.0
+out = sys.argv[3] if len(sys.argv) &gt; 3 else f"aruco_{mid}_{int(mm)}mm.svg"
+
+N = 6                                   # 4x4 + ขอบดำ 1 ช่อง
+bits = cv2.aruco.generateImageMarker(
+    cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50), mid, N)
+cell  = mm / N
+quiet = cell                            # quiet zone ขาว 1 ช่อง — ห้ามตัดทิ้ง
+total = mm + 2 * quiet
+
+rects = "".join(
+    f'&lt;rect x="{quiet + c*cell:.4f}" y="{quiet + r*cell:.4f}" '
+    f'width="{cell:.4f}" height="{cell:.4f}" fill="#000"/&gt;'
+    for r in range(N) for c in range(N) if bits[r, c] == 0
+)
+
+open(out, "w", encoding="utf-8").write(
+    f'&lt;svg xmlns="http://www.w3.org/2000/svg" width="{total}mm" height="{total + 8}mm" '
+    f'viewBox="0 0 {total} {total + 8}"&gt;'
+    f'&lt;rect width="{total}" height="{total + 8}" fill="#fff"/&gt;{rects}'
+    f'&lt;text x="{total/2}" y="{total + 5.5}" font-family="Arial" font-size="4" '
+    f'text-anchor="middle"&gt;ArUco DICT_4X4_50 id={mid} | ด้านดำ = {mm:.1f} mm | '
+    f'วัดจริงก่อนใช้&lt;/text&gt;&lt;/svg&gt;'
+)
+print(f"{out}  ด้านดำ {mm} mm, quiet zone {quiet:.1f} mm, กระดาษรวม {total:.1f} mm")
+</code></pre>
+
+<div class="box box--key">
+<span class="box__t">ขั้นตอนใช้งานจริง 5 ขั้น</span>
+<ol style="margin-bottom:0">
+<li>รัน <code>python make_marker.py 0 140</code> (เปลี่ยน id ตามเสา) → ได้ SVG</li>
+<li>พิมพ์บนสติกเกอร์กันน้ำหรือกระดาษหนา <b>ปิด "Fit to page"</b> แล้วเคลือบพลาสติกกันฝน</li>
+<li><b>วัดด้านดำด้วยเวอร์เนีย</b> จดค่าที่วัดได้ เช่น 139.6 mm แล้วเอาไปใส่ <code>MARKER_MM</code></li>
+<li>แปะบนหน้าเสาที่จะตรวจ ให้ marker แนบผิวสนิทและอยู่ระนาบเดียวกับบริเวณที่จะวัด</li>
+<li>ถ่ายให้ marker กับรอยแตกอยู่ในเฟรมเดียวกัน — ถ้ารอยแตกยาวเกินหนึ่งเฟรม ให้แปะ marker หลายตัวไล่ไป</li>
+</ol>
+</div>

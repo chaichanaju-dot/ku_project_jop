@@ -1,0 +1,124 @@
+<h1 class="nonum">ภาคผนวก ง. — คำถามที่ยังไม่มีคำตอบ</h1>
+<p class="small muted">รายการนี้คือสิ่งที่ค้นแล้วยังยืนยันไม่ได้ในรอบนี้ — บันทึกไว้เพื่อไม่ให้ถูกลืม และเพื่อไม่ให้ใครเข้าใจผิดว่าเอกสารนี้ตอบครบทุกข้อ ทุกข้อระบุว่าต้องไปตรวจสอบที่ไหน</p>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">การวัดระยะ <span class="muted small">(16 ข้อ)</span></h2><ul class="small">
+<li>Update rate (Hz) ของ laser rangefinder บน Zenmuse H20/H20T/H20N, H30/H30T และ M30/M30T — DJI ไม่ระบุในหน้า spec สาธารณะ ต้องขอ OEM datasheet จาก DJI Enterprise support หรือดูคู่มือ PDF จากหน้า Downloads ของแต่ละ payload</li>
+<li>Beam divergence ของ LRF บน Matrice 4 series และ Zenmuse H20 series — มีเฉพาะ H30 ที่ประกาศ spot size (50×450 mm @100 m) ส่วน H20 ให้แค่ reference aperture 18×18 mm ซึ่งไม่ใช่ divergence</li>
+<li>สเปก LRF ที่แท้จริงของ Matrice 4D/4TD (measurement range, blind zone, accuracy formula, update rate) — หน้า enterprise.dji.com/matrice-4d-series/specs redirect เสียตอนค้น (ส.ค. 2026) ตัวเลข 1,800 m มาจากแหล่งขาย ไม่ใช่ DJI โดยตรง</li>
+<li>อัตราอัปเดต (Hz) จริงของ ObstacleData และ PerceptionInfo listener ใน MSDK V5 — เอกสาร API ไม่ระบุเลย ต้องวัดเองด้วยการนับ callback บนเครื่องจริง (ใช้ PerceptionFragment.kt ใน SampleCode-V5)</li>
+<li>Accuracy ของ vision obstacle sensing (binocular) ทุกรุ่น — DJI ไม่เคยประกาศ มีแต่ range/FOV ต้องทำ characterization เองเทียบกับ total station หรือ reference rangefinder</li>
+<li>GitHub issue #368: targetPoint (0–1000) ของ laser API ไม่ทำให้ค่าระยะเปลี่ยน และ default เป็น (50,50) ไม่ใช่ (500,500) — ยังไม่มีคำตอบจาก DJI ต้องทดสอบเองว่าเลเซอร์เล็งตาม targetPoint ได้จริงหรือเล็งกลาง gimbal เสมอ</li>
+<li>PSDK มี channel ให้ payload ป้อนค่าระยะกลับเข้า flight controller เพื่อทำ closed-loop standoff hold หรือไม่ (แบบ rangefinder ของ PX4/ArduPilot) — ต้องตรวจใน PSDK API reference หมวด data subscription + flight control ก่อนตัดสินใจซื้อฮาร์ดแวร์</li>
+<li>Minimum focus distance ของกล้อง zoom บน Zenmuse H30/H30T ที่ระยะโฟกัสสุด (809.3 mm equiv) — ถ้าโฟกัสใกล้สุดไกลกว่า 10 m แผนถ่ายที่ 10–20 m ต้องปรับใหม่</li>
+<li>ผลกระทบจริงของ quad-Bayer บนเซ็นเซอร์ 48 MP ขนาด 1/1.3&quot; และ 1/1.5&quot; ต่อ effective resolution — คาดว่าใกล้ 12 MP มากกว่า 48 MP ทำให้ GSD ใช้งานจริงแย่กว่าที่คำนวณราว 2 เท่า ต้องทดสอบด้วย resolution chart (USAF 1951 / Siemens star) ที่ 3, 5, 10 m</li>
+<li>Minimum detection range ของ Zenmuse L1 และ Zenmuse L3 — หน้า spec โหลดไม่ครบ (L2 ระบุชัดที่ 3 m)</li>
+<li>ยืนยันตัวเลข &quot;RTK fix ล้มเหลวในระยะ 0–5 m จากสิ่งกีดขวาง และ re-fix 9–13 วินาที&quot; ในเปเปอร์ต้นฉบับ (น่าจะอยู่ใน Drones 2026, 10(2), 91) ก่อนอ้างในเล่มวิทยานิพนธ์ — ปัจจุบันมาจากบทสรุปการค้น ไม่ใช่ full text</li>
+<li>ยืนยันตัวเลข &quot;error &lt; 10% สำหรับรอยแตกบางกว่า 0.2 mm&quot; ของงาน four-point laser (Automation in Construction 2026, Vol.182) — paywall ต้องเข้าถึงผ่านห้องสมุด ม.เกษตรฯ พร้อมดูว่าใช้ laser รุ่นอะไร ระยะบินเท่าไหร่ กล้องอะไร</li>
+<li>Accuracy, resolution, beam divergence และน้ำหนักของ Benewake TF03 และ LightWare SF30/C, SF30/D, LW20/C — datasheet PDF อ่านอัตโนมัติไม่ได้ ต้องเปิดเอง</li>
+<li>ราคาปัจจุบันของ DJI X-Port และ E-Port V2 ในไทย และ compatibility กับ M400 / M4 series — ต้องถามตัวแทนจำหน่าย DJI Enterprise</li>
+<li>ข้อความข้อจำกัด obstacle sensing (texture, แสง, ผิวสะท้อน) ที่อ้างในรายงานนี้มาจากแหล่งสรุปที่สาม ไม่ใช่คู่มือ DJI ตัวจริง — ต้องตรวจซ้ำในคู่มือ PDF ของแต่ละรุ่นก่อนอ้างในเล่ม</li>
+<li>Payload capacity ของ Matrice 4 series คือ 200 g — LightWare SF11/C 4 ตัว = 140 g บวก mounting/สายไฟ/คอมพิวเตอร์ อาจเกินพิกัด ต้องชั่งจริงหรือย้ายไปแพลตฟอร์ม M350/M400</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">แพลตฟอร์มทางเลือก <span class="muted small">(15 ข้อ)</span></h2><ul class="small">
+<li>DJI Matrice 4E/4T เขียนค่า laser rangefinder distance ลงใน XMP metadata ของไฟล์ภาพหรือไม่ (field ประมาณ drone-dji:LRFTargetDistance / LRFStatus) — หาเอกสารยืนยันไม่เจอ วิธีเช็คที่เร็วที่สุดคือถ่ายภาพจริงแล้วรัน `exiftool -a -G1 IMG.JPG | grep -i lrf` ข้อนี้ตัดสินทิศทางทั้งโปรเจกต์ ควรทำเป็นอย่างแรก</li>
+<li>ราคา Skydio X10 (ไม่ใช่ X10D) แบบ enterprise 1 ลำสำหรับสถาบันการศึกษาไทยเท่าไหร่ และขายให้มหาวิทยาลัยไทยได้หรือไม่ ติดข้อจำกัด EAR/ITAR อะไรบ้าง lead time เท่าไหร่ — ต้องถาม PlanetComm โดยตรง</li>
+<li>Skydio Skills SDK เปิดให้สถาบันการศึกษาเข้าถึงในรูปแบบใดได้บ้าง (academic/research license) — แหล่งเดียวที่มีคือฟอรัมผู้ใช้ ความน่าเชื่อถือต่ำ ต้องถาม Skydio ยืนยัน</li>
+<li>Flyability ไม่ประกาศตัวเลข position hold accuracy, SLAM drift (เช่น m ต่อ 100 m) หรือระยะรักษาจากผนังของ Elios 3 เลย — ถ้าจะอ้างเชิงวิชาการต้องขอ accuracy report จาก Flyability หรือหางานวิจัยอิสระที่ทดสอบ Elios 3</li>
+<li>ราคาจริงของ Elios 3 จากแหล่งปฐมภูมิ — ตัวเลข $25,000 มาจากเว็บรีวิวทุติยภูมิ Flyability เองไม่ประกาศราคา</li>
+<li>Skydio 3D Scan ใช้ minimum standoff distance เท่าไหร่จริง และ scan volume สูงสุดเท่าไหร่ — ไม่ระบุในหน้าเว็บใด ๆ ต้องขอ datasheet</li>
+<li>สถานะสายผลิตภัณฑ์ Parrot ANAFI Ai ปี 2025–2026 (ยังผลิต/ซัพพอร์ตอยู่หรือไม่) ข้อมูลที่หาได้ส่วนใหญ่เป็นของปี 2021–2022 — ต้องถาม Parrot โดยตรง</li>
+<li>ราคา Parrot ANAFI Ai / ANAFI USA — Parrot ห้ามผู้ขายโฆษณาราคาออนไลน์ ต้อง login ถึงเห็น และไม่พบตัวแทนในไทย</li>
+<li>ราคา Voliro T แบบซื้อขาดหรือค่าเช่าต่อเดือน/ปี — ไม่เปิดเผยสาธารณะเลย ต้องขอใบเสนอราคาโดยตรง</li>
+<li>ราคาจริงของ Livox Mid-360 — RoboStore ประกาศ $4,275 ซึ่งสูงผิดปกติเทียบราคาที่พูดถึงกันทั่วไป ควรเทียบอย่างน้อย 3 ร้าน + สอบถามตัวแทน Livox</li>
+<li>ราคาปัจจุบันของ Intel/RealSense D455 — store.intelrealsense.com เข้าไม่ได้ตอนค้น (timeout) ต้องเช็คที่ store.realsenseai.com หรือ Mouser/DigiKey</li>
+<li>ModalAI ส่ง Starling 2 Max มาไทยได้หรือไม่ ติด export control อะไรบ้าง (เป็นสินค้า NDAA-compliant ผลิตในสหรัฐ) — ต้องถาม ModalAI sales ก่อนตั้งงบ</li>
+<li>อัตราแลกเปลี่ยน THB/USD และภาษีนำเข้า + VAT 7% สำหรับโดรน/กล้อง/LiDAR เข้าไทย — ยังไม่ได้ตรวจสอบ กระทบงบประมาณโดยตรง</li>
+<li>โดรนที่ ม.เกษตร / ทีมวิจัยมีอยู่จริงคือรุ่นอะไร มีกล้อง tele หรือไม่ มี laser rangefinder หรือไม่ — ข้อนี้เปลี่ยนคำแนะนำทั้งหมด ควรตรวจสอบก่อนตัดสินใจซื้ออะไร</li>
+<li>สะพาน/เสาตอม่อที่จะใช้ทดลองอยู่ในรัศมี 9 km จากสนามบินหรือไม่ และต้องขออนุญาต CAAT แบบ Specific Category หรือไม่ (กฎใหม่มีผล 17 พ.ค. 2026)</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">DJI SDK <span class="muted small">(11 ข้อ)</span></h2><ul class="small">
+<li>Bandwidth จริงของ E-Port / E-Port V2 / SkyPort V3 (Mbps) — ไม่พบตัวเลขทางการ ต้องเปิด https://developer.dji.com/doc/payload-sdk-tutorial/en/model-instruction/choose-hardware-platform.html ในเบราว์เซอร์จริง (หน้า render ด้วย JS ดึงผ่าน HTTP ธรรมดาไม่ได้) หรือถาม DJI SDK support โดยตรง</li>
+<li>ราคา E-Port V2 Development Kit / SkyPort V2 Adapter Set / X-Port — ผู้ขายส่วนใหญ่ไม่ประกาศราคาสาธารณะ (บางรายระบุว่า DJI ห้ามโฆษณาราคา) ต้องติดต่อ dealer ที่ได้รับอนุญาตในไทย</li>
+<li>minSdkVersion / JDK / Gradle version ที่ MSDK 5.18.0 ต้องใช้ — README ไม่ระบุ ต้องดู build.gradle ใน SampleCode-V5/android-sdk-v5-sample/</li>
+<li>ชื่อคลาสจริงของ RTK manager, LiveStream manager, Media manager ใน MSDK V5 — URL API reference ที่เดาไว้ตอบ 404 ต้องเปิดจากซอร์ส RTKCenterFragment.kt / LiveFragment.kt / MediaFragment.kt ใน repo</li>
+<li>LiveStream protocol ที่ MSDK V5 รองรับจริง (RTMP / RTSP / GB28181 / Agora) — ยังไม่ได้ยืนยันจากเอกสารทางการในรอบนี้</li>
+<li>MSDK V5 เปิด raw GNSS observables (pseudorange / carrier phase) สำหรับทำ PPK เองหรือไม่ — เชื่อว่าไม่ แต่ยังไม่ยืนยัน ต้องตรวจใน RTKCenterFragment.kt</li>
+<li>มาตรฐาน C ที่ PSDK V3 ต้องการ (C99 / C11) — ต้องดู CMakeLists.txt ใน repo dji-sdk/Payload-SDK</li>
+<li>กระบวนการ certification / partner agreement สำหรับผลิต PSDK payload เชิงพาณิชย์ — ไม่พบเอกสารสาธารณะ ต้องติดต่อ DJI SDK support</li>
+<li>sensor pixel pitch และ focal length ของกล้อง M4E/M3E เพื่อคำนวณ GSD — ต้องดึงจาก spec sheet ทางการของแต่ละรุ่นโดยตรง อย่าใช้ตัวเลขประมาณ</li>
+<li>ระยะบินขั้นต่ำที่ปลอดภัยจริงสำหรับตรวจรอยแตกเสาตอม่อ และ GSD ที่ต้องการต่อความกว้างรอยแตกตามเกณฑ์ BMMS/T-BHI — ไม่มีค่ามาตรฐานอ้างอิงได้ ต้อง validate ด้วย dataset ของโครงการเอง (น่าจะเป็น contribution หนึ่งของ thesis)</li>
+<li>กฎหมายไทย: การบินใกล้โครงสร้างสาธารณะ/สะพาน ต้องขออนุญาต กสทช. + CAAT อย่างไร และมี restricted zone ทับซ้อนหรือไม่ — อยู่นอกขอบเขตการค้นรอบนี้ ต้องตรวจกับ CAAT ก่อนบินจริง</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">marker / มาตราส่วน <span class="muted small">(10 ข้อ)</span></h2><ul class="small">
+<li>เกณฑ์ความกว้างรอยแตก (mm) และจำนวนระดับ condition rating ใน &#x27;คู่มือการสำรวจและตรวจสอบสะพาน&#x27; ของกรมทางหลวง (382 หน้า จัดทำโดย ม.เกษตรศาสตร์) — โหลดไม่ได้ผ่านเว็บ ต้องดาวน์โหลด PDF เอง นี่คือช่องว่างใหญ่ที่สุดสำหรับบริบทไทย และจำเป็นต่อการ map ค่า mm ที่วัดได้ -&gt; T-BHI</li>
+<li>DJI ระบุ FOV ของ Matrice 4T แค่ &#x27;82 องศา&#x27; โดยไม่บอกว่าเป็น DFOV หรือ HFOV — ตาราง GSD ใน §3.4 คำนวณโดยสมมติเป็น DFOV ถ้าเป็น HFOV ค่าจะผิด ~25% วิธีตรวจ: ถ่ายไม้บรรทัดที่ระยะวัดจริง 2.00 m แล้วนับ pixel</li>
+<li>Matrice 4 Series รองรับ Waypoint 3.0 ผ่าน Mobile SDK v5 หรือไม่ — เอกสาร DJI ที่ค้นเจอระบุรองรับเฉพาะ Matrice 30 Series / Mavic 3 Enterprise Series / Matrice 3D-3TD ถ้า M4 ยังไม่รองรับ ต้องพิจารณา Mavic 3E แทนสำหรับงานเขียนโปรแกรมบินเอง</li>
+<li>รายละเอียดตัวเลขของ Germanese et al. 2018 (J. Imaging 4(8) 99) — ขนาด marker เป็น mm, รุ่น UAV, ระยะบิน, และ error ที่รายงาน — MDPI คืน HTTP 403 ตอน fetch ต้องโหลด PDF open-access เอง</li>
+<li>ตัวเลข error เป็น % ของ Yoon et al. &#x27;Feasibility Study for the Fine Crack Width Estimation of Concrete Structures Based on Fiducial Markers&#x27; (IEEE 9583237) — paywall ต้องเข้าผ่าน IEEE Xplore ของ ม.เกษตร งานนี้สำคัญเพราะสรุปว่า &#x27;จำนวน pixel สำคัญกว่า GSD&#x27;</li>
+<li>ตัวเลขเปรียบเทียบ ChArUco vs checkerboard (repeatability +/-0.03 mm vs +/-0.08 mm, ใช้ภาพน้อยกว่า 50%) มาจาก blog ของผู้ขายกระดาน calibration ไม่ใช่ peer-reviewed — อย่าอ้างในเล่มจบโดยไม่ทดลองเอง</li>
+<li>ตัวเลขจาก arXiv:2509.17345 (marker 100mm -&gt; detect ได้ 3.5 m ฯลฯ) สกัดจาก PDF 9MB ด้วยโมเดลเล็ก และ abstract ไม่ยืนยัน — ต้องเปิด PDF อ่านตารางจริงก่อนอ้าง</li>
+<li>lens distortion ที่ขอบภาพของ Matrice 4T (ประมาณไว้ 2-5%) ไม่มีแหล่งอ้างอิงเฉพาะรุ่น — ต้อง calibrate เองแล้วคำนวณ r_distorted/r ที่ขอบภาพจากค่า k1/k2</li>
+<li>รายละเอียด four-point laser metric calibration (Automation in Construction S0926580526000154) — ScienceDirect คืน 403 ยังไม่ทราบความแม่นที่รายงาน ทั้งที่เป็นทางเลือกโดยตรงของ marker เมื่อติด marker ไม่ได้</li>
+<li>overlap ที่เหมาะสมสำหรับ stitching ระยะใกล้บนผิวคอนกรีต (ผมใช้ค่าทั่วไป 80% forward / 60% side) ยังไม่มีแหล่งอ้างอิงเฉพาะงาน crack inspection — งบ WebSearch หมดก่อนค้นได้</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">pipeline <span class="muted small">(12 ข้อ)</span></h2><ul class="small">
+<li>Effective resolution จริงของโหมด 48 MP บนเซนเซอร์ quad-Bayer ของ DJI ยังไม่ยืนยัน — ต้องวัดเองด้วย Siemens star / USAF 1951 target ใน Phase 0 ตัวเลข GSD ทั้งหมดในรายงานนี้เป็น nominal ถ้า effective ต่ำกว่า nominal 1.4x ต้องคูณระยะบิน D ด้วย 1/1.4</li>
+<li>Actual focal length ของ DJI Mini 4 Pro (6.72 mm) และ Mavic 4 Pro ทุกเลนส์ ยังไม่ยืนยัน — DJI ไม่ประกาศในหน้า specs (ตรวจสอบแล้ว) ตัวเลข 6.72 mm มาจากฟอรัม/รีวิว จึงใช้ฟอร์ม FOV แทนในรายงานนี้ ถ้าต้องการยืนยันให้อ่านจาก EXIF ของภาพจริง (FocalLength tag)</li>
+<li>ขนาดเซนเซอร์เป็น mm ของฟอร์แมต 1/1.3&quot; และ 1/1.5&quot; ยังไม่ยืนยัน — แหล่งอ้างอิงให้ค่าขัดกัน (9.6x7.2 vs 9.8x7.3 mm) ต้องดู datasheet ของเซนเซอร์รุ่นจริง (น่าจะเป็น Sony IMX ตระกูลหนึ่ง) หรือคำนวณย้อนจาก EXIF FocalLengthIn35mmFilm</li>
+<li>DJI Matrice 4E/4T ไม่ประกาศ FOV ของกล้อง wide ในหน้า specs ที่ดึงมา — ต้องเปิดหน้า specs เต็มหรือคู่มือผู้ใช้เพื่อคำนวณ GSD ของรุ่นนี้</li>
+<li>กฎ &#x27;รอยแตกเล็กสุด = 3 x GSD&#x27; ยังไม่ยืนยันแหล่งปฐมภูมิ — พบใน secondary source ต้องหา primary reference (น่าจะเป็นงาน photogrammetry detectability หรือ Nyquist-based argument) ก่อนอ้างในวิทยานิพนธ์</li>
+<li>ตาราง 4.9 ของ T-BHI (ค่าน้ำหนัก W_e ของแต่ละ element และการแบ่ง Primary/Secondary) ยังไม่ได้ดึงมาครบในรอบนี้ — ต้องเปิดหน้า 51-53 ของ PDF เพื่อได้ตารางเต็มก่อนเขียนโค้ดคำนวณ T-BHI</li>
+<li>ค่า q_e (ปริมาณของแต่ละ element) มาจากไหน — ถ้าไม่มีแบบก่อสร้างสะพาน ต้องรังวัดเอง หรือประมาณจาก SfM model ยังไม่ได้ตัดสินใจ มีผลโดยตรงต่อความเป็นไปได้ของ Phase 2</li>
+<li>ประกาศ CAAT ฉบับ 6 ก.พ. 2569 ฉบับเต็ม ยังไม่ได้อ่าน — ข้อมูลในรายงานมาจาก secondary source (บล็อกกฎหมายโดรน) ต้องเช็ค caat.or.th โดยตรง โดยเฉพาะเงื่อนไขการบินใกล้/เหนือโครงสร้างสาธารณะ ระยะห่างจากคน และการบินในเขตควบคุม</li>
+<li>โดรนรุ่นที่ทีมจะใช้จริงคือรุ่นไหน — ตัวเลขระยะบิน/จำนวนภาพ/shutter ทั้งหมดต้องคำนวณใหม่ตามรุ่นจริง สคริปต์คำนวณอยู่ในภาคผนวก B</li>
+<li>ยังไม่ได้ตรวจสอบว่ารายงานวิจัย วช. ปีงบ 68 (rawdata/00_บริบทโครงการ/รายงานวิจัยฉบับสมบูรณ์_วช68.pdf) มีชุดภาพ/ข้อมูลภาคสนามที่ใช้เป็น dataset ตั้งต้นได้หรือไม่ — ถ้ามี จะลดความเสี่ยง R1/R2 ลงมาก ควรเปิดอ่านก่อนเขียน proposal</li>
+<li>License ของ nnU-Net (ที่ OmniCrack30k ใช้) ยังไม่ยืนยัน — ต้องเช็คก่อนตัดสินใจใช้ pretrained weights</li>
+<li>ยังไม่ได้ยืนยันว่า Mavic 3 Pro / Mavic 3 Enterprise (รุ่นที่หาง่ายและถูกกว่าในไทย) มีสเปกเลนส์เทเลเพียงพอหรือไม่ — ควรเช็คก่อนตัดสินใจซื้อ/ยืม เพราะอาจได้ GSD ที่ต้องการในราคาถูกกว่า Mavic 4 Pro มาก</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">photogrammetry <span class="muted small">(15 ข้อ)</span></h2><ul class="small">
+<li>Metashape Standard ($179 / $59 educational) มี marker, scale bar และ planar-projection orthomosaic หรือไม่ — ต้องเช็คตาราง feature comparison ที่ agisoft.com/features/compare ก่อนตัดสินใจซื้อ เพราะเป็นตัวชี้ขาดว่าจะต้องจ่าย $549 (Pro edu) หรือ $59 (Standard edu)</li>
+<li>ราคา DJI Terra Standard/Flagship ปี 2026 ที่แท้จริง — แหล่งที่ค้นได้ขัดแย้งกัน (thefuture3d ให้ Pro $1,299/yr แต่ terrestrialimaging บอกว่าเปลี่ยนชื่อเป็น Standard/Flagship แล้วไม่ระบุราคา) ต้องถามตัวแทน DJI Enterprise โดยตรง</li>
+<li>DJI Terra รับภาพที่ไม่มี geotag (non-geotagged) มาทำ reconstruction ได้หรือไม่ และมี workflow scale-bar-only (ไม่มี GCP พิกัด) หรือไม่ — ไม่พบการกล่าวถึงในเอกสารทั้งหมดที่ค้น ต้องดู DJI Terra User Manual v4.0 หมวด GCP Management</li>
+<li>Gimbal tilt range (เงยขึ้นได้กี่องศา) ของ Mavic 3E และ Matrice 4E — หน้า spec ที่ดึงมาไม่ระบุ ตัวเลขนี้ตัดสินว่าถ่ายท้องสะพานตรง ๆ ได้หรือไม่</li>
+<li>DJI Matrice 350 RTK รองรับการติด gimbal แบบหงายขึ้น (upward mount) หรือไม่ และมี payload ใดบ้างที่ใช้ได้ — สำคัญมากสำหรับงานท้องสะพาน</li>
+<li>Laser rangefinder ของ Mavic 3T มีระยะ 200 m หรือ 1,200 m — แหล่งข้อมูลขัดแย้งกัน</li>
+<li>Max image size และ FOV ที่แท้จริงของกล้อง tele บน Matrice 4E (สมมติ 8000×6000 ในการคำนวณ GSD) และ minimum focus distance ของเลนส์ tele — ต้องทดสอบด้วยการถ่ายเป้าที่รู้ขนาดจริงในสนาม</li>
+<li>เกณฑ์ความกว้างรอยแตกร้าวและ condition rating ที่ BMMS ของกรมทางหลวง/กรมทางหลวงชนบทใช้จริง — ไม่พบเอกสารออนไลน์ ต้องขอคู่มือตรวจสอบสะพานฉบับจริง</li>
+<li>สูตรและเกณฑ์ของ T-BHI (Thailand Bridge Health Index) — ต้องอ้างอิงจากรายงานวิจัยทุน วช. ปีงบ 68 ต้นทางโดยตรง เพื่อกำหนดว่าต้องการปริมาณความเสียหายต่อชิ้นส่วนในรูปแบบใด (ซึ่งเป็นตัวชี้ว่าต้อง stitch หรือไม่)</li>
+<li>ราคาและความเป็นไปได้ในการเข้าถึง Flyability Elios 3 / Skydio X10 สำหรับงานใต้สะพาน (GPS-denied) — น่าจะเกินงบโปรเจกต์ ป.ตรี แต่ควรอ้างอิงเป็นข้อเสนอแนะในเล่ม</li>
+<li>DJI WPML (KMZ waypoint file) schema เวอร์ชันล่าสุด ถ้าจะเขียน generator เส้นทางบินเอง — ดูที่ developer.dji.com</li>
+<li>ราคาและความสามารถของ Dronelink / UgCS / Hammer Missions สำหรับ facade mission — ยังไม่ได้ค้นราคา</li>
+<li>ข้อกำหนดทางกฎหมายในการบินโดรนใกล้สะพาน/เหนือทางหลวงในไทย (CAAT, กสทช., การขออนุญาตจากกรมทางหลวง) — ยังไม่ได้ค้นเลย ต้องทำก่อนออกสนามจริง</li>
+<li>เงื่อนไขการทดลองของงานที่รายงานว่าตรวจจับรอยแตก &lt;0.2 mm ได้ (ScienceDirect S0926580523001899) — ระยะถ่าย กล้อง และการประมวลผลคืออะไร ก่อนจะอ้างตัวเลขนี้ในเล่ม</li>
+<li>ตัวเลขเชิงปริมาณของผลการเติม artificial texture ต่อความแม่นของโมเดล (F1000Research 13:1479) — เว็บบล็อกการดึงเนื้อหา ต้องเข้าไปอ่านเอง</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">ความปลอดภัยและกฎหมาย <span class="muted small">(13 ข้อ)</span></h2><ul class="small">
+<li>FHWA มีตัวเลข minimum standoff distance สำหรับ UAS กับสะพานจริงหรือไม่ — PDF ทั้ง 3 ฉบับ (HRT-21-086, HIF-19-056, HRT-21-083) ดึงข้อความไม่ได้ในรอบนี้ ต้องเปิดอ่านเอง โดยเฉพาะตาราง sensor performance requirements</li>
+<li>Ceiling effect เชิงปริมาณ (ระยะเริ่มมีผล + ขนาดแรงดูดขึ้น) — สำคัญที่สุดสำหรับการบินใต้ท้องสะพาน แต่เปเปอร์อยู่หลัง paywall (ASCE J. Aerospace Eng. 39(3)) ต้องใช้ access ของ ม.เกษตร</li>
+<li>Wall effect: ระยะที่เริ่มมีผลเป็นตัวเลข (กี่ rotor radii) — เปเปอร์ arXiv 2509.21496 มีข้อมูลแต่ PDF parse ไม่ได้</li>
+<li>ข้อกำหนด &#x27;ระยะห่าง 30 เมตรจากบุคคล/อาคาร/ทรัพย์สินผู้อื่น&#x27; ยังบังคับใช้อยู่หรือไม่หลังประกาศ CAAT ฉบับที่ 16 — ถ้ายังใช้ การบิน standoff 1-2 m จากเสาตอม่อคือการฝ่าฝืนโดยตรง ต้องเช็คตัวประกาศจริงและขอหนังสือยินยอมจากกรมทางหลวง</li>
+<li>บทลงโทษที่ถูกต้อง — แหล่งข้อมูลระบุ 40,000 / 50,000 / 100,000 บาท ไม่ตรงกัน ต้องเปิด พ.ร.บ.การเดินอากาศ พ.ศ. 2497 มาตราที่เกี่ยวข้อง</li>
+<li>กรมทางหลวง / กรมทางหลวงชนบท / รฟท. มีระเบียบเฉพาะเรื่องการบินโดรนใกล้สะพานหรือไม่ — ไม่พบเอกสารเผยแพร่สาธารณะ ต้องทำหนังสือถามสำนักบำรุงทางโดยตรง</li>
+<li>ระยะตรวจจับสิ่งกีดขวางทิศ upward ของ Matrice 4 Series — หน้า spec ไม่ระบุแยก ทั้งที่เป็นทิศสำคัญที่สุดสำหรับการบินใต้ท้องสะพาน</li>
+<li>Pixel pitch และ focal length จริง (ไม่ใช่ equivalent) ของกล้อง M4T/M4E ทั้ง 3 ตัว — ต้องได้จาก spec sheet ฉบับเต็มหรือสอบเทียบเอง</li>
+<li>ค่า lux จริงของ DJI AL1 ที่ระยะ 2-5 m — ตัวเลขในรายงานนี้เป็นการอนุมานด้วย inverse-square law จาก 17 lux @ 50 m ซึ่ง extrapolate 25 เท่า ต้องวัดจริงด้วย lux meter</li>
+<li>เกณฑ์ T-BHI (Thailand Bridge Health Index) ฉบับทางการ และวิธี map ผลตรวจจับจากภาพ UAV เป็น condition rating ตาม NBI/AASHTO — ไม่พบเอกสารสาธารณะ ต้องดูรายงานทุน วช. ปีงบ 68 ที่เป็นต้นทางของโครงงาน</li>
+<li>สถานะการรับรอง ATO ของหลักสูตรอบรม Specific Category — DroneTH ระบุว่ายังรอ CAAT รับรอง ใบรับรองจะมีผลทางกฎหมายเมื่ออนุมัติแล้วเท่านั้น</li>
+<li>ช่วงค่าที่ setObstacleAvoidanceBrakingDistance() ยอมรับจริงในแต่ละรุ่น (clamp ที่เท่าไร) — แหล่งบุคคลที่สามระบุ warning distance 1.6-16 m แต่ยังไม่ยืนยันกับ M4 Series</li>
+<li>การใช้ mmWave radar เสริมเข้าข่ายต้องรับรอง กสทช. ตามร่างประกาศฉบับที่ 2 หรือไม่ในกรณีติดตั้งเพื่อการวิจัย (ไม่ได้จำหน่าย)</li>
+</ul>
+<h2 class="nonum" style="font-size:11pt;margin-top:5mm">ทบทวนวรรณกรรม <span class="muted small">(14 ข้อ)</span></h2><ul class="small">
+<li>Sensors 2022 (s22124469) รายงาน spatial resolution เป็น mm/pixel ไว้เท่าไหร่กันแน่ — ค่าที่ text-extraction ดึงได้ (0.582 mm/px @1 m) เป็น 2 เท่าของค่าที่คำนวณจากสเปกกล้องที่ paper ระบุเอง (0.294 mm/px) ต้องเปิด PDF ตัวจริงจาก MDPI (WebFetch โดน 403) เพื่อยืนยัน</li>
+<li>Sensors 2022: รอยแตกเล็กสุดที่ระบบวัดได้จริงคือ 0.1 mm (ตาม abstract) หรือ 0.25 mm (ตามเนื้อความที่อ้าง Kim et al.) — และ &#x27;92% accuracy ในการวัดความยาว&#x27; เป็นผลของ paper นี้เองหรือของงานที่อ้างถึง (Tian et al.)</li>
+<li>Automation in Construction 182:106774 (2026, four-point laser + Mamba) — ตัวเลข measurement error (mm/%), ช่วงความกว้างที่วัดได้, ระยะบิน และ segmentation metrics ยังเข้าไม่ถึง (paywall) นี่คืองานที่ตรงโจทย์ที่สุดในโลกตอนนี้ ต้องดึงผ่านห้องสมุด มก.</li>
+<li>Ding et al. 2023 (AutCon 152:104929) — ตัวเลข MAE/MAPE ที่แท้จริงของ IBR-Former + laser rangefinder และระยะบินที่ใช้ ยังไม่ยืนยัน (paywall, abstract ไม่มีใน Semantic Scholar)</li>
+<li>Applied Sciences 12(20):10651 (U-Net + Canny + laser rangefinder) — สเปก rangefinder, ระยะทำงาน, ความแม่นเป็น mm ยังไม่ยืนยัน (MDPI 403)</li>
+<li>ACI 224R-01 Table 4.1 — ยืนยันค่า 0.016/0.012/0.007/0.006/0.004 in จากต้นฉบับ Ch.4 โดยตรง (ขณะนี้ยืนยันผ่านแหล่งทุติยภูมิ ASCC PS-33 เท่านั้น; concrete.org เผยแพร่เฉพาะ Ch.3 ฟรี)</li>
+<li>AASHTO MBEI defect 1130 ฉบับต้นทาง — ยืนยันว่าตัวเลข 0.3/1.3 mm ที่เอกสาร T-BHI สังเคราะห์ไว้ ตรงกับ 0.012 in / 0.05 in ในต้นฉบับหรือไม่ (มีไฟล์ VDOT Supplement + FHWA Element Condition State handout อยู่ใน rawdata แล้ว ยังไม่ได้เปิดตรวจในรอบนี้)</li>
+<li>คู่มือ BMMS กรมทางหลวงฉบับปัจจุบัน — ตารางที่ 4-13 ที่ดึงมายังเป็นฉบับล่าสุดหรือไม่ (km.doh.go.th ปฏิเสธ connection จาก environment นี้)</li>
+<li>CODEBRIM: จำนวนภาพและจำนวน annotated defect box ที่แน่นอน — ยังไม่ยืนยัน ต้องเช็ค zenodo record ต้นทาง</li>
+<li>Bridge Crack Library (BCL) — ค้นไม่พบแหล่งหลักในรอบนี้ ยังไม่ยืนยันว่ามีอยู่จริงในชื่อนี้</li>
+<li>DJI Matrice 4E laser rangefinder: ระยะวัดต่ำสุด (minimum working distance) คือเท่าไหร่ สเปกระบุเฉพาะ accuracy &#x27;beyond 3 m&#x27; — ถ้าบินที่ 3 m จะยังอ่านค่าได้หรือไม่ ต้องทดสอบจริงหรือดู user manual</li>
+<li>DJI SDK: MSDK v5 / PSDK รองรับ Matrice 4E หรือไม่ และเปิด API อ่านค่า laser rangefinder แบบ real-time ได้หรือไม่ — ยังไม่ยืนยัน ต้องดู developer.dji.com compatibility matrix</li>
+<li>ยังไม่มี benchmark ใดในวรรณกรรมที่รายงาน weighted Cohen&#x27;s kappa ระหว่าง AI กับ inspector มนุษย์บน condition rating scale — ค่า baseline ที่ควรตั้งเป็นเป้าจึงยังไม่มีข้อมูลอ้างอิง</li>
+<li>ยังไม่พบ public dataset ใดที่มี label ความกว้างรอยแตกเป็น mm พร้อม GSD/ระยะกล้องกำกับ — ถ้ามีอยู่แล้วจะลดงานสร้าง dataset ของโปรเจกต์ได้มาก ควรค้นเพิ่มด้วยคำว่า &#x27;crack width regression dataset&#x27; / &#x27;metric crack dataset&#x27;</li>
+</ul>
