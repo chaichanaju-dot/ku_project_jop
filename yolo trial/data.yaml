@@ -1,0 +1,13 @@
+train: C:\yolo trial\train\images
+val: C:\yolo trial\valid
+
+
+nc: 7
+names: ['Exposed Rebar', 'beam', 'crack', 'pier bridge', 'pier cap', 'spalling', 'stain']
+
+roboflow:
+  workspace: nuttasits-workspace-ijcfi
+  project: bridge-wsouj
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/nuttasits-workspace-ijcfi/bridge-wsouj/dataset/1
