@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>จะซื้อ "เลเซอร์จิ๋ว" มาทำจุดวัดสเกล 4 จุด ต้องเลือกแบบไหน</title>
+<style>
+@page { size: A4; margin: 11mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: 'Leelawadee UI', Tahoma, sans-serif;
+  color: #1b1f24; margin: 0; line-height: 1.42; font-size: 10.3pt;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.title { font-size: 18pt; font-weight: 700; line-height: 1.25; margin: 0 0 1.5mm; }
+.rule { height: 3px; background: #1667c9; width: 30mm; margin: 0 0 1.8mm; }
+.sub { font-size: 9.3pt; color: #5a626b; margin: 0 0 3mm; }
+
+.step { display: grid; grid-template-columns: 7.2mm 1fr; gap: 0 2.6mm; margin-bottom: 3mm; page-break-inside: avoid; }
+.num {
+  width: 7.2mm; height: 7.2mm; border-radius: 50%; background: #1667c9; color: #fff;
+  font-weight: 700; font-size: 11.5pt; display: flex; align-items: center;
+  justify-content: center; line-height: 1;
+}
+.step--win .num { background: #16803c; }
+.step--warn .num { background: #b3690a; }
+.step h2 { font-size: 11.8pt; margin: 0.3mm 0 0.8mm; line-height: 1.25; }
+.step p { font-size: 9.9pt; margin: 0 0 1mm; }
+.body { min-width: 0; }
+b.hi { background: #fff2a8; padding: 0 1mm; border-radius: 2px; }
+.win { color: #16803c; }
+.bad { color: #c02626; }
+svg { display: block; max-width: 100%; height: auto; margin: 1mm 0; }
+
+table { width: 100%; border-collapse: collapse; margin: 1.5mm 0 2mm; font-size: 8.8pt; }
+thead { background: #1667c9; color: #fff; }
+th { text-align: left; padding: 1.4mm 2mm; font-weight: 600; border: 1px solid #1667c9; }
+td { padding: 1.3mm 2mm; border: 1px solid #d8dce2; vertical-align: top; }
+tbody tr:nth-child(even) { background: #f7f8fa; }
+td.c, th.c { text-align: center; }
+
+.box { padding: 2.4mm 3.4mm; margin: 1.5mm 0 2mm; border-radius: 3px; font-size: 9.4pt; page-break-inside: avoid; }
+.box__t { font-weight: 700; display: block; margin-bottom: 1mm; }
+.box--key  { background: #eaf2fa; border-left: 4px solid #1667c9; }
+.box--key .box__t { color: #1667c9; }
+.box--win  { background: #f0f9f3; border-left: 4px solid #16803c; }
+.box--win .box__t { color: #16803c; }
+.box--warn { background: #fdf1e0; border-left: 4px solid #b3690a; }
+.box--warn .box__t { color: #b3690a; }
+.box--bad  { background: #fceded; border-left: 4px solid #c02626; }
+.box--bad .box__t { color: #c02626; }
+
+.answer { border: 2.5px solid #16803c; background: #f0f9f3; border-radius: 5px; padding: 3mm 4mm; margin: 1.5mm 0 0; page-break-inside: avoid; }
+.answer .t { font-weight: 700; font-size: 11.5pt; color: #16803c; margin: 0 0 1.5mm; }
+.spec { display: grid; grid-template-columns: auto 1fr; gap: 1mm 3mm; font-size: 9.8pt; }
+.spec b { color: #16803c; white-space: nowrap; }
+
+.foot { margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #d9dde2; font-size: 8pt; color: #5a626b; }
+.foot a { color: #5a626b; }
+.foot ul { margin: 1mm 0 0; padding-left: 4mm; }
+.pb { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<div class="title">จะซื้อ "เลเซอร์จิ๋ว" มาทำจุดวัดสเกล 4 จุด ต้องเลือกแบบไหน</div>
+<div class="rule"></div>
+<div class="sub">อธิบายแบบง่ายที่สุด · ต่อยอดตัวเลือก C "ยิงเลเซอร์ 4 จุด" ที่พูดถึงใน UAV_platform_and_ranging_study.pdf §7.3 · โครงการตรวจสภาพสะพานด้วย AI</div>
+
+<!-- 1 -->
+<div class="step">
+  <div class="num">1</div>
+  <div class="body">
+    <h2>เลเซอร์จิ๋วที่ซื้อมาประกอบเองได้ มีของให้เลือก 4 อย่าง</h2>
+    <p>เวลาไปดูของขาย จะเจอสเปกหลัก ๆ 4 ตัวเสมอ:</p>
+    <table>
+      <thead><tr><th>เลือกอะไร</th><th>มีแบบไหนบ้าง</th></tr></thead>
+      <tbody>
+        <tr><td><b>สี (ความยาวคลื่น)</b></td><td>แดง 650nm (ถูกสุด หาง่ายสุด) · เขียว 520/532nm (แพงขึ้นนิด แต่สว่างตาที่สุด) · ม่วง/น้ำเงิน 405/450nm (แปลกตา แต่ตาคนมองเห็นยากกว่า)</td></tr>
+        <tr><td><b>รูปร่างลำแสง</b></td><td><b class="hi">จุดกลม (dot)</b> · เส้นตรง (line) · กากบาท (cross)</td></tr>
+        <tr><td><b>กำลังไฟ (mW)</b></td><td>ตั้งแต่ &lt;5 มิลลิวัตต์ ไปถึงหลายร้อยมิลลิวัตต์ — ยิ่งเยอะยิ่งสว่าง แต่ยิ่งอันตราย</td></tr>
+        <tr><td><b>ไฟเลี้ยง/ขนาดหัว</b></td><td>3V, 5V, 12V · หัวโตประมาณ 6–26 มม.</td></tr>
+      </tbody>
+    </table>
+
+    <svg viewBox="0 0 500 66" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+      <rect x="4" y="6" width="150" height="54" rx="4" fill="#f0f9f3" stroke="#16803c" stroke-width="2"/>
+      <circle cx="79" cy="30" r="9" fill="#16803c"/>
+      <text x="79" y="52" font-size="10" fill="#16803c" font-weight="700" text-anchor="middle">จุด (dot) ✓</text>
+      <rect x="176" y="6" width="150" height="54" rx="4" fill="#fceded" stroke="#c02626" stroke-width="2"/>
+      <line x1="211" y1="30" x2="291" y2="30" stroke="#c02626" stroke-width="6"/>
+      <text x="251" y="52" font-size="10" fill="#c02626" font-weight="700" text-anchor="middle">เส้น (line) ✗</text>
+      <rect x="348" y="6" width="150" height="54" rx="4" fill="#fceded" stroke="#c02626" stroke-width="2"/>
+      <line x1="423" y1="14" x2="423" y2="52" stroke="#c02626" stroke-width="6"/>
+      <line x1="404" y1="33" x2="442" y2="33" stroke="#c02626" stroke-width="6"/>
+      <text x="423" y="58" font-size="10" fill="#c02626" font-weight="700" text-anchor="middle">กากบาท (cross) ✗</text>
+    </svg>
+
+    <div class="box box--key">
+      <span class="box__t">ต้องเลือก "จุด" เท่านั้น ห้ามซื้อเส้น/กากบาท</span>
+      รหัส <code>laser_scale.py</code> ต้องการ<b>จุดศูนย์กลาง</b>ของแต่ละจุดไปคำนวณระยะห่าง —
+      เส้นตรงหรือกากบาทไม่มีจุดศูนย์กลางที่ชัดพอให้โปรแกรมหาตำแหน่งได้แม่น ๆ
+    </div>
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="step step--win">
+  <div class="num">2</div>
+  <div class="body">
+    <h2>ถ้าใช้กลางแจ้ง ให้เลือก "สีเขียว" — เหตุผลซ้อนกันสองชั้น</h2>
+    <p><b>ชั้นที่ 1 — ตาคน:</b> ตาคนไวต่อแสงสีเขียวมากกว่าสีแดงมาก ที่กำลังไฟเท่ากัน
+    เลเซอร์เขียวจะดูสว่างกว่าเลเซอร์แดง<b class="hi">ประมาณ 3–4 เท่า</b> (บางแหล่งบอกสูงกว่านี้อีก)
+    เพราะตาคนไวกับความยาวคลื่นแถวสีเขียวเป็นพิเศษ</p>
+    <p><b>ชั้นที่ 2 — กล้อง (สำคัญกว่าตาคนสำหรับงานนี้!):</b> ระบบนี้ให้<b>กล้อง+โปรแกรม</b>เป็นคนหาจุด ไม่ใช่ตาคน
+    และเซนเซอร์กล้องดิจิทัลทุกตัว (Bayer sensor) มี<b>พิกเซลรับสีเขียวเยอะกว่าสีแดง/น้ำเงิน 2 เท่า</b>โดยธรรมชาติของกล้องเอง
+    → ภาพที่ได้จากกล้อง จุดเขียวจะคมและสว่างกว่าจุดแดงในระบบเดียวกัน</p>
+    <div class="box box--win">
+      <span class="box__t">ของแถม: โค้ดที่มีอยู่แล้วก็ตั้งไว้เป็นสีเขียวอยู่แล้ว</span>
+      ใน <code>laser_scale.py</code> ตัวแปร <code>HSV_LO</code>/<code>HSV_HI</code> ที่ใช้หาสีจุดเลเซอร์ ถูกตั้งค่าเริ่มต้นเป็น
+      "เขียวสว่างจัด" ไว้แล้ว — ถ้าซื้อเลเซอร์<b>สีเขียว</b>มา แทบไม่ต้องแก้โค้ดเลย
+      แต่ถ้าซื้อสีอื่นมา ต้องกลับมาแก้ 2 บรรทัดนี้ให้ตรงกับสีจริงที่ซื้อ
+    </div>
+  </div>
+</div>
+
+<div class="pb"></div>
+
+<!-- 3 -->
+<div class="step">
+  <div class="num">3</div>
+  <div class="body">
+    <h2>แต่ "เขียว" มี 2 แบบข้างในไม่เหมือนกัน — เลือกผิดแบบมีปัญหาตอนแดดร้อน</h2>
+    <p>เลเซอร์เขียวราคาถูกที่ขายทั่วไป ส่วนใหญ่เป็นแบบ <b>DPSS</b> (เอาเลเซอร์อินฟราเรดที่มองไม่เห็น
+    ไปผ่านผลึกพิเศษแปลงเป็นสีเขียว) แต่มีอีกแบบคือ <b>diode เขียวตรง ๆ</b> (ยิงสีเขียวออกมาเลยจากตัวไดโอด
+    ไม่ต้องแปลง) ต่างกันตรงนี้:</p>
+    <table>
+      <thead><tr><th></th><th>DPSS (532nm)</th><th>diode เขียวตรง (515–520nm)</th></tr></thead>
+      <tbody>
+        <tr><td><b>ทนแดด/ทนร้อน</b></td><td class="c bad">แย่ — ร้อนแล้วแสงกระพริบ/หรี่ลง ต้อง "อุ่นเครื่อง" ก่อนใช้</td><td class="c win">ดี — เปิดติดสว่างคงที่ทันที ไม่กลัวร้อน</td></tr>
+        <tr><td><b>ความสว่างคงที่</b></td><td class="c bad">เพี้ยนได้ถึง ±10–25%</td><td class="c win">คงที่กว่า ~±3%</td></tr>
+        <tr><td><b>ดูจากสเปกยังไง</b></td><td class="c">เขียนเลข <b>532nm</b></td><td class="c">เขียนเลข <b>515–520nm</b></td></tr>
+      </tbody>
+    </table>
+    <div class="box box--warn">
+      <span class="box__t">ทำไมเรื่องนี้สำคัญกับงานนี้เป็นพิเศษ</span>
+      โดรนบินตรวจสะพานกลางแจ้ง กลางแดดประเทศไทยที่ร้อนได้ถึง 40°C+ — ถ้าใช้เลเซอร์ DPSS แบบถูก ๆ
+      ความสว่าง/ตำแหน่งจุดอาจเพี้ยนระหว่างบิน ทำให้ 4 จุดที่ควรมี "ระยะห่างคงที่เป๊ะ" ผิดเพี้ยนไปด้วย
+      → <b>ให้เลือก diode เขียวตรง (515–520nm) แม้จะแพงกว่านิดหน่อย</b>
+    </div>
+  </div>
+</div>
+
+<!-- 4 -->
+<div class="step">
+  <div class="num">4</div>
+  <div class="body">
+    <h2>กำลังไฟ (มิลลิวัตต์) เท่าไหร่ถึงพอ — และเท่าไหร่ถึงเริ่มอันตราย</h2>
+    <p>เลเซอร์ทุกตัวมี "ระดับความอันตราย" (laser class) กำกับตามกำลังไฟ ยิ่งเลขคลาสสูง ยิ่งอันตราย:</p>
+    <table>
+      <thead><tr><th>คลาส</th><th>กำลังไฟโดยประมาณ</th><th>อันตรายแค่ไหน</th></tr></thead>
+      <tbody>
+        <tr><td class="c">1</td><td class="c">ต่ำมาก (ไมโครวัตต์)</td><td>ปลอดภัย มองตรง ๆ นาน ๆ ก็ไม่เป็นไร</td></tr>
+        <tr><td class="c">2</td><td class="c">≤ 1 mW</td><td>ปลอดภัย — ตาคนจะกระพริบหนีเองก่อนโดนนาน</td></tr>
+        <tr><td class="c">3R</td><td class="c">1–5 mW</td><td>เลเซอร์พอยเตอร์ทั่วไป ยังปลอดภัยถ้าใช้ระวัง ห้ามจ้องตรง ๆ</td></tr>
+        <tr><td class="c">3B</td><td class="c">5–500 mW</td><td><b class="bad">อันตราย</b> — โดนตาโดยตรงหรือแสงสะท้อนกระจก อาจทำตาเสียได้</td></tr>
+        <tr><td class="c">4</td><td class="c">&gt; 500 mW</td><td><b class="bad">อันตรายมาก</b> — จุดไฟติดวัสดุได้ ทำร้ายตา/ผิวหนังทันที</td></tr>
+      </tbody>
+    </table>
+    <p>งานวิจัยเรื่องความสว่างบอกว่า เลเซอร์เขียวกลางแจ้งทั่วไป (ไม่ใช่แดดจ้าเปรี้ยง ๆ เที่ยงวัน)
+    ใช้ระดับ <b>ไม่กี่สิบ mW</b> ก็เริ่มมองเห็นชัดแล้ว ส่วนกลางแดดจัดจริง ๆ ต้องแรงถึงหลักร้อย mW ขึ้นไป
+    ซึ่งเข้าคลาส 4 ที่อันตรายและไม่จำเป็นสำหรับงานนี้เลย</p>
+    <div class="box box--key">
+      <span class="box__t">ทางออกที่ฉลาดกว่าการอัดกำลังไฟให้แรง</span>
+      รายงานหลัก (บทที่ 4-5) แนะนำอยู่แล้วว่า<b>ควรเลือกเวลาบินที่ไม่ใช่แดดจ้าเที่ยงวัน</b> (เมฆครึ้ม/เช้า/เย็น)
+      เพื่อลดแสงสะท้อนบนผิวคอนกรีตอยู่แล้ว — เวลาแบบนั้นเลเซอร์แค่ระดับ <b>สิบ–ไม่กี่สิบ mW (คลาส 3R ถึง 3B ต้น ๆ)</b>
+      ก็เห็นชัดเพียงพอ ไม่ต้องเสี่ยงไปแตะคลาส 4
+    </div>
+  </div>
+</div>
+
+<div class="pb"></div>
+
+<!-- 5 -->
+<div class="step">
+  <div class="num">5</div>
+  <div class="body">
+    <h2>ประกอบเป็น "แท่นยิง 4 จุด" ต้องระวังเรื่องนี้ — สำคัญกว่าเรื่องสีอีก</h2>
+    <p>ตามที่บันทึกวิจัยเขียนไว้แล้ว: ลำแสงทั้ง 4 เส้น<b>ต้องขนานกันจริง</b> ไม่ใช่ลู่เข้า/บานออกแบบเครื่องวัดระยะ (rangefinder)
+    เพราะถ้าขนานจริง ระยะห่างระหว่างจุดบนผิวคอนกรีตจะ<b>คงที่เท่าเดิมไม่ว่าจะบินใกล้หรือไกล</b> — นี่คือสิ่งที่ทำให้มันใช้เป็น "ไม้บรรทัด" ได้เลย</p>
+    <svg viewBox="0 0 500 130" xmlns="http://www.w3.org/2000/svg" font-family="Leelawadee UI, Tahoma, sans-serif">
+      <rect x="4" y="2" width="246" height="126" rx="4" fill="#f0f9f3" stroke="#16803c" stroke-width="2"/>
+      <text x="16" y="16" font-size="9.5" fill="#16803c" font-weight="700">ขนานกัน (ที่ต้องการ)</text>
+      <rect x="16" y="24" width="8" height="26" fill="#7d858e"/>
+      <line x1="24" y1="30" x2="140" y2="30" stroke="#16803c" stroke-width="1.6"/>
+      <line x1="24" y1="44" x2="140" y2="44" stroke="#16803c" stroke-width="1.6"/>
+      <rect x="140" y="24" width="90" height="26" fill="#dfeee3" stroke="#b6bdc5"/>
+      <circle cx="152" cy="30" r="3" fill="#16803c"/><circle cx="152" cy="44" r="3" fill="#16803c"/>
+      <text x="182" y="40" font-size="9" fill="#16803c" font-weight="700">ห่าง 20 มม.</text>
+      <rect x="16" y="70" width="8" height="26" fill="#7d858e"/>
+      <line x1="24" y1="76" x2="220" y2="76" stroke="#16803c" stroke-width="1.6"/>
+      <line x1="24" y1="90" x2="220" y2="90" stroke="#16803c" stroke-width="1.6"/>
+      <rect x="220" y="70" width="24" height="26" fill="#dfeee3" stroke="#b6bdc5"/>
+      <circle cx="228" cy="76" r="3" fill="#16803c"/><circle cx="228" cy="90" r="3" fill="#16803c"/>
+      <text x="16" y="112" font-size="9" fill="#16803c" font-weight="700">บินไกลขึ้น → ห่างเท่าเดิม 20 มม. ✓</text>
+
+      <rect x="256" y="2" width="240" height="126" rx="4" fill="#fceded" stroke="#c02626" stroke-width="2"/>
+      <text x="266" y="16" font-size="9.5" fill="#c02626" font-weight="700">ลู่เข้า (แบบ rangefinder — ไม่เอา)</text>
+      <rect x="266" y="24" width="8" height="26" fill="#7d858e"/>
+      <line x1="274" y1="28" x2="392" y2="36" stroke="#c02626" stroke-width="1.6"/>
+      <line x1="274" y1="46" x2="392" y2="38" stroke="#c02626" stroke-width="1.6"/>
+      <rect x="392" y="24" width="90" height="26" fill="#f4dede" stroke="#b6bdc5"/>
+      <circle cx="404" cy="36" r="3" fill="#c02626"/><circle cx="404" cy="38" r="3" fill="#c02626"/>
+      <text x="420" y="35" font-size="9" fill="#c02626" font-weight="700">ห่าง 4 มม.</text>
+      <rect x="266" y="70" width="8" height="26" fill="#7d858e"/>
+      <line x1="274" y1="74" x2="472" y2="81" stroke="#c02626" stroke-width="1.6"/>
+      <line x1="274" y1="92" x2="472" y2="84" stroke="#c02626" stroke-width="1.6"/>
+      <rect x="472" y="70" width="20" height="26" fill="#f4dede" stroke="#b6bdc5"/>
+      <text x="266" y="106" font-size="9" fill="#c02626" font-weight="700">บินไกลขึ้น → ห่างเปลี่ยนตลอด ✗</text>
+      <text x="266" y="116" font-size="9" fill="#c02626" font-weight="700">ใช้เป็นไม้บรรทัดไม่ได้</text>
+    </svg>
+    <div class="box box--key">
+      <span class="box__t">4 ข้อต้องทำตอนประกอบ</span>
+      <b>1)</b> ซื้อ 4 ตัว "ล็อตเดียวกัน/รุ่นเดียวกัน" ให้คุณสมบัติใกล้เคียงกันที่สุด &nbsp;
+      <b>2)</b> เลือกแบบ<b>ปรับโฟกัสได้ (adjustable focus)</b> ไม่ใช่โฟกัสตายตัว จะได้ปรับจุดให้เล็ก/คมที่ระยะบินจริง &nbsp;
+      <b>3)</b> ยึดทั้ง 4 ตัวบนแท่น/คานแข็งแรงเดียวกัน ตั้งให้ขนานกันด้วยตา/เครื่องมือช่วยเล็ง &nbsp;
+      <b>4)</b> ตรวจสอบความขนานจริงหลังประกอบ — ยิงที่ระยะ 2 เมตร แล้ว 4 เมตร วัดระยะห่างจุดด้วยตลับเมตร
+      ถ้าตัวเลขไม่เท่ากัน แปลว่ายังไม่ขนาน ต้องปรับใหม่ (ตรงกับคอมเมนต์ <code>DOT_SPACING_MM</code> ในโค้ดที่บอกว่าต้องวัดค่าจริงตอนประกอบ ไม่ใช่ค่าที่ตั้งใจไว้ล่วงหน้า)
+    </div>
+  </div>
+</div>
+
+<!-- 6 -->
+<div class="step step--warn">
+  <div class="num">6</div>
+  <div class="body">
+    <h2>ก่อนบินจริง ต้องเช็ก 2 เรื่องนี้ก่อน (ยังไม่ยืนยัน — ต้องเช็คเองอีกที)</h2>
+    <div class="box box--warn">
+      <span class="box__t">1. กฎหมายไทยเรื่องกำลังไฟเลเซอร์พอยเตอร์</span>
+      ค้นแล้วยังหาตัวเลขที่ชัดเจนของไทย (เช่น จำกัดไม่เกินกี่ mW) ไม่เจอ — ที่เจอชัดคือของสหรัฐฯ (FDA จำกัดที่ 5 mW
+      สำหรับเลเซอร์พอยเตอร์ทั่วไป) <b>ก่อนซื้อของแรงเกิน 5 mW ควรเช็คกับผู้ขาย/หน่วยงานไทยอีกที</b>
+    </div>
+    <div class="box box--warn">
+      <span class="box__t">2. กฎการบินโดรน (CAAT)</span>
+      เจอสัญญาณว่ากฎการบินโดรนบางแหล่งพูดถึงการ<b>ห้ามพกอุปกรณ์ปล่อยแสงเลเซอร์ติดโดรน</b> แต่ยังไม่เจอข้อความกฎหมายเต็ม ๆ
+      ที่ยืนยันได้ชัดเจนว่าใช้กับกรณี "เลเซอร์จุดเล็ก ๆ กำลังต่ำติดใต้โดรนเพื่อวัดสเกล" หรือไม่ —
+      <b class="bad">ต้องเช็คกับ กสทช./CAAT ก่อนติดตั้งใช้งานจริง</b> ไม่ใช่แค่เชื่อผลค้นหาออนไลน์
+    </div>
+    <p style="font-size:9pt;color:#5a626b">กติกาการทำงานทั่วไปที่ปลอดภัยเสมอไม่ว่ากฎหมายจะว่ายังไง: ห้ามส่องเข้าตาคน/นักบิน/คนขับรถใต้สะพานเด็ดขาด
+    ใส่แว่นกันแสงเลเซอร์ตอนตั้งเล็ง และปิดเลเซอร์ทันทีที่ไม่ได้ถ่ายภาพ</p>
+  </div>
+</div>
+
+<!-- คำแนะนำ -->
+<div class="answer">
+  <div class="t">สรุป — ถ้าจะสั่งซื้อวันนี้ เอาสเปกนี้</div>
+  <div class="spec">
+    <b>สี</b><span>เขียว <b class="win">515–520 nm แบบ diode เขียวตรง</b> (ไม่ใช่ 532nm DPSS)</span>
+    <b>รูปลำแสง</b><span>จุด (dot) เท่านั้น</span>
+    <b>โฟกัส</b><span>ปรับได้ (adjustable focus)</span>
+    <b>กำลังไฟ</b><span>ประมาณ 10–50 mW (คลาส 3R ถึง 3B ต้น ๆ) — เห็นชัดพอโดยไม่ต้องเสี่ยงคลาส 4</span>
+    <b>ไฟเลี้ยง</b><span>3–5V DC (ใช้แบตเตอรี่/พาวเวอร์แบงค์เล็กสะดวกกว่า 12V)</span>
+    <b>จำนวน</b><span>ซื้อ 4 ตัว ล็อต/รุ่นเดียวกันเป๊ะ</span>
+  </div>
+  <p style="margin:2mm 0 0;font-size:9.3pt;text-align:center">
+    ซื้อของแบบนี้มา → เข้ากับสมมติฐานสี HSV ในโค้ดที่มีอยู่แล้วทันที ·
+    เหลือแค่ประกอบขนานกัน + ตรวจความขนาน + เช็คกฎหมายก่อนบินจริง
+  </p>
+</div>
+
+<div class="foot">
+ข้อมูลนี้มาจากการค้นคว้าออนไลน์ทั่วไป (ไม่ใช่ datasheet ของสินค้าที่จะสั่งซื้อจริง) — ก่อนกดสั่งซื้อ ควรเทียบสเปกในหน้านี้กับ datasheet จริงของร้านที่จะซื้ออีกครั้ง
+<ul>
+  <li>ความสว่างเขียว vs แดงที่กำลังไฟเท่ากัน — aiminglasers.com, "Green Laser vs. Red Laser: Which is More Visible for Outdoor Use"</li>
+  <li>DPSS 532nm vs diode เขียวตรง 515–520nm (ความเสถียร/ทนความร้อน) — midwest-laser.com, laserpointerhub.com "532nm vs 520nm Green Laser"</li>
+  <li>ตารางคลาสความปลอดภัยเลเซอร์ (IEC 60825-1) — laserax.com/blog/laser-safety-laser-classes-explained, lasermet.com</li>
+  <li>ขีดจำกัด 5 mW ของเลเซอร์พอยเตอร์ในสหรัฐฯ (FDA) — laserpointersafety.com</li>
+  <li>หลักการ 4-จุดเลเซอร์ขนาน (four-point laser metric calibration) — บันทึกวิจัยเดิมของโปรเจกต์นี้เอง (research_notes/04_marker_scale.md §7.3)</li>
+</ul>
+</div>
+
+</body>
+</html>
