@@ -30,3 +30,6 @@ venv/
 # copyrighted reference material kept locally at repo root (not the rawdata/ copy)
 /paper/
 /01 Literature Review/
+
+# Raw data (large datasets, not meant for git)
+rawdata/
