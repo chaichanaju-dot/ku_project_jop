@@ -23,7 +23,7 @@ from ultralytics import YOLO
 # เทรน 942 epoch บน 1042+115 ภาพ, precision=0.91, mAP50-95=0.80 - ดู
 # results.csv ในโฟลเดอร์เดียวกัน). วางไว้คนละที่กับโปรเจกต์นี้เพราะเป็นงานรุ่นพี่
 # ไม่ได้เทรนเอง จึงอ้าง path ตรงไปที่ต้นฉบับแทนที่จะก็อปปี้ไฟล์ 6.9MB เข้ามาในนี้
-SENIOR_MODEL_PATH = r"C:\ku_project_jop\rawdata\งานของรุ่นพี่\weights\best.pt"
+SENIOR_MODEL_PATH = r"D:\ku_project_jop\rawdata\งานของรุ่นพี่\weights\best.pt"
 CONF_THRESHOLD = 0.25
 
 # BGR (cv2 ใช้ลำดับนี้) - สีต่างกันตาม class ที่โมเดลรุ่นพี่ทายได้ (รวม "strain"

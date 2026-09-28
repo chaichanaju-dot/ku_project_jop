@@ -17,3 +17,19 @@ venv/
 # Temp/scratch
 *.tmp
 ~$*
+
+# model weights / checkpoints (large binaries, re-downloadable or re-trainable)
+*.pt
+*.pth
+*.onnx
+
+# training run outputs at repo root (predictions, val images, logs — may include real drone photos)
+/weights/
+/runs/
+
+# copyrighted reference material kept locally at repo root (not the rawdata/ copy)
+/paper/
+/01 Literature Review/
+
+# Raw data (large datasets, not meant for git)
+rawdata/
