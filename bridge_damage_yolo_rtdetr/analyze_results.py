@@ -11,7 +11,7 @@ import collections                      # ใช้ Counter นับจำน�
 from pathlib import Path
 from ultralytics import RTDETR
 
-PROJECT_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent  # ถอยขึ้นมา 2 ชั้น (สคริปต์นี้อยู่ใน bridge_damage_yolo_rtdetr/) ให้ตรงกับ D:\Project AI
 DATA_DIR = PROJECT_ROOT / "dataset" / "damage_rtdetr"
 RUNS_DIR = PROJECT_ROOT / "runs" / "rtdetr_damage"
 CLASSES = ["Crack", "Efflorescence", "Rust_Stain", "Spalling", "Exposed_Rebar", "Honeycomb"]

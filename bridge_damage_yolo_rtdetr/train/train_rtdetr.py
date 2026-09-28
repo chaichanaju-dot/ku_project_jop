@@ -7,7 +7,7 @@ import subprocess                    # เรียก robocopy sync ข้อ�
 from pathlib import Path
 from ultralytics import RTDETR      # RT-DETR ของ ultralytics ใช้ data.yaml/label format เดียวกับ YOLO detect (กล่อง ไม่ใช่ mask)
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent  # โฟลเดอร์โปรเจกต์ (สคริปต์นี้อยู่ใน train/ เลยต้องถอยขึ้นมา 1 ชั้น) — อาจเป็น D:\ หรือ \\tsclient\D\ ถ้าต่อผ่าน RDP
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # โฟลเดอร์โปรเจกต์ (สคริปต์นี้อยู่ใน bridge_damage_yolo_rtdetr/train/ เลยต้องถอยขึ้นมา 2 ชั้น) — อาจเป็น D:\ หรือ \\tsclient\D\ ถ้าต่อผ่าน RDP
 NETWORK_DATA_DIR = PROJECT_ROOT / "dataset" / "damage_rtdetr"        # dataset ที่จัดระเบียบใหม่ (ต้องรันสคริปต์เตรียม dataset ให้เสร็จก่อน แล้วผลลัพธ์ต้องอยู่ path นี้เสมอ)
 NETWORK_RUNS_DIR = PROJECT_ROOT / "runs" / "rtdetr_damage"           # ผลเทรนสุดท้ายจะถูกก๊อปกลับมาเก็บถาวรที่นี่ (รวมกับผลรอบเก่าในโฟลเดอร์เดียวกัน เทียบกันง่าย)
 
