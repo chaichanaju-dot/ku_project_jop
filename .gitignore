@@ -33,3 +33,6 @@ venv/
 
 # Raw data (large datasets, not meant for git)
 rawdata/
+
+# personal course notes (genetics class) — kept local only
+/พันธุ/
