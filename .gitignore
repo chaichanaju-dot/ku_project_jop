@@ -31,8 +31,10 @@ venv/
 /paper/
 /01 Literature Review/
 
-# Raw data (large datasets, not meant for git)
-rawdata/
+# Raw data (large datasets, not meant for git) - except the reference docs + reports below
+rawdata/*
+!rawdata/01 Literature Review/
+!rawdata/03 Reports/
 
 # personal course notes (genetics class) — kept local only
 /พันธุ/
