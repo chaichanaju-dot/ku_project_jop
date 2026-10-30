@@ -7,12 +7,13 @@ desktop.ini
 .vscode/
 .claude/settings.local.json
 
-# Python (if analysis/model code gets added under 02 Methodology & Work/)
+# Python
 __pycache__/
 *.pyc
 .venv/
 venv/
 .ipynb_checkpoints/
+node_modules/
 
 # Temp/scratch
 *.tmp
@@ -23,18 +24,17 @@ venv/
 *.pth
 *.onnx
 
-# training run outputs at repo root (predictions, val images, logs — may include real drone photos)
-/weights/
-/runs/
+# ภาพถ่ายทีมลงสำรวจ (มีใบหน้าคน + ขนาดใหญ่) — เก็บในเครื่องเท่านั้น
+/04_ภาพและข้อมูลสนาม/ภาพถ่ายทีมลงสำรวจสะพาน_24ตค/
 
-# copyrighted reference material kept locally at repo root (not the rawdata/ copy)
-/paper/
-/01 Literature Review/
+# ภาพ/วิดีโอโดรนดิบ (ใหญ่ ~1.3 GB)
+/04_ภาพและข้อมูลสนาม/ภาพโดรน_Agisoft/
 
-# Raw data (large datasets, not meant for git) - except the reference docs + reports below
-rawdata/*
-!rawdata/01 Literature Review/
-!rawdata/03 Reports/
+# โค้ด+dataset ของรุ่นพี่ (ใหญ่ ~2 GB)
+/05_โค้ดและการทดลอง/โค้ดและโมเดลของรุ่นพี่/
+
+# สำเนาซ้ำ รอลบ
+/99_ไฟล์ซ้ำ_ลบได้/
 
 # personal course notes (genetics class) — kept local only
 /พันธุ/
