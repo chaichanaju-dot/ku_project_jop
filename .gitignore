@@ -38,3 +38,6 @@ node_modules/
 
 # personal course notes (genetics class) — kept local only
 /พันธุ/
+
+# ภาพโดรนดิบ 61GB — เก็บในเครื่องเท่านั้น ห้าม commit
+/rawdata/
