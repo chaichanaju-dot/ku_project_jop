@@ -1,0 +1,1300 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><title>T-BHI ฉบับการ์ตูน (ลงลึก)</title><style>/* สไตล์ร่วมของการ์ตูนเตรียมประชุม (เลียนแบบ สรุปการ์ตูน_T-BHI_ก่อนพรีเซนต์_2569-11-01.pdf) */
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Mali', 'Leelawadee UI', sans-serif; color: #1f2430; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.page { width: 210mm; height: 297mm; padding: 13mm 13mm 16mm; position: relative; overflow: hidden;
+  background: #fbf8ef radial-gradient(#e6dfcd 1px, transparent 1.2px) 0 0 / 13px 13px; page-break-after: always; }
+.page:last-child { page-break-after: auto; }
+
+/* หัวหน้า */
+.head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.num { flex: none; width: 40px; height: 40px; border-radius: 50%; background: #1f2430; color: #fff; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+.title { background: #ffd84d; border: 3px solid #1f2430; box-shadow: 5px 5px 0 #1f2430; padding: 2px 14px; font-size: 22px; font-weight: 700; line-height: 1.3; }
+.sub { margin-left: auto; color: #6b6b6b; font-size: 10.5px; text-align: right; max-width: 62mm; line-height: 1.35; }
+
+/* ปก */
+.cover-tag { display: table; margin: 4mm auto 3mm; background: #ffd84d; border: 2.5px solid #1f2430; padding: 2px 14px; font-weight: 700; font-size: 13px; transform: rotate(-1.5deg); }
+.cover-title { text-align: center; font-size: 34px; font-weight: 700; margin: 0; line-height: 1.25; }
+.cover-sub { text-align: center; font-size: 14px; font-weight: 600; margin: 4px 0 8px; }
+
+/* กล่อง */
+.card { border: 3px solid #1f2430; border-radius: 14px; box-shadow: 5px 5px 0 #1f2430; padding: 8px 12px; margin: 0 0 11px; background: #fff; font-size: 11.2px; line-height: 1.5; }
+.card h3 { margin: 0 0 4px; font-size: 14px; }
+.card p { margin: 2px 0; }
+.card ul, .card ol { margin: 2px 0; padding-left: 18px; }
+.card li { margin: 1px 0; }
+.yellow { background: #fff3c4; } .blue { background: #e8eef6; } .green { background: #e3f4ea; } .pink { background: #fde4e4; } .gray { background: #f1f1ee; }
+.tag { display: inline-block; background: #ffd84d; border: 2px solid #1f2430; padding: 0 8px; font-weight: 700; font-size: 12px; transform: rotate(-1deg); margin-bottom: 4px; }
+.tag.g { background: #7fd3a0; } .tag.r { background: #ff9d9d; }
+.note { font-size: 9.6px; color: #666; margin-top: 3px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.grid2 > .card, .grid3 > .card { margin-bottom: 0; }
+.mb { margin-bottom: 11px; }
+b, strong { font-weight: 700; }
+.red { color: #d63a3a; font-weight: 700; } .grn { color: #1f8a4c; font-weight: 700; }
+.mark { background: #ffe37a; padding: 0 3px; border-radius: 3px; }
+
+/* ตาราง */
+table { border-collapse: collapse; width: 100%; font-size: 10.3px; line-height: 1.4; }
+th { background: #1f2430; color: #fff; text-align: left; padding: 4px 6px; font-weight: 600; }
+td { border: 1.5px solid #1f2430; padding: 3px 6px; background: #fff; vertical-align: top; }
+tr.hl td { background: #e3f4ea; font-weight: 600; }
+tr.bad td { background: #fde4e4; }
+td.c, th.c { text-align: center; }
+
+/* คำพูด */
+.say { display: flex; gap: 8px; align-items: flex-start; margin: 5px 0; }
+.say.r { flex-direction: row-reverse; }
+.who { flex: none; width: 54px; text-align: center; font-size: 9.5px; line-height: 1.2; }
+.who svg { width: 42px; height: 42px; display: block; margin: 0 auto 1px; }
+.bub { flex: 1; border: 2.5px solid #1f2430; border-radius: 14px; padding: 6px 11px; background: #fff; font-size: 11.5px; line-height: 1.5; }
+.bub.p { background: #fde4e4; } .bub.g { background: #e3f4ea; } .bub.y { background: #fff3c4; } .bub.b { background: #e8eef6; }
+.bub .en { display: block; font-size: 9.5px; color: #666; margin-top: 2px; }
+
+/* ขั้นตอนแบบลูกศร */
+.flow { display: flex; align-items: stretch; gap: 0; }
+.flow .st { flex: 1; border: 2.5px solid #1f2430; border-radius: 12px; background: #fff; padding: 6px 8px; text-align: center; font-size: 10.5px; line-height: 1.35; }
+.flow .st b { display: block; font-size: 12.5px; }
+.flow .ar { flex: none; width: 22px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; }
+
+.foot { position: absolute; left: 13mm; right: 13mm; bottom: 8mm; border-top: 1.5px dashed #bdb6a4; padding-top: 3px; font-size: 9px; color: #8a8576; display: flex; justify-content: space-between; }
+.chars { display: flex; justify-content: space-around; text-align: center; font-size: 10.5px; }
+.chars svg { width: 46px; height: 46px; display: block; margin: 0 auto 2px; }
+
+
+body{font-family:'Leelawadee UI','Leelawadee','Tahoma',sans-serif;}
+.av{font-size:30px;line-height:1.1;text-align:center;font-family:'Segoe UI Emoji','Leelawadee UI',sans-serif}
+.av.s{font-size:22px}
+.who .av{margin:0 auto 1px}
+.chip{display:inline-block;border:1.5px solid #1f2430;border-radius:9px;padding:0 6px;font-size:9.5px;font-weight:700;line-height:1.5;vertical-align:baseline}
+.chip.g{background:#bfe8cf}.chip.y{background:#ffe37a}.chip.r{background:#ffb4b4}
+.chars{gap:6px;align-items:flex-start}
+.chars>div{flex:1;line-height:1.3}
+.chars .av{font-size:34px}
+.laserbox{position:relative;width:130px;height:92px;margin:4px auto;border:2px solid #1f2430;background:#cfc9bb;border-radius:4px}
+.laserbox .d{position:absolute;width:11px;height:11px;border-radius:50%;background:#e02020;box-shadow:0 0 6px #ff4040}
+.laserbox .d1{left:22px;top:14px}.laserbox .d2{right:22px;top:14px}.laserbox .d3{left:22px;bottom:14px}.laserbox .d4{right:22px;bottom:14px}
+.laserbox .crk{position:absolute;left:38px;top:42px;width:56px;height:4px;background:#2b2b2b;transform:rotate(-8deg);border-radius:2px}
+.laserbox .lbl{position:absolute;left:58px;top:2px;font-weight:700;font-size:12px}
+.mono{font-family:Consolas,monospace;font-size:9px;line-height:1.3;background:#f1f1ee;border:1.5px solid #bbb;border-radius:6px;padding:3px 4px;margin-bottom:3px}
+.lvls{display:flex;gap:6px}
+.lv{flex:1;border:2.5px solid #1f2430;border-radius:12px;padding:5px 2px;text-align:center;font-size:11px;font-weight:600}
+.lv b{display:block;font-size:15px}
+.l5{background:#9be3b5}.l4{background:#d3f0a8}.l3{background:#fff0a0}.l2{background:#ffd08a}.l1{background:#ffa99a}.l0{background:#e48a8a}
+.cases td,.cases th{font-size:11px;line-height:1.4;padding:3px 6px}
+.cases tr.cat td{background:#ffd84d;font-weight:700;font-size:11px;border:2px solid #1f2430}
+.gy{background:#eee !important;color:#777}
+.eq{font-family:'Cambria Math','Cambria','Times New Roman',serif;font-size:17px;text-align:center;margin:4px 0;font-weight:700}
+.eqs{font-family:'Cambria Math','Cambria','Times New Roman',serif;font-size:12px}
+ul.two,ol.two{columns:2;column-gap:18px}
+.card ul.two li,.card ol.two li{break-inside:avoid}
+sub{font-size:0.75em}
+.say .who{width:50px}
+.cases.tight td,.cases.tight th{font-size:10.3px;line-height:1.36;padding:2.5px 5px}
+.cases.tight tr.cat td{font-size:10.5px}
+</style></head><body><!-- ============ หน้า 1 ปก ============ -->
+<div class="page">
+  <div class="cover-tag">สรุปการ์ตูนฉบับลงลึก · สถานะ 25 พ.ย. 2569</div>
+  <h1 class="cover-title">T-BHI ฉบับการ์ตูน (ลงลึก)</h1>
+  <div class="cover-sub">เกณฑ์ → ข้อกำหนดทุกกรณี → pipeline ตั้งแต่โดรนบินจนได้สถานะสะพาน</div>
+  <div class="cover-sub" style="font-weight:400;font-size:12px;margin-top:-4px">Automated Screening of Bridge Condition from UAV Imagery Using Vision-Language Models</div>
+
+  <div class="chars card mb" style="margin-top:6mm">
+    <div><div class="av">🚁</div><b>น้องโดรน</b><br>บินถ่ายภาพ + ยิงเลเซอร์ 4 จุด</div>
+    <div><div class="av">🤖</div><b>น้อง AI</b><br>VLM หาชนิด+กรอบ · SAM วาดมาสก์</div>
+    <div><div class="av">🌉</div><b>ลุงสะพาน</b><br>สะพานเฉลิมพระเกียรติ 72 พรรษา</div>
+    <div><div class="av">🧑‍🏫</div><b>กรรมการ</b><br>ถามได้ทุกเรื่อง</div>
+    <div><div class="av">🙋</div><b>เรา</b><br>ทีมโครงงาน</div>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card blue">
+      <span class="tag">เล่มนี้มีอะไร</span>
+      <table>
+        <tr><td>หน้า 2</td><td>โครงงานคืออะไร ทำอะไร ไม่ทำอะไร</td></tr>
+        <tr><td>หน้า 3–7</td><td><b>Pipeline 6 ขั้น</b> (ข้อมูล · AI · เลเซอร์)</td></tr>
+        <tr><td>หน้า 8–9</td><td><b>เกณฑ์</b> BMMS ระดับ 5–0 + ตารางกฎตัดสินระดับจากภาพ</td></tr>
+        <tr><td>หน้า 10–11</td><td><b>ข้อกำหนดทุกกรณี</b> "ถ้า… ระบบทำ…" 32 กรณี</td></tr>
+        <tr><td>หน้า 12</td><td>สูตร EHI / T-BHI ค่า C ค่า W ตัวอย่างคำนวณ</td></tr>
+        <tr><td>หน้า 13</td><td>สถานะสะพาน กฎบังคับ ค่าความมั่นใจ</td></tr>
+        <tr><td>หน้า 14</td><td>ขั้น 6 เทียบวิศวกร</td></tr>
+        <tr><td>หน้า 15</td><td>สิ่งที่ยังรอตัดสิน · แผนงาน</td></tr>
+        <tr><td>หน้า 16–20</td><td><b>ข้อกำหนดทั้งหมด + เหตุผลที่เล่มเขียนไว้</b> (ขอบเขต · ข้อมูล · AI · เลเซอร์ · ระดับ/ดัชนี · สถานะ · ประเมินผล)</td></tr>
+        <tr><td>หน้า 21–22</td><td>ตรรกะ "ถ้ามีระดับ 2 ไม่ควรดีกว่า…" ตัวอย่างคำนวณ · <b>Q&amp;A คำถามที่น่าโดนถาม</b></td></tr>
+      </table>
+    </div>
+    <div class="card yellow">
+      <span class="tag">ป้ายสีที่ใช้ในเล่มนี้</span>
+      <p><span class="chip g">ตามเล่ม v11</span> ที่เล่มเขียนไว้ · ตาราง 2.6, 3.4, หัวข้อ 3.7.1–3.7.6 และสมการ 2.1/3.1–3.3 เปิดเทียบ PDF v11 แล้ว ส่วนอื่นคัดจากสรุปที่อ่านเล่มครบเมื่อ 7 พ.ย.</p>
+      <p><span class="chip y">ผู้จัดทำคำนวณ</span> ตัวเลขที่คำนวณเอง รันสคริปต์ตรวจแล้ว 25 พ.ย.</p>
+      <p><span class="chip r">ข้อเสนอ / ยังรอ</span> ยังไม่ผ่านทีมหรืออาจารย์ <b>ห้ามถือเป็นข้อสรุป</b></p>
+      <p class="note">ถ้าสิ่งที่เขียนในเล่มนี้ขัดกับไฟล์จริง ให้ยึดไฟล์จริง</p>
+    </div>
+  </div>
+
+  <div class="card pink">
+    <h3>⚠ อ่านก่อน: สถานะจริงของงาน ณ 25 พ.ย. 2569</h3>
+    <ul>
+      <li><b>ยังไม่มีผลทดลองใดๆ</b> ยังไม่ได้เก็บข้อมูลหลัก ยังไม่ได้ฝึกโมเดล ยังไม่ได้ทดสอบเลเซอร์ ยังไม่มีโค้ดโปรแกรม T-BHI · ทุกอย่างในหน้า 3–22 คือ <u>แผนและกฎที่เล่มเขียนไว้</u> ไม่ใช่ผลที่ทำได้แล้ว</li>
+      <li>เล่มล่าสุดที่ยืนยัน = <b>รูปเล่ม Project v11 (7 พ.ย. 2569)</b> · เล่มสมบูรณ์ส่งปลายมีนาคม 2570</li>
+      <li><b>ช่วงคะแนนสถานะ (ตาราง 2.7) กำลังปรับอยู่</b> ยังไม่ตัดสิน (ดูหน้า 13)</li>
+      <li>บันทึก 25 พ.ย.: ผู้ใช้บอกว่า "ตอนนี้ทำ Qwen อย่างเดียว" ยังไม่ชัดว่าหมายถึงตัด SAM/YOLO ด้วยหรือไม่ · <b>สรุปนี้ยึดตามเล่ม v11</b> (VLM + SAM + YOLO สำรอง)</li>
+    </ul>
+  </div>
+  <div class="foot"><span>T-BHI ฉบับการ์ตูนลงลึก · ทำจากเล่ม v11 + specs/ + โน้ตโปรเจกต์</span><span>1</span></div>
+</div>
+
+<!-- ============ หน้า 2 โครงงานคืออะไร ============ -->
+<div class="page">
+  <div class="head"><div class="num">1</div><div class="title">โครงงานนี้คืออะไร</div><div class="sub">เล่ม 1.1–1.3 · วช. ดิจิทัลแฝด</div></div>
+
+  <div class="say"><div class="who"><div class="av s">🧑‍🏫</div>กรรมการ</div><div class="bub p">ระบบนี้ตัดสินเลยไหมว่าสะพานปลอดภัยหรือไม่?</div></div>
+  <div class="say r"><div class="who"><div class="av s">🙋</div>เรา</div><div class="bub g">ไม่ตัดสินขั้นสุดท้าย ระบบเป็น <b>เครื่องคัดกรองขั้นแรก (Tier 1)</b> บอกว่าสะพานไหน <b>ควรส่งวิศวกรไปตรวจละเอียด</b> · เพราะไม่มีคนแก้ผลก่อนคำนวณ ระบบจึงต้องรายงาน <b>ค่าความมั่นใจ</b> ของตัวเองด้วย</div></div>
+
+  <div class="grid2 mb" style="margin-top:8px">
+    <div class="card green">
+      <span class="tag g">ระบบทำ</span>
+      <ul>
+        <li>ภาพถ่ายจากอากาศยานไร้คนขับ → หาชิ้นส่วน + ความเสียหาย</li>
+        <li>วัดขนาดรอยร้าวเป็น มม. ด้วยเลเซอร์ 4 จุด</li>
+        <li>แปลงเป็นระดับ 0–5 → EHI → T-BHI → <b>สถานะ + ค่าความมั่นใจ</b> (รวมผล "ตัดสินไม่ได้ ส่งวิศวกรตรวจ")</li>
+        <li>ตรวจย้อนได้ทุกขั้น (Python กฎ ทำซ้ำได้)</li>
+        <li>เทียบกับวิศวกรโยธา <b>หลายท่าน</b> 3 ระดับ (หน้า 14)</li>
+      </ul>
+    </div>
+    <div class="card pink">
+      <span class="tag r">ระบบไม่ทำ</span>
+      <ul>
+        <li>ไม่ประเมินกำลังรับน้ำหนัก · ไม่ใช้ NDT</li>
+        <li>ไม่มีขั้นให้คนแก้ผลก่อนคำนวณ (ไม่มี human-in-the-loop)</li>
+        <li>ไม่สร้างแบบจำลอง 3 มิติ / โฟโตแกรมเมตรี / ออร์โท / พิกัด GPS / GSD (ตัดทิ้งตามประชุม 31 ต.ค.)</li>
+        <li>ไม่ให้ LLM/VLM คำนวณ EHI หรือ T-BHI</li>
+        <li>ไม่ใช้ QWK · ไม่ใช้ QLoRA (ใช้ LoRA)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card blue">
+      <span class="tag">สะพานกรณีศึกษา (เล่ม 3.3.1)</span>
+      <p><b>สะพานเฉลิมพระเกียรติ 72 พรรษา</b> จ.ฉะเชิงเทรา · รหัส 144210087 · ข้ามแม่น้ำบางปะกง ทล.304 · เปิด พ.ศ. 2542</p>
+      <ul>
+        <li><b>คอนกรีตอัดแรง (PC) คานตัวไอ</b> 4 ช่องจราจร ยาว 647 ม. กว้าง 21.6 ม.</li>
+        <li>BMMS ล่าสุด 10 ก.ย. 2567 = <b>ระดับ 2 (ชำรุด)</b></li>
+        <li>มีช่วงบนบก (S21 เพดานต่ำ) กับกลางน้ำ (S15 เข้าถึงยาก)</li>
+        <li>คานหลัก = PC (ยืนยันแล้ว) · <b>เสา/หัวเสา เล่มตั้งเป็น RC แต่ยังไม่มีเอกสารยืนยัน</b></li>
+        <li>สะพานเดียว → <b>สรุปทั่วไปไม่ได้</b></li>
+      </ul>
+    </div>
+    <div class="card yellow">
+      <span class="tag">ศัพท์สั้นๆ</span>
+      <table>
+        <tr><td><b>BMMS</b></td><td>ระบบบริหารงานบำรุงรักษาสะพานของกรมทางหลวง ระดับ 5–0</td></tr>
+        <tr><td><b>EHI</b></td><td>คะแนน 0–100 ของชิ้นส่วนแต่ละชนิด (Element Health Index)</td></tr>
+        <tr><td><b>T-BHI</b></td><td>คะแนน 0–100 ทั้งสะพาน = เฉลี่ยถ่วงน้ำหนักของ EHI</td></tr>
+        <tr><td><b>VLM</b></td><td>แบบจำลองภาษาภาพ ใช้หาชนิด+กรอบ</td></tr>
+        <tr><td><b>SAM</b></td><td>โมเดลวาดมาสก์ตามขอบจริงจากกรอบ</td></tr>
+        <tr><td><b>PC / RC</b></td><td>คอนกรีตอัดแรง / คอนกรีตเสริมเหล็ก (ใช้เกณฑ์ต่างกัน)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card gray">
+    <h3>ที่มาของสูตรและเกณฑ์ (เล่ม ตาราง 2.9) — แยกให้ถูกว่าอะไรอ้างใคร</h3>
+    <table>
+      <tr><th style="width:32%">ค่า / กฎ</th><th style="width:34%">มาจาก</th><th>สถานะ</th></tr>
+      <tr><td>ชื่อและนิยามระดับ 5–0, ความกว้างรอยร้าว</td><td>BMMS กรมทางหลวง (ตาราง 4-1, 4-3…4-13)</td><td>อ้างตรง</td></tr>
+      <tr><td>รูปสมการ ΣC·y และ Σq·w·HI / Σq·w</td><td>AASHTO MBE 2018 Eq. 3.3.1.3-1, -2</td><td>ดัดแปลงรูปสมการ</td></tr>
+      <tr><td>น้ำหนัก W</td><td>Pellegrino et al. (2011) Table 3</td><td>ตัวเลขอ้างตรง · การจัดกลุ่มไทย = ผู้จัดทำ</td></tr>
+      <tr><td>ค่า C 6 ระดับ, ช่วงคะแนนสถานะ, กฎบังคับ, ระดับความมั่นใจ</td><td>เอกสาร T-BHI ของโครงการดิจิทัลแฝด (ศุภศิษฏ์ ศรีวรานันท์ และคณะ 2569ข)</td><td>อ้างอาจารย์ตามถ้อยคำ</td></tr>
+      <tr><td>กฎตัดสินระดับจากภาพ, q = สัดส่วนพื้นที่กรอบ, นิยาม "หลายจุด", ช่อง 0.23–0.25 มม.</td><td>ผู้จัดทำโครงงาน</td><td><span class="chip y">ของเราเอง</span></td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>1 · โครงงานนี้คืออะไร</span><span>2</span></div>
+</div>
+
+<!-- ============ หน้า 3 Pipeline ภาพรวม ============ -->
+<div class="page">
+  <div class="head"><div class="num">2</div><div class="title">Pipeline 6 ขั้น (ภาพรวม)</div><div class="sub">เล่ม 3.2 รูป 3.1 · ขั้น 3 และ 4 ทำขนานกัน</div></div>
+
+  <div class="flow mb">
+    <div class="st"><div class="av s">🚁</div><b>1 เก็บภาพ</b>Matrice 4E + เลเซอร์ 4 จุด + crack scale</div><div class="ar">→</div>
+    <div class="st"><div class="av s">🔍</div><b>2 คัดภาพ</b>คม · แสง · เห็นจุดเลเซอร์</div><div class="ar">→</div>
+    <div class="st" style="background:#fff3c4"><div class="av s">🤖</div><b>3 AI</b>VLM + SAM → มาสก์</div><div class="ar">⇄</div>
+    <div class="st" style="background:#e8eef6"><div class="av s">🔴</div><b>4 เลเซอร์</b>สเกล มม./พิกเซล</div><div class="ar">→</div>
+    <div class="st" style="background:#e3f4ea"><div class="av s">🧮</div><b>5 ประเมิน</b>ระดับ → EHI → T-BHI</div><div class="ar">→</div>
+    <div class="st"><div class="av s">👷</div><b>6 เทียบวิศวกร</b>3 ระดับ</div>
+  </div>
+
+  <div class="card mb">
+    <h3>แต่ละขั้นรับอะไร ส่งอะไร</h3>
+    <table>
+      <tr><th style="width:5%">ขั้น</th><th style="width:7%">เล่ม</th><th style="width:48%">ทำอะไร</th><th>ผลที่ได้</th></tr>
+      <tr><td class="c">1</td><td>3.3</td><td>บินแยกตามชิ้นส่วนและรอบบิน ถ่ายพร้อมจุดเลเซอร์ 4 จุด และวาง crack scale ข้างรอย</td><td>ภาพดิบ + บันทึกการบิน</td></tr>
+      <tr><td class="c">2</td><td>3.4</td><td>คัดภาพด้วยความคมชัด (Laplacian) · แสง · จุดเลเซอร์ แล้วให้ป้ายชนิดชิ้นส่วนระดับภาพ</td><td>รายการภาพ + ป้ายชิ้นส่วน</td></tr>
+      <tr class="hl"><td class="c">3</td><td>3.5</td><td><b>VLM</b> บอกชนิด+กรอบชิ้นส่วน 5 ประเภท และตำแหน่ง+ชนิดความเสียหาย 6 ประเภท → ส่งกรอบให้ <b>SAM</b> วาดมาสก์ → จับคู่ความเสียหายกับชิ้นส่วนด้วยกรอบในภาพเดียวกัน</td><td>มาสก์ความเสียหาย + สัดส่วนต่อชิ้นส่วน</td></tr>
+      <tr class="hl"><td class="c">4</td><td>3.6</td><td>หาจุดเลเซอร์ (HSV) → โฮโมกราฟี → สเกล s = d/p → ความกว้างรอย (เปอร์เซ็นไทล์ที่ 95 ตามเส้นกึ่งกลางมาสก์)</td><td>สเกลต่อภาพ + ความกว้างรอย</td></tr>
+      <tr><td class="c">5</td><td>3.7</td><td>Python กฎ: ลักษณะความเสียหาย → ระดับ 0–5 → EHI → T-BHI → สถานะ + กฎบังคับ + ค่าความมั่นใจ</td><td>ดัชนีที่ตรวจย้อนได้ทุกขั้น</td></tr>
+      <tr><td class="c">6</td><td>3.8</td><td>วิศวกรหลายท่านให้ระดับแยกกัน (ไม่เห็นผลระบบ) แล้วเทียบ 3 ระดับ</td><td>ตารางสับสน · สถานะตรงไหม · พลาดทางอันตรายไหม</td></tr>
+    </table>
+    <p class="note">ที่มา: เล่ม v11 หัวข้อ 3.2 และตาราง/รูป 3.1 · <span class="chip g">ตามเล่ม v11</span></p>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card yellow">
+      <span class="tag">หลักการ 4 ข้อที่ pipeline ยึด</span>
+      <ol>
+        <li><b>VLM ตอบเฉพาะ "ชนิด + กรอบ" (JSON)</b> ไม่ตอบขนาดหรือระดับ · <b>ห้าม VLM คำนวณ EHI/T-BHI</b> เพื่อให้ทำซ้ำได้</li>
+        <li><b>คิดสเกลและสัดส่วนต่อภาพ แล้วรวมที่ระดับสัดส่วน</b> ไม่บวกพิกเซลข้ามภาพ (1 พิกเซลของภาพใกล้กับไกลมีขนาดจริงไม่เท่ากัน)</li>
+        <li><b>ระบบหลักต้องเดินจนจบโดยไม่พึ่ง VLM</b> (อาจารย์สั่ง 30 ต.ค.) → มีทางสำรอง YOLO26</li>
+        <li><b>ไม่แบ่งส่วนชิ้นส่วนเป็นมาสก์</b> (ตัดทิ้ง 31 ต.ค.) ใช้ <u>กรอบ</u>ชิ้นส่วนเป็นตัวหารของสัดส่วน</li>
+      </ol>
+    </div>
+    <div class="card pink">
+      <span class="tag r">ข้อ 4 ยังไม่ได้ถามอาจารย์</span>
+      <p>การใช้ "กรอบ" เป็นตัวหาร Claude ตัดสินแทนทีมไว้ <b>ยังไม่เคยถามอาจารย์</b></p>
+      <p>ข้อจำกัดที่เล่มยอมรับ: กรอบเป็นสี่เหลี่ยมเสมอ อาจรวมพื้นหลังเข้ามา → สัดส่วนความเสียหายออกมา<b>ต่ำกว่าจริง</b> · เล่มจึงรายงาน<b>ระดับที่แย่สุดของชิ้นส่วนคู่กับ EHI</b> และกฎบังคับสถานะ<b>ไม่ขึ้นกับสัดส่วน</b></p>
+      <p class="note">ยังไม่มีเปเปอร์ที่วัดว่ากรอบให้พื้นที่เกินจริงกี่ % · เล่มต้องวัดเอง</p>
+    </div>
+  </div>
+
+  <div class="say"><div class="who"><div class="av s">🧑‍🏫</div>กรรมการ</div><div class="bub p">ทำไมไม่รวมภาพเป็นภาพใหญ่ภาพเดียวแล้วค่อยตรวจ?</div></div>
+  <div class="say r"><div class="who"><div class="av s">🙋</div>เรา</div><div class="bub g">ผิวคอนกรีตเรียบ ไม่มีจุดเด่นให้จับคู่ภาพ และใต้สะพานไม่มี GPS ที่แม่นพอ · ถ้าไม่รวมภาพ ภาพที่ซ้อนกันอาจนับความเสียหายซ้ำ จึงรวมที่ <b>ระดับสัดส่วน</b> แทน <span class="note">(ยังไม่ได้ทดลองรวมภาพกับข้อมูลชุดนี้จริง)</span></div></div>
+  <div class="foot"><span>2 · Pipeline ภาพรวม</span><span>3</span></div>
+</div>
+<!-- ============ หน้า 4 ข้อมูล + เก็บภาพ ============ -->
+<div class="page">
+  <div class="head"><div class="num">3</div><div class="title">ขั้น 1–2: ข้อมูลและการเก็บภาพ</div><div class="sub">เล่ม 3.3–3.4 · ตาราง 3.2</div></div>
+
+  <div class="card mb">
+    <h3>ชุดข้อมูล 4 ชุด ใช้ทำอะไร (กติกาปัจจุบัน = อาจารย์ 3 พ.ย. + 6 พ.ย.)</h3>
+    <table>
+      <tr><th style="width:15%">ชุด</th><th style="width:38%">ที่มา</th><th>ใช้ทำอะไร</th></tr>
+      <tr><td><b>ชุดเดิม</b></td><td>ภาพโครงการ วช. ของอาจารย์ &gt;1,000 ภาพ สะพานเดียวกัน · บินสูง 20–40 ม. ซ้อน 70–80% คานเฉียง 25–35° ตอม่อบินรอบ 360° · เล่มว่า Mavic 3 Enterprise "ตามที่รายงานระบุ"</td><td><b>ฝึก + ตรวจสอบ</b> (ชุดตรวจสอบ ≈ ร้อยละ 20 ของชุดเดิม แบ่งตามรอบบิน) · ไม่มีเลเซอร์/crack scale · คิดได้แค่สัดส่วนต่อภาพ</td></tr>
+      <tr class="hl"><td><b>ชุดใหม่</b></td><td>Matrice 4E บินแยกตามชิ้นส่วน + เลเซอร์ 4 จุด + crack scale</td><td><b>ทดสอบอย่างเดียวทั้งชุด ไม่ฝึก</b> · แยกไว้ตั้งแต่ก่อนฝึก ไม่ใช้ปรับค่าใด · ใช้ครั้งเดียวตอนรายงานผลสุดท้าย · ใช้ทดสอบความแม่นขนาด (3.6.4) · ต้องติดป้ายเฉลยด้วย</td></tr>
+      <tr><td><b>ภาพบินนำร่อง</b> (ธ.ค. ยังไม่ได้บิน)</td><td>Matrice 4E</td><td>ปรับแผนบิน/เกณฑ์เท่านั้น (ระยะถ่าย อัตราซ้อน เกณฑ์คมชัด ระยะทดสอบเลเซอร์) · แยกโฟลเดอร์จากชุดทดสอบ</td></tr>
+      <tr><td><b>ชุดสาธารณะ</b></td><td>Roboflow</td><td>ใช้ฝึกได้ · <b>ห้ามอัปภาพ UAV จริงขึ้น Roboflow</b></td></tr>
+    </table>
+    <p class="note">ข้อความเก่า "ชุดใหม่ฝึกบางรอบบิน" (v10) และคำตอบ 31 ต.ค. "เอาบางส่วนเข้าฝึก" <b>ใช้ไม่ได้แล้ว</b> · <span class="chip g">ตามเล่ม v11</span></p>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card blue">
+      <span class="tag">กติกากันข้อมูลรั่ว</span>
+      <ul>
+        <li><b>1 รอบบินอยู่ชุดเดียว</b> (ไม่ให้ภาพรอบเดียวกันไปอยู่ทั้งฝึกและตรวจสอบ)</li>
+        <li>ไม่กำหนดอัตราตายตัว (ไม่ใช่ 4:1:1 ที่เคยเป็นเป้า)</li>
+        <li>augmentation <b>เฉพาะชุดฝึก</b>: พลิกแนวนอน · หมุน ≤ ±15° · ปรับสว่าง/เบลอ · <b>ไม่พลิกแนวตั้ง</b></li>
+        <li>ต้องนับตัวอย่างต่อประเภทก่อนสรุปผลรายประเภท</li>
+        <li>ชุดเดิมถ่ายไกล ชุดใหม่ถ่ายใกล้ ต่างกันมาก → <b>รายงานผลชุดตรวจสอบกับชุดทดสอบแยกกัน</b> (เล่มระบุเป็นข้อจำกัด)</li>
+      </ul>
+    </div>
+    <div class="card pink">
+      <span class="tag r">ข้อมูลในเครื่อง</span>
+      <ul>
+        <li><b>rawdata/</b> ภาพโดรนทีมปี 68 (2–3 ต.ค. 2568) <b>7,276 ภาพ</b> 5280×3956 · EXIF ระบุ "DJI M3M" ไม่ตรง "Mavic 3 Enterprise" ในเล่ม · <b>ยังไม่รู้ว่าเป็น "ชุดเดิม" หรือไม่</b></li>
+        <li>ชุดรุ่นพี่ 638 รูป ป้ายเป็น<b>กรอบเอียง</b> ไม่ใช่โพลิกอน · ไม่ใช่สะพานนี้ ไม่ใช่กล้อง DJI</li>
+        <li>⚠ ภาพโดรน<b>ห้าม git ห้ามอัปขึ้นบริการ AI ภายนอก</b> ระบุที่มา "ข้อมูลจากโครงงานปี 2568"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <h3>ขั้น 1: แผนบิน 5 ลำดับ (ตาราง 3.2) + พารามิเตอร์</h3>
+    <div class="flow" style="margin-bottom:6px">
+      <div class="st"><b>① คาน</b>ใต้สะพาน เงยไม่เกิน 35° เห็นเลเซอร์ครบ 4</div><div class="ar">→</div>
+      <div class="st"><b>② หัวเสา</b>รอบหลายด้าน</div><div class="ar">→</div>
+      <div class="st"><b>③ ตอม่อ</b>รอบทิศ ระวังสะท้อนน้ำ</div><div class="ar">→</div>
+      <div class="st"><b>④ คานยาว</b>ต่อเนื่อง ระยะ/มุมคงที่</div><div class="ar">→</div>
+      <div class="st"><b>⑤ พื้นสะพาน</b>ลำดับสุดท้าย ก้ม −90° ประสานกรมทางหลวง</div>
+    </div>
+    <ul>
+      <li>(ก) ระยะถ่าย <b>≥ 1 ม.</b> ตามโฟกัสใกล้สุดของกล้อง · กำหนดจากบินนำร่อง · บันทึกมุมเงยกล้อง (GimbalPitchDegree)</li>
+      <li>(ข) ซ้อนให้น้อยที่สุดที่ยังครอบคลุม (เป้าเริ่มต้น ไม่เกินร้อยละ 50 ตามแนวบิน) · ช่วงถ่ายไม่ต่ำกว่า 0.5 วินาที/ภาพ</li>
+      <li>(ค) เห็นจุดเลเซอร์ 4 จุดไม่ถูกแดดกลบ · ไม่เห็นให้ถ่ายซ้ำ · วาง crack scale ติดข้างรอย</li>
+      <li>(ง) บันทึกเวลา/แสง/ลม · ขออนุญาตกรมทางหลวง · <b>ไม่บินเหนือช่องจราจร</b></li>
+      <li>ข้อมูลดิบไม่แก้ ทำบนสำเนา · สำรองอย่างน้อย 2 ที่ในวันเดียว</li>
+    </ul>
+  </div>
+
+  <div class="grid2">
+    <div class="card green">
+      <span class="tag g">ขั้น 2: คัดภาพ 3 เกณฑ์ (3.4.1)</span>
+      <ol>
+        <li><b>ความคมชัด</b> — Laplacian เทียบเกณฑ์จากบินนำร่อง</li>
+        <li><b>แสง</b> — สัดส่วนพิกเซลตัดดำ/ขาว</li>
+        <li><b>จุดเลเซอร์</b> — ภาพชุดใหม่ต้องหาได้ครบ 4 จุด · ไม่ครบยังส่งให้ขั้น 3 ได้ แต่<b>ไม่มีสเกล รอยร้าวความมั่นใจต่ำ</b></li>
+      </ol>
+      <p><b>ป้ายชิ้นส่วนระดับภาพ</b> 2 ทาง: ตั้งต้นจากบันทึกการบิน (ชุดใหม่) + VLM ระบุชนิดพร้อมกรอบ (ป้ายหลัก) · ไม่ตรงกัน → แจ้งตรวจ</p>
+    </div>
+    <div class="card yellow">
+      <span class="tag">อุปกรณ์ที่เกี่ยวกับการถ่าย</span>
+      <ul>
+        <li><b>DJI Matrice 4E</b> กล้อง 4/3" 20 MP · โฟกัสใกล้สุด 1 ม. · เงยได้ ≤ +35° ก้ม −90° · ถ่ายเร็วสุด 0.5 วิ/ภาพ · บรรทุกเสริม ≤ 200 ก.</li>
+        <li>เครื่องวัดระยะในตัว <u>1 จุด</u> คลาด &lt;0.3 ม. ที่ 1–3 ม. → <b>ใช้หาสเกลไม่ได้</b> จึงใช้เลเซอร์</li>
+        <li>เครื่อง: Dell Precision 7865 · RAM 64 GB · <b>RTX 5070 Ti 16 GB</b> · ภาพจริงไม่ขึ้นคลาวด์</li>
+      </ul>
+      <p class="note">สเปกอ้าง DJI (2026) · ยังไม่ได้เทียบหน้าเว็บ DJI</p>
+    </div>
+  </div>
+  <div class="foot"><span>3 · ขั้น 1–2 ข้อมูลและการเก็บภาพ</span><span>4</span></div>
+</div>
+
+<!-- ============ หน้า 5 AI ============ -->
+<div class="page">
+  <div class="head"><div class="num">4</div><div class="title">ขั้น 3: AI หาความเสียหาย</div><div class="sub">เล่ม 3.5 · VLM ปรับด้วย LoRA + SAM + YOLO26 สำรอง</div></div>
+
+  <div class="flow mb" style="align-items:center">
+    <div class="st"><div class="av s">📷</div><b>ภาพ</b>ต้นฉบับ</div><div class="ar">→</div>
+    <div class="st" style="background:#fff3c4"><div class="av s">🤖</div><b>VLM (LoRA)</b>ชนิด + กรอบ</div><div class="ar">→</div>
+    <div class="st"><div class="mono">{"type":"crack",<br>"box":[120,40,260,190]}</div><b>JSON</b></div><div class="ar">→</div>
+    <div class="st" style="background:#e8eef6"><div class="av s">✂️</div><b>SAM (LoRA)</b>1 กรอบ → 1 มาสก์</div><div class="ar">→</div>
+    <div class="st" style="background:#e3f4ea"><div class="av s">🎨</div><b>มาสก์</b>ความเสียหาย</div>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card blue">
+      <span class="tag">ชิ้นส่วน 5 ประเภท (ใช้ "กรอบ")</span>
+      <table>
+        <tr><td><b>เสา</b></td><td>รวมตอม่อ/กำแพงตอม่อ</td></tr>
+        <tr><td><b>คาน</b></td><td>ทุกชนิด รวมคานขวาง</td></tr>
+        <tr><td><b>หัวเสา</b></td><td>คานรัดหัวเสา</td></tr>
+        <tr><td><b>พื้น</b></td><td>พื้นสะพาน</td></tr>
+        <tr><td><b>ราว</b></td><td>ราวสะพาน/แผงกั้น</td></tr>
+      </table>
+      <p class="note"><b>นอก T-BHI:</b> ฐานราก · เสาเข็ม · แผ่นรองรับ · รอยต่อ · ผิวทาง · ระบายน้ำ (โดรนมองไม่เห็นหรืออยู่นอกขอบเขต) → เมื่อหายไป ต้องรายงานว่าไม่ได้ประเมิน</p>
+    </div>
+    <div class="card pink">
+      <span class="tag r">ความเสียหาย 6 ประเภท (ใช้ "มาสก์")</span>
+      <table>
+        <tr><td><b>Crack</b></td><td>รอยร้าว</td></tr>
+        <tr><td><b>Efflorescence</b></td><td>คราบเกลือ/น้ำ (รวมเป็นประเภทเดียว)</td></tr>
+        <tr><td><b>Rust_Stain</b></td><td>คราบสนิม</td></tr>
+        <tr><td><b>Spalling</b></td><td>กะเทาะ</td></tr>
+        <tr><td><b>Exposed_Rebar</b></td><td>เหล็กเสริมโผล่</td></tr>
+        <tr><td><b>Honeycomb</b></td><td>รูพรุนรังผึ้ง</td></tr>
+      </table>
+      <p class="note">ติดป้ายเฉพาะ <b>"สิ่งที่ตาเห็น" ไม่ติดระดับ</b> — ระดับให้โปรแกรมแปลง</p>
+    </div>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card yellow">
+      <span class="tag">VLM (3.5.3)</span>
+      <ul>
+        <li>โมเดลภาษาภาพแบบ<b>เปิดน้ำหนักที่ระบุกรอบได้</b> ปรับด้วย <b>LoRA</b> บนเครื่องที่มี (รุ่น/ขนาดยืนยันหลังทดสอบ)</li>
+        <li>ตอบ <b>JSON ชนิด+กรอบพิกเซลเท่านั้น</b> ตรวจโครงสร้างทุกรายการ <b>รายการไม่ผ่านถูกทิ้งและนับเป็นสถิติ</b></li>
+        <li>ปรับแต่งด้วยคู่ภาพ–JSON ที่สร้างอัตโนมัติจากป้าย</li>
+        <li>ไม่ใช้ QLoRA เพราะบีบตัวรับภาพ 4 บิตแล้ว recall ตก</li>
+        <li><b>ทำไมไม่ให้ตอบขนาด/ระดับ:</b> ภาพหลอน (Chen 2025) · Zhang &amp; Liu 2025 พบตัวเลขพิกเซลที่ VLM เขียนผิด · Yasuno 2026 พบ mode collapse ใน VLM fine-tune</li>
+      </ul>
+      <p class="note"><span class="chip r">สมมติฐานที่ต้องทดสอบ</span> VLM ให้กรอบความเสียหายที่ recall@IoU0.5 ไม่ต่ำกว่า YOLO26 · <b>ไม่มีเปเปอร์ใดวัดความแม่นนี้</b> ห้ามเขียนว่าพิสูจน์แล้ว</p>
+    </div>
+    <div class="card green">
+      <span class="tag g">SAM (3.5.3)</span>
+      <ul>
+        <li>รับกรอบจาก VLM เป็นพรอมต์ <b>1 กรอบ → 1 มาสก์</b></li>
+        <li>บทที่ 2 เขียน "SAM" · บทที่ 3 ระบุ SAM 3 ได้</li>
+        <li>ปรับด้วย LoRA: สร้างกรอบฝึกจากโพลิกอน + เติมความคลาดเคลื่อนสุ่ม · วัด IoU + Dice (กรอบจริง และกรอบจาก VLM)</li>
+        <li><b>ใช้กับความเสียหายเท่านั้น</b> — ชิ้นส่วนใช้กรอบ เพราะภาพระยะใกล้บินแยกชิ้นส่วน เป้าหมายเกือบเต็มภาพ</li>
+        <li>เลือกมาสก์แทนกรอบ เพราะกรอบให้พื้นที่เกิน โดยเฉพาะรอยคด</li>
+      </ul>
+      <p class="note">ไม่มีหลักฐาน SAM 3 บนสะพานนอกพรีพรินต์ · SAM2 ใน Çelik 2025 ใช้ไม่ดีกับรอยร้าว/ขอบไม่คม</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card gray">
+      <span class="tag">ทางสำรอง YOLO26 แบบกรอบ (3.5.2)</span>
+      <ul>
+        <li>เทียบขนาด s/m/l ตามขีดจำกัด GPU บน<b>ชุดตรวจสอบ</b> (ไม่ใช่ชุดทดสอบ)</li>
+        <li>VLM ต่ำกว่า YOLO26 ในประเภทไหน → ใช้ YOLO26 ประเภทนั้น · รัน VLM ไม่ได้เลย → YOLO26 ทุกประเภท + ป้ายชิ้นส่วนจากบันทึกการบิน</li>
+        <li>⏰ <b>จุดตัดสินใจ = สิ้นเดือน ม.ค. 2570</b> หลังรอบฝึกแรก</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <span class="tag">จับคู่ความเสียหาย–ชิ้นส่วน (3.5.4)</span>
+      <ul>
+        <li>ส่วนของมาสก์ที่อยู่ในกรอบชิ้นส่วนใด นับเป็นของชิ้นส่วนนั้น · <b>ภาพเดียวกัน ไม่ข้ามภาพ ไม่ใช้ GPS</b></li>
+        <li>คร่อมสองกรอบ → แบ่งตามพิกเซลที่ทับ</li>
+        <li>นอกกรอบทุกกรอบ → "ไม่สังกัดชิ้นส่วน" ไม่เข้าดัชนี · เกินร้อยละ 50 แจ้งตรวจ</li>
+      </ul>
+    </div>
+  </div>
+  <div class="say" style="margin-top:6px"><div class="who"><div class="av s">🧑‍🏫</div>กรรมการ</div><div class="bub p">เลือกระหว่างกรอบของ VLM กับ YOLO ยังไง?</div></div>
+  <div class="say r"><div class="who"><div class="av s">🙋</div>เรา</div><div class="bub g">ใช้ <b>ชุดตรวจสอบ</b> เลือก · ชุดทดสอบแยกไว้ ใช้ครั้งเดียวตอนท้าย</div></div>
+  <div class="foot"><span>4 · ขั้น 3 AI · เล่ม v11 3.5 (ยังไม่ได้ฝึกโมเดลใดๆ)</span><span>5</span></div>
+</div>
+
+<!-- ============ หน้า 6 เลเซอร์ (หลักการ) ============ -->
+<div class="page">
+  <div class="head"><div class="num">5</div><div class="title">ขั้น 4: เลเซอร์ 4 จุด วัดขนาดจริง</div><div class="sub">เล่ม 2.5, 3.6 · หลักการและขั้นตอน</div></div>
+
+  <div class="say"><div class="who"><div class="av s">🧑‍🏫</div>กรรมการ</div><div class="bub p">ทำไมไม่คำนวณขนาดจากระยะถ่ายกับกล้อง (GSD)?</div></div>
+  <div class="say r"><div class="who"><div class="av s">🙋</div>เรา</div><div class="bub g">ต้องรู้ระยะกล้องถึงผิว ซึ่งไม่ได้บันทึก เครื่องวัดระยะในตัวคลาดมาก (&lt;0.3 ม. ที่ 1–3 ม. = ราวร้อยละ 10–30) และใต้สะพานคุมโฟกัสยาก → <b>ใช้เลเซอร์ 4 จุดเป็นไม้บรรทัดในภาพ</b></div></div>
+
+  <div class="grid2 mb" style="margin-top:8px">
+    <div class="card yellow">
+      <span class="tag">หลักคิด</span>
+      <div class="laserbox"><span class="d d1"></span><span class="d d2"></span><span class="d d3"></span><span class="d d4"></span><span class="crk"></span><span class="lbl">d</span></div>
+      <p style="text-align:center;margin-top:4px">เลเซอร์ลำแสง<b>ขนาน</b> 4 ตัว เรียงเป็นสี่เหลี่ยมจัตุรัส <b>ด้าน d ที่รู้ค่า</b></p>
+      <p style="text-align:center;font-size:15px;margin:3px 0"><b>s = d / p</b> (มม./พิกเซล)</p>
+      <p>p = ความยาวด้านของจัตุรัสในภาพ (พิกเซล) · ตัวอย่าง: d = 100 มม. = 200 พิกเซล → <b>0.5 มม./px</b> → รอย 4 px = <b>2 มม.</b> <span class="chip y">ผู้จัดทำคำนวณ</span></p>
+    </div>
+    <div class="card blue">
+      <span class="tag">3 ขั้นตอน (3.6.3)</span>
+      <ol>
+        <li><b>หาจุด</b> — HSV คัดพิกเซลสีเลเซอร์ → blob วงกลมใหญ่สุด 4 ก้อน → จุดศูนย์กลางระดับย่อยพิกเซล → ต้องได้ <b>4 จุดเป็นสี่เหลี่ยมนูน</b> · ไม่ผ่าน = ไม่มีสเกล ความมั่นใจต่ำ</li>
+        <li><b>สเกล</b> — โฮโมกราฟีจาก 4 จุดไปเป็นจัตุรัสด้าน d · <b>สมมติผิวเป็นระนาบเฉพาะที่</b> (โค้ง/ขรุขระ → ลดความมั่นใจ) · <b>สเกลใช้ในภาพนั้นเท่านั้น</b></li>
+        <li><b>ความกว้างรอย</b> — เส้นกึ่งกลางมาสก์ SAM วัดจากแผนที่ระยะ แปลงด้วยสเกล · ใช้ <b>เปอร์เซ็นไทล์ที่ 95</b> + รายงานค่าสูงสุด · <b>&lt; 3 พิกเซล = วัดไม่ได้</b> ความมั่นใจต่ำ ไม่ใช้ตัดสินระดับโดยตรง</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card green">
+      <span class="tag g">ชุดเลเซอร์ที่ต้องสร้างเอง (3.6.2)</span>
+      <ul>
+        <li>4 ตัวขนาน ด้าน d ทดสอบ <b>≥ 2 ค่า</b> (100 มม. ตาม Li et al. 2022 + ค่าที่มากกว่า)</li>
+        <li>สีที่แยกจากคอนกรีตในแสงกลางวัน · กำลังต่ำสุดที่ยังเห็นจุด · ความปลอดภัยดวงตา</li>
+        <li><b>น้ำหนักรวม ≤ 200 ก.</b> (รวมอุปกรณ์ยึด) · ลำแสงขนานแกนกล้อง ไม่บังเซนเซอร์</li>
+        <li>สอบเทียบความขนานบนแผ่นเรียบที่ <b>1, 2, 3, 5 ม.</b></li>
+        <li>รุ่นเลเซอร์ยังไม่ตัดสิน (เคยจดว่าสีแดง 9 มม. ข้อมูลผู้ขาย แต่เล่มยังไม่ระบุรุ่น)</li>
+      </ul>
+      <p><b>crack scale</b> = แผ่นแถบความกว้างที่รู้ค่า ใช้เป็นค่าอ้างอิงทดสอบ · ขอบคมกว่ารอยจริง จึงเทียบรอยจริงกับเกจเพิ่มบางจุด</p>
+    </div>
+    <div class="card pink">
+      <span class="tag r">เมื่อสเกลเพี้ยนได้ (ข้อควรรู้)</span>
+      <ul>
+        <li>ผิวเอียงมุม θ → วัดเล็กไป cos θ : 15° ≈ 3.4% · 30° ≈ 13.4% · 45° ≈ 29.3% (ทิศอันตราย) <span class="chip y">ผู้จัดทำคำนวณ</span> <span class="chip r">ข้อเสนอ 10 พ.ย.</span></li>
+        <li>ลำแสงเบี่ยง α → คลาดสเกล 2Lα/d</li>
+        <li>ผิวโค้ง/ขรุขระ ผิดสมมติฐานระนาบ</li>
+        <li>แดดตรงกลบจุดเลเซอร์ → หาจุดไม่ได้ (Zhang et al. 2026 พบเช่นกัน)</li>
+        <li>ไม่ครบ 4 จุด → <b>ไม่มีสเกล</b> รอยร้าวความมั่นใจต่ำ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card gray">
+    <h3>หลักฐานเปเปอร์ที่เล่มใช้ (ตรวจกับต้นฉบับแล้วตามบันทึกโปรเจกต์)</h3>
+    <table>
+      <tr><th style="width:17%">งาน</th><th>ที่ทำ / ผล</th></tr>
+      <tr><td><b>Li et al. 2022</b></td><td>เลเซอร์ขนาน 4 ตัว d = 100 มม. · 12 รอย 0.16–0.66 มม. ระยะ 501–720 มม. · อัตราส่วน 0.97 (CV 7.59%) เทียบวิธีใช้ระยะ 1.15 (CV 15.73%) · จริงๆ 4 จาก 12 รอยอยู่นอก ±10% · สมการแก้มุมเป็น affine</td></tr>
+      <tr><td><b>Zhang et al. 2026</b></td><td>เครื่องวัดระยะ 4 ตัว + โฮโมกราฟี · ป้าย 0.8–20 มม. ที่ 2/4/6 ม. · 0.8 มม. คลาดราว 2.5% · สะพานจริง MAE 0.038 มม. · 6 ม. ใช้กับป้ายผนังเท่านั้น</td></tr>
+      <tr><td><b>Peng 2021</b></td><td>เลเซอร์ 3 จุด ระยะ 2.07–2.64 ม. → 0.105–0.142 มม./px</td></tr>
+      <tr><td><b>Zuo 2026</b></td><td>เลเซอร์กากบาท + TF-Luna 3 ตัว (~190 ก.) · 39 รอย เทียบผู้ตรวจ 6 คน · รอยแคบ &lt;0.3 มม. ถูกวัดเกินเฉลี่ยราว 2.5 เท่า (ผู้จัดทำคำนวณจาก Appendix)</td></tr>
+      <tr><td><b>Liu 2020</b></td><td>รอย 0.45 มม. วัดเกิน 249% · ใช้เกณฑ์ 1 หรือ 3 พิกเซล (เล่มเลือก 3)</td></tr>
+    </table>
+    <p class="note">⚠ <b>Zheng et al. 2022 ไม่ใช่หลักฐานขีดจำกัดพิกเซล</b> (รอยกว้าง &gt;0.5 มม. 5 รอย เกินแค่ 2 รอย ผู้เขียนอธิบายว่าเป็นตำหนิบนผิว) — ประโยคใน 2.5.4 ของ v11 ยังคลาด รอผู้ใช้ตัดสินใจ · ไม่มีเปเปอร์ใดเทียบวิธีสเกล 3 แบบพร้อมกัน</p>
+  </div>
+  <div class="foot"><span>5 · ขั้น 4 เลเซอร์ (หลักการ) · ยังไม่มีผลทดลองเลเซอร์ใดๆ</span><span>6</span></div>
+</div>
+
+<!-- ============ หน้า 7 เลเซอร์ (ขีดจำกัด + ทดสอบ) ============ -->
+<div class="page">
+  <div class="head"><div class="num">5</div><div class="title">เลเซอร์: เห็นรอยแคบแค่ไหน + ทดสอบยังไง</div><div class="sub">ตาราง 2.12, 3.3 · 3.6.4</div></div>
+
+  <div class="card mb">
+    <h3>ขีดจำกัดพิกเซล: 1 พิกเซลบนผิวกว้างกี่ มม. ที่ระยะถ่ายต่างๆ <span class="chip y">ผู้จัดทำคำนวณจากสเปกกล้อง</span></h3>
+    <table>
+      <tr><th>ระยะถ่าย D</th><th class="c">1 ม.</th><th class="c">2 ม.</th><th class="c">3 ม.</th><th class="c">5 ม.</th></tr>
+      <tr><td>1 พิกเซล (มม.)</td><td class="c">0.27</td><td class="c">0.55</td><td class="c">0.82</td><td class="c">1.36</td></tr>
+      <tr class="hl"><td><b>ความกว้างต่ำสุดที่เชื่อถือได้ (3 พิกเซล)</b></td><td class="c"><b>0.82</b></td><td class="c"><b>1.64</b></td><td class="c"><b>2.46</b></td><td class="c"><b>4.09</b></td></tr>
+    </table>
+    <p class="note">สูตร: 1 พิกเซล = (0.8 × 2D × tan 42°) ÷ 5280 · เกณฑ์ &lt;3 พิกเซล = วัดไม่ได้อย่างน่าเชื่อถือ (Liu et al. 2020)</p>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card green">
+      <span class="tag g">RC: วัดได้</span>
+      <p>เกณฑ์ RC ระดับ 4/3 อยู่ที่ <b>1.6 มม.</b> · ที่ระยะ 2 ม. ความกว้างต่ำสุดที่เชื่อถือได้ ≈ 1.64 มม. (พอดีขอบ) · ถ้าถ่ายไกลกว่านั้น (3 ม. = 2.46 มม.) ต่ำสุดที่เชื่อถือได้เกินขอบ 1.6 มม. → แยกระดับ 4/3 ของ RC ไม่ได้อย่างเชื่อถือ</p>
+      <p>ถ้า &lt; 3 พิกเซลหรือไม่มีสเกล → <b>"ตัดสินไม่ได้ ส่งวิศวกรตรวจ"</b></p>
+    </div>
+    <div class="card pink">
+      <span class="tag r">PC: ข้อจำกัดหลัก</span>
+      <p>PC ระดับ 4–3 อยู่ที่ <b>0.10–0.23 มม.</b> ซึ่งแคบกว่า 1 พิกเซล (0.27 มม.) แม้ที่ 1 ม. → <b>รอยละเอียดของคาน PC วัดไม่ได้</b></p>
+      <p>เล่มจึงให้ระดับ 2 + ความมั่นใจต่ำ + รายงานว่าไม่น่าเชื่อถือ · ทางแก้ที่ต้องทดลอง: ภาพตัดเฉพาะบริเวณความละเอียดเต็ม หรือกล้องเทเล <span class="chip r">แผนหลังนำเสนอ</span></p>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <h3>แผนทดสอบความแม่นของขนาด (ตาราง 3.3 · หัวข้อ 3.6.4) <span class="chip g">ตามเล่ม v11</span></h3>
+    <table>
+      <tr><th style="width:22%">ปัจจัย</th><th>ค่าที่ทดสอบ</th></tr>
+      <tr><td>ระยะ</td><td>≥ 3 ระดับ ไม่ต่ำกว่า 1 ม. (ตั้งต้น 1.5 / 3 / 5 ม. ปรับตามภาพบินนำร่องที่แยกจากชุดทดสอบ)</td></tr>
+      <tr><td>มุมถ่าย</td><td>0° / 15° / 30° / 45°</td></tr>
+      <tr><td>แสง</td><td>แดดตรง / ร่มเงา / ใต้สะพาน</td></tr>
+      <tr><td>ความกว้างอ้างอิง</td><td>หลายขนาด ครอบค่าขอบเขตของ BMMS</td></tr>
+      <tr><td>ผิว</td><td>เรียบ / ขรุขระ</td></tr>
+      <tr><td>จำนวน</td><td>≥ 3 ภาพต่อเงื่อนไข</td></tr>
+    </table>
+    <p style="margin-top:4px"><b>ตัวชี้วัด 4 ตัว:</b> (ก) อัตราหาจุดครบ 4 · (ข) คลาดสเกล % · (ค) คลาดความกว้าง มม./% แยกตามความกว้างอ้างอิง · (ง) สัดส่วนอยู่ใน ±10% · <b>อย่ารายงานค่าเฉลี่ยมีเครื่องหมายค่าเดียว</b> (ค่าบวกลบหักล้างกัน)</p>
+    <p><b>ลำดับ:</b> ทดสอบเต็มในที่คุมเงื่อนไขก่อน → ยืนยันใต้สะพานเฉพาะเงื่อนไขจริง → วัดผลของลำแสงเอียงต่อสเกล</p>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card yellow">
+      <span class="tag">กล้องเทเล (ข้อเสนอ — ยังไม่ผ่านอาจารย์)</span>
+      <ul>
+        <li>เทเล 168 มม. ที่ 3 ม. ≈ 0.077 มม./px (3 px ≈ 0.23 มม.) <span class="chip y">ผู้จัดทำคำนวณ</span> · ยังไม่เทียบเว็บ DJI</li>
+        <li>ภาพตัดจากกล้องมุมกว้างไม่เพิ่มความละเอียด</li>
+        <li>ซูมใกล้แล้วไม่รู้ว่าเป็นชิ้นส่วนไหน → ถ่ายคู่กับภาพมุมกว้าง 1 ภาพ</li>
+        <li>ยังไม่ได้ตรวจว่าโดรนถ่ายหลายกล้องพร้อมกันได้ไหม</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <span class="tag">คำถามกรรมการที่ต้องเตรียม</span>
+      <div class="say"><div class="who"><div class="av s">🧑‍🏫</div></div><div class="bub p" style="font-size:10.5px">รอย PC ละเอียด วัดได้ไหม?</div></div>
+      <div class="say r"><div class="who"><div class="av s">🙋</div></div><div class="bub g" style="font-size:10.5px">ที่ 1 ม. วัดได้ราว 0.82 มม. แต่เกณฑ์ PC ละเอียดกว่า → เป็นข้อจำกัด รายงานด้วยความมั่นใจต่ำ และจะทดลองภาพตัด/กล้องเทเล</div></div>
+    </div>
+  </div>
+
+  <div class="card gray">
+    <p class="note" style="margin:0">ช่องว่างงานวิจัยที่เล่มอ้าง (จากการค้นของผู้จัดทำถึง ต.ค. 2026): ไม่มีเปเปอร์ใดเทียบวิธีสเกล 3 แบบพร้อมกัน · ไม่มีใครรายงานแสงเป็นตัวเลข · ไม่มีงานทดสอบ &gt;6 ม. กับรอยจริง</p>
+  </div>
+  <div class="foot"><span>5 · ขั้น 4 เลเซอร์ (ขีดจำกัดและแผนทดสอบ)</span><span>7</span></div>
+</div>
+<!-- ============ หน้า 8 เกณฑ์ BMMS ============ -->
+<div class="page">
+  <div class="head"><div class="num">6</div><div class="title">เกณฑ์: BMMS ระดับ 5–0</div><div class="sub">เล่ม 2.2 ตาราง 2.1–2.5</div></div>
+
+  <div class="lvls mb">
+    <div class="lv l5"><b>5</b>ดีมาก</div><div class="lv l4"><b>4</b>ดีพอใช้</div><div class="lv l3"><b>3</b>พอใช้</div><div class="lv l2"><b>2</b>ชำรุด</div><div class="lv l1"><b>1</b>วิกฤต</div><div class="lv l0"><b>0</b>วิบัติ</div>
+  </div>
+  <p class="note" style="margin:-4px 0 8px">ระดับ 4–0 ใน BMMS นิยามด้วย "การซ่อมบำรุง" ไม่ใช่ตัวเลขความเสียหาย · <b>ระดับ 0 ไม่ถูกกำหนดจากภาพ</b> · ไม่พบความเสียหาย = ระดับ 5</p>
+
+  <div class="grid2 mb">
+    <div class="card">
+      <span class="tag">ความกว้างรอยร้าว (มม.) → ระดับ</span>
+      <table>
+        <tr><th class="c">ระดับ</th><th class="c">RC</th><th class="c">PC (คานตามยาว/พื้น/คานรัดหัวเสา)</th></tr>
+        <tr><td class="c"><b>4</b></td><td class="c">&lt; 1.6 (hairline)</td><td class="c">&lt; 0.10</td></tr>
+        <tr><td class="c"><b>3</b></td><td class="c">1.6 – 3.2</td><td class="c">0.10 – 0.23</td></tr>
+        <tr><td class="c"><b>2</b></td><td class="c">3.2 – 4.8</td><td class="c">0.25 – 0.76</td></tr>
+        <tr><td class="c"><b>1</b></td><td class="c">&gt; 4.8</td><td class="c">&gt; 0.76</td></tr>
+      </table>
+      <ul style="margin-top:4px">
+        <li><b>ช่อง 0.23–0.25 มม. ของ PC ว่างในต้นฉบับ</b> → เล่มจัดเป็นระดับ 2 (ผู้จัดทำกำหนด)</li>
+        <li>ค่าตกพอดีขอบ = ระดับที่<b>แย่กว่า</b></li>
+        <li>เสาตอม่อและฐานราก ต้นฉบับมีเกณฑ์เฉพาะ RC</li>
+        <li>BMMS <b>ไม่ระบุที่มา</b>ของตัวเลข → ห้ามเขียนว่าตาม ACI/AASHTO</li>
+      </ul>
+    </div>
+    <div class="card pink">
+      <span class="tag r">ระดับ 2/1 ผูกกับเงื่อนไขอื่นด้วย</span>
+      <ul>
+        <li>รอยแตกเนื่องจาก<b>เหล็กเสริมเป็นสนิม</b> → RC ระดับ 2 (ใหญ่ = 1)</li>
+        <li><b>รอยเฉือน/ดัดที่กระทบกำลัง ทุกขนาด = ระดับ 1</b> (ภาพตัดสินไม่ได้ → เล่มไม่กำหนดระดับ 1 จากเหตุนี้)</li>
+        <li>PC เห็นลวดอัดแรง: บางส่วน = 2 · จำนวนมาก = 1</li>
+        <li>hairline วัดด้วยอุปกรณ์ธรรมดาไม่ได้ (PC ต้องใช้ crack gauge)</li>
+        <li>ความลึกกะเทาะ / การเสียหน้าตัดเหล็ก <b>ตัดสินจากภาพไม่ได้</b> → ตัวบ่งชี้ทางอ้อม + ความมั่นใจต่ำ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <span class="tag">เกณฑ์เชิงบรรยายของความเสียหายอื่น (เล่ม ตาราง 2.5)</span>
+    <table>
+      <tr><th style="width:15%">ความเสียหาย</th><th class="c">ระดับ 4</th><th class="c">ระดับ 3</th><th class="c">ระดับ 2</th><th class="c">ระดับ 1</th></tr>
+      <tr><td><b>กะเทาะ</b></td><td>หลุดล่อนเล็กน้อย ลึกไม่ถึงเหล็ก</td><td>เล็กน้อยหลายจุด/บริเวณกว้าง ไม่ถึงเหล็ก</td><td>หลุดล่อนถึงเหล็กเสริม</td><td>ถึงเหล็กหลายจุด/บริเวณกว้าง</td></tr>
+      <tr><td><b>รูพรุนรังผึ้ง</b></td><td>โพรงเล็ก ไม่ถึงเหล็ก</td><td>โพรงเล็กหลายจุด หรือโพรงใหญ่ ไม่ถึงเหล็ก</td><td class="gy">ไม่มีบรรทัดเฉพาะ</td><td class="gy">ไม่มีบรรทัดเฉพาะ</td></tr>
+      <tr><td><b>เหล็กเสริม</b></td><td>(ยังไม่ถึงเหล็ก)</td><td>เสียหายถึงเหล็กในตำแหน่งที่ไม่มีผลต่อกำลัง (อาจมีสนิม)</td><td>เหล็กเป็นสนิม · PC: เห็นลวดอัดแรงบางส่วน</td><td>เหล็กเป็นสนิม/เสียหายมาก · PC: เห็นลวดจำนวนมาก · แอ่นตัวผิดปกติ</td></tr>
+      <tr><td><b>คราบเกลือ/คราบน้ำ</b></td><td>คราบน้ำเล็กน้อย</td><td>คราบน้ำมาก พบคราบเกลือ</td><td class="gy">ไม่มีบรรทัดเฉพาะ</td><td class="gy">ไม่มีบรรทัดเฉพาะ</td></tr>
+      <tr><td><b>คราบสนิม</b></td><td colspan="4" class="gy">BMMS ไม่มีเกณฑ์ระดับแยก (มีแค่ประโยคว่าปรากฏตามรอยแตก)</td></tr>
+    </table>
+    <p class="note">ที่มา: กรมทางหลวง (ม.ป.ป.) ตาราง 4-3, 4-5, 4-13 (ย่อและเรียบเรียงถ้อยคำ) · BMMS <b>ไม่มีเกณฑ์เป็นพื้นที่</b> (ตร.ม./ร้อยละ) ของความเสียหายเหล่านี้ · "เล็ก/ใหญ่/หลายจุด" ไม่มีตัวเลข · ตัวเลขขนาดใน BMMS บางตาราง ไม่เชื่อมกันเอง → อ้างชุดเดียว</p>
+  </div>
+
+  <div class="card blue mb">
+    <span class="tag">BMMS รวมเป็นสภาพสะพานยังไง</span>
+    <p>ใช้ <b>ค่าต่ำสุด</b> ไม่ใช่ค่าเฉลี่ย: ระดับแย่สุดของชิ้นส่วนเป็นตัวแทนของแต่ละกลุ่ม · ค่าต่ำสุดของโครงสร้างส่วนบนและส่วนล่าง = สภาพโดยรวม · <b>ส่วนประกอบรองไม่เข้าสูตร</b> · ตัวอย่างในคู่มือ: บน 4 · ล่าง 3 · รอง 1 → <b>โดยรวม 3</b></p>
+    <p><b>BMMS ไม่มี</b> น้ำหนักชิ้นส่วน · ดัชนี 0–100 · เกณฑ์เป็นพื้นที่ → จึงเสนอ T-BHI เติมช่องว่างนี้ · ความถี่ตรวจ: ปกติ 1–2 ปี · หลัก 4 ปี (OCR ≤ 3) / 6 ปี (OCR ≥ 4) · <b>งานนี้ไม่ใช่การตรวจประเภทใดของ BMMS</b> เป็นการคัดกรองก่อนหน้านั้น</p>
+  </div>
+
+  <div class="card gray">
+    <span class="tag">จับคู่องค์ประกอบ BMMS → 5 ประเภทของเล่ม (ตาราง 2.1) และวัสดุ</span>
+    <table>
+      <tr><th style="width:14%">ประเภท</th><th style="width:38%">รวมองค์ประกอบ BMMS</th><th>วัสดุที่ใช้เลือกเกณฑ์</th></tr>
+      <tr><td><b>เสา</b></td><td>เสาตอม่อ · กำแพงตอม่อ</td><td>RC (<b>ยังไม่มีเอกสารยืนยัน</b>)</td></tr>
+      <tr><td><b>คาน</b></td><td>คานหลัก · ค้ำยันคาน/คานขวาง (ทุกชนิดใช้ W ของคานหลัก)</td><td><b>PC</b> (ยืนยันจากรายงานและรูปถ่าย)</td></tr>
+      <tr><td><b>หัวเสา</b></td><td>คานรัดหัวเสา</td><td>RC (ยังไม่มีเอกสารยืนยัน)</td></tr>
+      <tr><td><b>พื้น</b></td><td>พื้นสะพาน</td><td class="gy">เล่ม v11 ไม่ได้ระบุวัสดุ</td></tr>
+      <tr><td><b>ราว</b></td><td>ราวสะพาน/แผงกั้น</td><td class="gy">เล่ม v11 ไม่ได้ระบุวัสดุ</td></tr>
+    </table>
+    <p class="note">ต้องยืนยันวัสดุเสา/หัวเสากับวิศวกร / แบบ as-built / ทะเบียน BMMS / แขวงทางหลวงฉะเชิงเทรา</p>
+  </div>
+  <div class="foot"><span>6 · เกณฑ์ BMMS · ตัวเลขคัดจากโน้ตที่ตรวจกับต้นฉบับ BMMS แล้ว (รอบนี้ยังไม่ได้เปิด PDF BMMS ซ้ำ)</span><span>8</span></div>
+</div>
+
+<!-- ============ หน้า 9 ตาราง 2.6 ============ -->
+<div class="page">
+  <div class="head"><div class="num">7</div><div class="title">เกณฑ์ → กฎที่ "ภาพ" ตัดสินได้</div><div class="sub">เล่ม ตาราง 2.6 · ผู้จัดทำแปลงจาก BMMS</div></div>
+
+  <div class="say"><div class="who"><div class="av s">🌉</div></div><div class="bub y">เกณฑ์ BMMS เขียนให้ <b>ผู้ตรวจที่ยืนอยู่หน้างาน</b> ไม่ใช่ให้ภาพ เช่น "ลึกถึงเหล็กเสริม" ภาพวัดความลึกไม่ได้ → ผู้จัดทำจึง<b>แปลงเป็นกฎที่ภาพตัดสินได้</b> (ตาราง 2.6) · <b>กฎในตารางนี้เป็นข้อกำหนดของผู้จัดทำ</b></div></div>
+
+  <div class="card mb" style="margin-top:8px">
+    <table>
+      <tr><th style="width:11%">ประเภท</th><th style="width:48%">วิธีตัดสินระดับจากภาพ</th><th style="width:8%" class="c">ระดับ</th><th>ข้อจำกัดของภาพ</th></tr>
+      <tr><td><b>Crack</b></td><td>วัดความกว้างด้วยสเกลเลเซอร์ แล้วเทียบตาราง 2.4 (หน้า 8) · ถ้ามี Rust_Stain ทับรอย → <b>ไม่ดีกว่า 2</b> · ตรวจพบรอยแต่วัดไม่ได้ (ไม่มีสเกลหรือ &lt; 3 พิกเซล): <b>คาน PC = ระดับ 2</b> + รายงานไม่น่าเชื่อถือ · <b>ชิ้นส่วน RC = "ตัดสินไม่ได้ ส่งวิศวกรตรวจ"</b></td><td class="c">4–1</td><td>รอยเฉือน/ดัดที่กระทบกำลัง ตัดสินจากภาพไม่ได้ จึงไม่กำหนดระดับ 1 จากเหตุนี้</td></tr>
+      <tr><td><b>Spalling</b></td><td>ไม่เห็นเหล็กในแอ่ง: <b>4</b> (จุดเดียว/พื้นที่น้อย) หรือ <b>3</b> (หลายจุด/บริเวณกว้าง) · เห็นเหล็กโผล่ในแอ่ง (Exposed_Rebar ซ้อน): <b>2</b> · เหล็กโผล่หลายจุด/บริเวณกว้าง: <b>1</b></td><td class="c">4–1</td><td>ความลึกวัดจากภาพไม่ได้ จึงใช้ "การเห็นเหล็ก" แทน "ลึกถึงเหล็กเสริม"</td></tr>
+      <tr><td><b>Exposed_Rebar</b></td><td><b>3</b> เมื่อไม่มีสัญญาณเหล็กเสียหน้าตัด · <b>2</b> เมื่อมี Rust_Stain ติดกับเหล็กและมีพื้นที่มากกว่าพื้นที่เหล็ก · <b>1</b> เมื่อโผล่หลายจุด/บริเวณกว้าง</td><td class="c">3–1</td><td>ภาพบอกการเสียหน้าตัดไม่ได้ → ความมั่นใจระดับต่ำ</td></tr>
+      <tr><td><b>Honeycomb</b></td><td><b>4</b> เมื่อเล็กหรือจุดเดียว · <b>3</b> เมื่อหลายจุด/บริเวณกว้าง</td><td class="c">4–3</td><td>BMMS ไม่มีเกณฑ์ระดับ 2 และ 1</td></tr>
+      <tr><td><b>Efflorescence</b></td><td><b>ระดับ 3 เสมอ</b></td><td class="c">3</td><td>ประเภทรวมคราบน้ำและคราบเกลือ · BMMS มีเกณฑ์ถึงระดับ 3</td></tr>
+      <tr><td><b>Rust_Stain</b></td><td>เดี่ยวๆ <b>ระดับ 3</b> · ทับ Crack → ดัน Crack เป็น <b>2</b> · ติด Exposed_Rebar และมีพื้นที่มากกว่า → ดัน Exposed_Rebar เป็น <b>2</b></td><td class="c">3 หรือดันประเภทอื่น</td><td>BMMS ไม่มีเกณฑ์ระดับของคราบสนิม</td></tr>
+    </table>
+    <p class="note">ที่มา: เล่ม v11 ตาราง 2.6 (หน้าพิมพ์ 11) เปิดเทียบ PDF แล้ว · <span class="chip g">ตามเล่ม v11</span></p>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card yellow">
+      <span class="tag">กฎทั่วไปที่ใช้กับทุกประเภท (3.7.1–3.7.2)</span>
+      <ul>
+        <li>ระดับสภาพ 6 ระดับตามตาราง 2.3 · ความกว้างรอยแบ่งระดับตามตาราง 2.4</li>
+        <li><b>ค่าตกพอดีขอบเขต → ระดับที่แย่กว่า</b></li>
+        <li><b>ไม่พบความเสียหาย = ระดับ 5</b> · ระดับ 0 ไม่กำหนดจากภาพ</li>
+        <li>พิกเซลที่ถูกมาสก์ครอบมากกว่าหนึ่งอัน → <b>นับระดับที่แย่ที่สุดเพียงระดับเดียว</b> (ไม่นับซ้ำ)</li>
+        <li><b>พื้นที่ไม่เสียหาย = ระดับ 5</b> = พื้นที่กรอบชิ้นส่วน − พื้นที่รวมของมาสก์ความเสียหาย</li>
+        <li><b>เสาและหัวเสาใช้เกณฑ์ RC · คานหลักใช้เกณฑ์ PC</b></li>
+      </ul>
+    </div>
+    <div class="card pink">
+      <span class="tag r">"หลายจุด / บริเวณกว้าง" แปลว่าอะไร</span>
+      <p>BMMS ไม่ให้ตัวเลข ผู้จัดทำกำหนดค่าตั้งต้น:</p>
+      <p style="text-align:center;font-size:12px"><b>≥ 3 จุดต่อชิ้นส่วนในภาพ</b><br>หรือ<br><b>≥ ร้อยละ 5 ของพื้นที่ชิ้นส่วน</b></p>
+      <p class="note">จะปรับร่วมกับวิศวกร · <span class="chip r">ยังรออาจารย์ยืนยัน</span></p>
+    </div>
+  </div>
+
+  <div class="card gray">
+    <span class="tag r">ข้อเสนอแก้กฎ 10 พ.ย. — ยังไม่ผ่านทีม/อาจารย์ ห้ามถือเป็นกฎของเล่ม</span>
+    <table>
+      <tr><td style="width:3%">1</td><td>เหล็กโผล่ (Exposed_Rebar) ให้ <b>ระดับ 2 ขึ้นไป</b> ตัดระดับ 3 ออก (ความเสียหายเดียวกันได้ 2 หรือ 3 ขึ้นกับว่า AI เจอหลุมกะเทาะด้วยหรือไม่)</td></tr>
+      <tr><td>2</td><td>รอย RC แคบกว่า 3 พิกเซล ให้ระดับ 4 ได้ ถ้า 3 × สเกล &lt; 1.6 มม.</td></tr>
+      <tr><td>3</td><td>คูณค่าวัดด้วย (1 + ความคลาดเคลื่อนของสเกล) ก่อนเทียบเส้นแบ่ง</td></tr>
+      <tr><td>4</td><td>หารความกว้างด้วย cos θ เมื่อผิวเอียง (วัดเล็กไป cos θ — ผู้จัดทำคำนวณ)</td></tr>
+    </table>
+    <p class="note">เล่ม v11 ยังไม่ระบุวัสดุของพื้นและราว · 3.7.1 ย่อหน้าเหตุผลยังเขียน "อาจเป็นระดับ 2 หรือ 1 อยู่แล้ว" (ตั้งใจคงไว้)</p>
+  </div>
+  <div class="foot"><span>7 · กฎตัดสินระดับจากภาพ · เล่ม v11 ตาราง 2.6</span><span>9</span></div>
+</div>
+
+<!-- ============ หน้า 10 ข้อกำหนดทุกกรณี (1) ============ -->
+<div class="page">
+  <div class="head"><div class="num">8</div><div class="title">ข้อกำหนดทุกกรณี (1/2)</div><div class="sub">"ถ้าเจอ… ระบบทำ…" · ระดับและค่าวัด · ความเสียหายซ้อน</div></div>
+
+  <div class="card mb">
+    <table class="cases">
+      <tr class="cat"><td colspan="4">ก. ระดับและค่าวัด</td></tr>
+      <tr><th style="width:4%">#</th><th style="width:30%">ถ้าเจอ…</th><th style="width:44%">ระบบทำ…</th><th>ที่มา</th></tr>
+      <tr><td class="c">1</td><td>ไม่พบความเสียหายในชิ้นส่วน</td><td><b>ระดับ 5</b></td><td>3.7.1</td></tr>
+      <tr><td class="c">2</td><td>ควรเป็นระดับ 0 (วิบัติ)</td><td><b>ไม่กำหนดจากภาพ</b></td><td>3.7.1</td></tr>
+      <tr><td class="c">3</td><td>ความกว้างตกพอดีขอบ (RC 1.6 / 3.2 / 4.8 · PC 0.10 / 0.23 / 0.76 มม.)</td><td>จัดเป็น<b>ระดับที่แย่กว่า</b></td><td>3.7.1</td></tr>
+      <tr><td class="c">4</td><td>คาน PC ความกว้างอยู่ในช่องว่าง 0.23–0.25 มม. (เช่น 0.24)</td><td><b>ระดับ 2</b> (ช่องนี้ว่างในต้นฉบับ BMMS)</td><td>3.7.1</td></tr>
+      <tr><td class="c">5</td><td><b>คาน PC</b> ตรวจพบรอย แต่วัดไม่ได้ (ไม่มีสเกลหรือ &lt; 3 พิกเซล)</td><td><b>ระดับ 2</b> + ความมั่นใจต่ำ + รายงานตรงๆ ว่า "ไม่น่าเชื่อถือเพราะวัดขนาดไม่ได้" + แนะนำส่งวิศวกร · นับในสัดส่วนระดับ 2 ตามปกติ</td><td>ตาราง 2.6, 3.7.1, 3.7.4</td></tr>
+      <tr><td class="c">6</td><td><b>ชิ้นส่วน RC</b> (เสา/หัวเสา) ตรวจพบรอย แต่วัดไม่ได้</td><td><b>ไม่ให้ระดับ</b> → "ตัดสินไม่ได้ ส่งวิศวกรตรวจ" · EHI คำนวณจากส่วนที่ตัดสินได้ + รายงานว่ามีส่วนที่ตัดสินไม่ได้ · สถานะสะพาน = "ตัดสินไม่ได้ ส่งวิศวกรตรวจ" คู่กับ T-BHI ของส่วนที่ตัดสินได้ (ใช้เป็นสถานะสุดท้ายไม่ได้)</td><td>3.7.1, 3.7.4, 3.7.6</td></tr>
+      <tr><td class="c">7</td><td>ทำไมรอยวัดไม่ได้จึง<b>ไม่ให้ระดับ 3</b> เป็นค่าตั้งต้น</td><td>ที่ 1 ม. วัดได้น้อยสุด ~0.8 มม. แต่ PC ระดับ 2 เริ่ม 0.25 มม. → รอยอาจเป็นระดับ 2 หรือแย่กว่าอยู่แล้ว · อาจารย์ท้วงว่าตั้งต้นที่ 3 ไม่ปลอดภัย</td><td>3.7.1 · อาจารย์ 6 พ.ย.</td></tr>
+      <tr><td class="c">8</td><td>รอยเฉือน/ดัดที่กระทบกำลัง (BMMS: ทุกขนาด = ระดับ 1)</td><td>ภาพตัดสินไม่ได้ → <b>ไม่กำหนดระดับ 1</b> จากเหตุนี้</td><td>ตาราง 2.6</td></tr>
+      <tr><td class="c">9</td><td>ต้องรู้ความลึกกะเทาะ หรือการเสียหน้าตัดเหล็ก</td><td>วัดจากภาพไม่ได้ → ใช้ตัวบ่งชี้ทางอ้อม ("เห็นเหล็ก") + <b>ความมั่นใจต่ำ</b></td><td>ตาราง 2.6, 3.4</td></tr>
+
+      <tr class="cat"><td colspan="4">ข. ความเสียหายหลายชนิดและซ้อนกัน</td></tr>
+      <tr><td class="c">10</td><td>Rust_Stain <b>ทับ</b> Crack</td><td>Crack <b>ไม่ดีกว่าระดับ 2</b> (ดัน Crack เป็น 2)</td><td>ตาราง 2.6</td></tr>
+      <tr><td class="c">11</td><td>Rust_Stain <b>ติด</b> Exposed_Rebar และมีพื้นที่มากกว่าพื้นที่เหล็ก</td><td>ดัน Exposed_Rebar เป็น <b>ระดับ 2</b></td><td>ตาราง 2.6</td></tr>
+      <tr><td class="c">12</td><td>Rust_Stain เดี่ยวๆ</td><td><b>ระดับ 3</b> (BMMS ไม่มีเกณฑ์แยก)</td><td>ตาราง 2.6</td></tr>
+      <tr><td class="c">13</td><td>Spalling ไม่เห็นเหล็ก</td><td><b>4</b> (จุดเดียว/พื้นที่น้อย) · <b>3</b> (หลายจุด/บริเวณกว้าง)</td><td>ตาราง 2.6</td></tr>
+      <tr><td class="c">14</td><td>Spalling แล้วเห็นเหล็ก (Exposed_Rebar ซ้อน)</td><td><b>2</b> · เหล็กโผล่หลายจุด/บริเวณกว้าง → <b>1</b></td><td>ตาราง 2.6</td></tr>
+      <tr><td class="c">15</td><td>Exposed_Rebar ไม่มีสัญญาณเหล็กเสียหน้าตัด</td><td><b>3</b> · ความมั่นใจต่ำ (ภาพบอกการเสียหน้าตัดไม่ได้)</td><td>ตาราง 2.6</td></tr>
+      <tr><td class="c">16</td><td>Honeycomb</td><td><b>4 หรือ 3 เท่านั้น</b> (BMMS ไม่มีระดับ 2, 1)</td><td>ตาราง 2.6</td></tr>
+      <tr><td class="c">17</td><td>Efflorescence (คราบน้ำหรือคราบเกลือ แยกจากภาพไม่ได้)</td><td><b>ระดับ 3 เสมอ</b></td><td>ตาราง 2.6</td></tr>
+      <tr><td class="c">18</td><td>พิกเซลเดียวถูกมาสก์ครอบหลายอัน</td><td>นับ<b>ระดับที่แย่ที่สุดเพียงระดับเดียว</b></td><td>3.7.2</td></tr>
+      <tr><td class="c">19</td><td>จะตัดสิน "หลายจุด/บริเวณกว้าง" ยังไง</td><td><b>≥ 3 จุดต่อชิ้นส่วนในภาพ หรือ ≥ ร้อยละ 5 ของพื้นที่ชิ้นส่วน</b> (ผู้จัดทำกำหนด รอยืนยัน)</td><td>3.7.1</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>8 · ข้อกำหนดทุกกรณี (1/2) · อ้างอิงเล่ม v11 หัวข้อที่ระบุ</span><span>10</span></div>
+</div>
+
+<!-- ============ หน้า 11 ข้อกำหนดทุกกรณี (2) ============ -->
+<div class="page">
+  <div class="head"><div class="num">8</div><div class="title">ข้อกำหนดทุกกรณี (2/2)</div><div class="sub">ข้อมูลและโมเดล · ระดับสะพาน · ลำดับคำนวณ</div></div>
+
+  <div class="card mb">
+    <table class="cases">
+      <tr class="cat"><td colspan="4">ค. ข้อมูลและโมเดล</td></tr>
+      <tr><th style="width:4%">#</th><th style="width:30%">ถ้าเจอ…</th><th style="width:44%">ระบบทำ…</th><th>ที่มา</th></tr>
+      <tr><td class="c">20</td><td>ความเสียหายคร่อมกรอบของสองชิ้นส่วน</td><td>แบ่งตามพิกเซลที่ทับกรอบแต่ละชิ้นส่วน</td><td>3.5.4</td></tr>
+      <tr><td class="c">21</td><td>ความเสียหายอยู่นอกทุกกรอบชิ้นส่วน</td><td>นับเป็น "<b>ไม่สังกัดชิ้นส่วน</b>" ไม่เข้าดัชนี · เกินร้อยละ 50 → แจ้งตรวจ</td><td>3.5.4</td></tr>
+      <tr><td class="c">22</td><td>หาจุดเลเซอร์ไม่ครบ 4 จุด หรือไม่เป็นสี่เหลี่ยมนูน</td><td><b>ไม่มีสเกล</b> · รอยร้าวความมั่นใจต่ำ · แต่ภาพยังใช้หาความเสียหายและกฎบังคับสถานะได้</td><td>3.4.1, 3.6.3</td></tr>
+      <tr><td class="c">23</td><td>รอยกว้างน้อยกว่า 3 พิกเซล</td><td>วัดไม่ได้อย่างน่าเชื่อถือ → ความมั่นใจต่ำ ไม่ใช้ตัดสินระดับโดยตรง (ไปตามกรณี 5/6)</td><td>3.6.3</td></tr>
+      <tr><td class="c">24</td><td>VLM ตอบ JSON ไม่ผ่านการตรวจโครงสร้าง</td><td><b>ทิ้งรายการนั้น</b> และนับเป็นสถิติ</td><td>3.5.3</td></tr>
+      <tr><td class="c">25</td><td>ป้ายชนิดชิ้นส่วนจาก VLM ไม่ตรงบันทึกการบิน</td><td>แจ้งตรวจ</td><td>3.4.2</td></tr>
+      <tr><td class="c">26</td><td>รัน VLM ไม่ได้ / ให้กรอบต่ำกว่า YOLO26 (วัดบนชุดตรวจสอบ)</td><td>ใช้ YOLO26 แบบกรอบ (เฉพาะประเภทนั้น หรือทุกประเภทถ้ารันไม่ได้เลย) + ป้ายชิ้นส่วนจากบันทึกการบิน · <b>ระบบหลักต้องเดินจนจบ</b></td><td>3.5.2, 3.5.3</td></tr>
+
+            <tr><td class="c">27</td><td><b>ภาพชุดเดิม</b> (ไม่มีเลเซอร์ ไม่มี crack scale ทุกภาพ)</td><td>ใช้<b>ฝึกและตรวจสอบเท่านั้น</b> ไม่ใช้เป็นชุดทดสอบ · ไม่มีสเกล → คิดได้เฉพาะสัดส่วนต่อภาพ · ไม่มีภาพเห็นชิ้นส่วนครบทั้งชิ้น · ความกว้างรอยในภาพชุดนี้วัดเป็น มม. ไม่ได้</td><td>3.3.2</td></tr>
+      <tr class="cat"><td colspan="4">ง. ระดับชิ้นส่วนและสถานะสะพาน</td></tr>
+      <tr><td class="c">28</td><td>ชิ้นส่วนเดียวมีความเสียหายหลายระดับ</td><td>รายงาน<b>ระดับที่แย่สุดของชิ้นส่วนคู่กับ EHI เสมอ</b> (EHI ถูกเจือจางด้วยพื้นที่)</td><td>3.7.4</td></tr>
+      <tr><td class="c">29</td><td>พบระดับ <b>2 / 1 / 0</b> ในคาน เสา หรือหัวเสา <u>ในภาพใดภาพหนึ่ง</u></td><td>สถานะสะพาน<b>ไม่ดีกว่า ชำรุด / วิกฤต / วิบัติ</b> ตามลำดับ · รวมระดับจากตัวบ่งชี้ทางอ้อม โดยรายงานแยกว่ามาจากความมั่นใจต่ำ + แนะนำให้วิศวกรตรวจ</td><td>3.7.6</td></tr>
+      <tr><td class="c">30</td><td>ไม่พบ คาน เสา หรือหัวเสา ชนิดใดเลย</td><td>รายงาน <b>"ไม่ครบชิ้นส่วนหลัก"</b> · แสดงรายการชิ้นส่วนที่พบ/ไม่พบทุกครั้ง</td><td>3.7.5</td></tr>
+      <tr><td class="c">31</td><td>ชิ้นส่วนนอก 5 ประเภท (ฐานราก แผ่นรองรับ รอยต่อ ผิวทาง ฯลฯ)</td><td>ไม่เข้า T-BHI (โดรนมองไม่เห็น/นอกขอบเขต)</td><td>2.2.4, 3.7.5</td></tr>
+      <tr><td class="c">32</td><td>พบระดับ 2 หรือต่ำกว่าที่ <b>พื้นสะพาน</b></td><td>กฎบังคับของเล่มระบุเฉพาะ คาน เสา หัวเสา · <span class="chip r">เอกสาร T-BHI นับ "Primary" รวมพื้น — ยังไม่ตรงกัน รออาจารย์</span></td><td>3.7.6 · ข้อ B</td></tr>
+    </table>
+  </div>
+
+  <div class="card mb">
+    <h3>ลำดับคำนวณต่อชิ้นส่วน (3.7.2 – 3.7.6)</h3>
+    <div class="flow">
+      <div class="st"><b>① ต่อภาพ</b>ระดับของมาสก์แต่ละอัน → พื้นที่ A<sub>e,i,k</sub> · ระดับ 5 = กรอบ − มาสก์</div><div class="ar">→</div>
+      <div class="st"><b>② จับคู่</b>ความเสียหาย ↔ กรอบชิ้นส่วน (ภาพเดียวกัน)</div><div class="ar">→</div>
+      <div class="st"><b>③ รวมภาพ</b>y<sub>e</sub>(k) (สมการ 3.2)</div><div class="ar">→</div>
+      <div class="st"><b>④ EHI → T-BHI</b>สมการ 2.1, 2.2 (หน้า 12)</div><div class="ar">→</div>
+      <div class="st"><b>⑤ สถานะ</b>ช่วงคะแนน + กฎบังคับ + ความมั่นใจ (หน้า 13)</div>
+    </div>
+    <p class="note" style="margin-top:4px">รายงานคู่กันเสมอ: ระดับแย่สุดของชิ้นส่วน · ค่าความมั่นใจ · รายการชิ้นส่วนที่พบ/ไม่พบ</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card yellow">
+      <span class="tag">กรณีทดสอบตั้งต้นของโปรแกรม (ยังไม่ได้เขียนโค้ด)</span>
+      <ul>
+        <li>รอย PC ไม่มีสเกล → ระดับ 2 + ความมั่นใจต่ำ (ไม่ใช่ 3)</li>
+        <li>รอย RC ไม่มีสเกล → "ตัดสินไม่ได้ ส่งวิศวกรตรวจ"</li>
+        <li>Rust_Stain ทับ Crack ระดับ 3 → Crack = 2</li>
+        <li>Efflorescence → 3 เสมอ · Honeycomb ไม่เกิน 3 · ไม่เจออะไร → 5</li>
+        <li>ค่าตกขอบ (1.6, 3.2, 0.10, 0.23, 0.76 มม.) → ระดับที่แย่กว่า · 0.24 มม. (PC) → ระดับ 2</li>
+      </ul>
+    </div>
+    <div class="card pink">
+      <span class="tag r">ที่ยังคลุมเครือ</span>
+      <ul>
+        <li>"หลายจุด" (≥3 จุด / ≥ร้อยละ 5) รออาจารย์</li>
+        <li>วัสดุเสา/หัวเสา RC หรือ PC</li>
+        <li>พื้นสะพานเข้ากฎบังคับไหม</li>
+        <li>ตัวหาร = กรอบ VLM (ยังไม่ได้ถามอาจารย์)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>8 · ข้อกำหนดทุกกรณี (2/2) · รวม 32 กรณี</span><span>11</span></div>
+</div>
+<!-- ============ หน้า 12 สูตร ============ -->
+<div class="page">
+  <div class="head"><div class="num">9</div><div class="title">สูตร EHI และ T-BHI</div><div class="sub">เล่ม 2.2.3–2.2.4, 3.7.3–3.7.5 · ตรวจเทียบ AASHTO MBE / เอกสาร T-BHI / Pellegrino แล้ว</div></div>
+
+  <div class="grid2 mb">
+    <div class="card yellow eqcard">
+      <span class="tag">สมการ 2.1 — คะแนนชิ้นส่วน</span>
+      <div class="eq">EHI<sub>e</sub> = 100 × Σ<sub>k=0..5</sub> C<sub>k</sub> · y<sub>e</sub>(k)</div>
+      <p><b>EHI</b> = คะแนน 0–100 ของชิ้นส่วนชนิด e · <b>C<sub>k</sub></b> = ค่าสัมประสิทธิ์ของระดับ k · <b>y<sub>e</sub>(k)</b> = สัดส่วนพื้นที่ของชิ้นส่วนชนิด e ที่อยู่ระดับ k (<u>รวมระดับ 5 ที่ไม่เสียหายด้วย</u>)</p>
+    </div>
+    <div class="card green eqcard">
+      <span class="tag g">สมการ 2.2 — คะแนนทั้งสะพาน</span>
+      <div class="eq">T-BHI = Σ q<sub>e</sub>·W<sub>e</sub>·EHI<sub>e</sub> / Σ q<sub>e</sub>·W<sub>e</sub></div>
+      <p><b>q<sub>e</sub></b> = ปริมาณชิ้นส่วนชนิด e · <b>W<sub>e</sub></b> = น้ำหนักความสำคัญ · ค่าเฉลี่ยถ่วงน้ำหนักของ EHI ทุกชนิดที่ตรวจพบ</p>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <h3>ค่าที่ป้อนเข้าสูตรจากภาพ (3.7.3, 3.7.5) <span class="chip g">ตามเล่ม v11</span></h3>
+    <table>
+      <tr><th style="width:12%">สมการ</th><th style="width:30%">สูตร</th><th>ความหมาย / ข้อควรรู้</th></tr>
+      <tr><td>(3.1) ต่อภาพ</td><td class="eqs">y<sub>e,i</sub>(k) = A<sub>e,i,k</sub> / A<sub>e,i</sub></td><td>A<sub>e,i</sub> = พื้นที่<b>กรอบ</b>ชิ้นส่วน e ในภาพ i (ตัวหาร) · A<sub>e,i,k</sub> = ส่วนที่อยู่ระดับ k</td></tr>
+      <tr><td>(3.2) ข้ามภาพ</td><td class="eqs">y<sub>e</sub>(k) = (1/N<sub>e</sub>) Σ<sub>i</sub> y<sub>e,i</sub>(k)</td><td>เฉลี่ยน้ำหนักเท่ากัน · N<sub>e</sub> = จำนวนภาพที่มีชิ้นส่วน e · ภาพซ้อนอาจนับซ้ำ → <b>ลดซ้อนที่ต้นทาง (3.3.4) + ทดสอบความไว</b> (คำนวณซ้ำด้วยภาพที่คัดให้ห่างกัน) · <span class="chip r">อาจารย์ท้วง: ผลเปลี่ยนตามจำนวนภาพ</span></td></tr>
+      <tr><td>(3.3) q</td><td class="eqs">q<sub>e</sub> = Σ<sub>i</sub> ( A<sub>e,i</sub> / G<sub>i</sub> )</td><td>G<sub>i</sub> = พื้นที่ทั้งภาพ i · ไม่มีแบบก่อสร้างจึงใช้สัดส่วนพื้นที่กรอบเป็น<b>ตัวแทน</b>ของปริมาณ · <span class="chip r">อาจารย์ท้วง: q ควรมาจากปริมาณจริง</span></td></tr>
+    </table>
+    <p class="note">ตรวจเทียบต้นฉบับ (25 พ.ย.): AASHTO MBE เขียนแค่ y = "percentage of element e in Condition State i" และ q = "total quantity" <b>ไม่ระบุหน่วย</b> · การใช้ "พื้นที่" และ A/G เป็นการเลือกของผู้จัดทำ · MBE ไม่มี ×100 (เอกสาร T-BHI มี)</p>
+  </div>
+
+  <div class="grid3 mb">
+    <div class="card">
+      <span class="tag">ค่า C และ EHI เมื่อทั้งชิ้นอยู่ระดับเดียว</span>
+      <table>
+        <tr><th class="c">ระดับ</th><th class="c">C</th><th class="c">EHI</th></tr>
+        <tr><td class="c">5</td><td class="c">1.00</td><td class="c">100</td></tr>
+        <tr><td class="c">4</td><td class="c">0.83</td><td class="c">83</td></tr>
+        <tr><td class="c">3</td><td class="c">0.67</td><td class="c">67</td></tr>
+        <tr><td class="c">2</td><td class="c">0.33</td><td class="c">33</td></tr>
+        <tr><td class="c">1</td><td class="c">0.17</td><td class="c">17</td></tr>
+        <tr><td class="c">0</td><td class="c">0.00</td><td class="c">0</td></tr>
+      </table>
+      <p class="note">ที่มา: เอกสาร T-BHI ตาราง 4.12 (ประมาณค่าเชิงเส้น) · <b>AASHTO MBE ให้แค่ C=1 (CS1) และ C=0 (CS4)</b> CS2/CS3 เจ้าของระบบกำหนดเอง → ค่า 0.67/0.33 ที่เอกสารอ้างว่าเป็นของ AASHTO <u>ไม่อยู่ใน MBE</u></p>
+    </div>
+    <div class="card">
+      <span class="tag">น้ำหนัก W ที่เล่มใช้</span>
+      <table>
+        <tr><th>ชิ้นส่วน</th><th class="c">W</th></tr>
+        <tr><td>คาน (ทุกชนิดใช้ค่าคานหลัก)</td><td class="c"><b>10</b></td></tr>
+        <tr><td>เสา (รวมตอม่อ)</td><td class="c"><b>10</b></td></tr>
+        <tr><td>หัวเสา</td><td class="c"><b>9</b></td></tr>
+        <tr><td>พื้น</td><td class="c"><b>9</b></td></tr>
+        <tr><td>ราว</td><td class="c"><b>5</b></td></tr>
+      </table>
+      <p class="note">ที่มา: Pellegrino et al. (2011) Table 3 (W ตั้งแต่ 10 = สำคัญสุด ถึง 5) · ตัวเลข W อ้างตรง · <b>การจัดชิ้นส่วนไทยเข้ากลุ่มเป็นของผู้จัดทำ</b> · ต้นฉบับไม่มีคำว่า "หัวเสา" (แถว W=9 รอทีมตัดสิน)</p>
+    </div>
+    <div class="card pink">
+      <span class="tag r">ใช้จาก Pellegrino แค่ W</span>
+      <ul>
+        <li>Pellegrino <b>ไม่มี y และไม่มี q</b> — CV เป็นค่าเดียวต่อชิ้นส่วน TSR ถ่วงด้วย W อย่างเดียว</li>
+        <li>สเกล CV กลับทิศกับ BMMS (CV 1 = ดีสุด) <b>อย่ายืมสเกล</b></li>
+        <li>รูป y × C และ q × W มาจาก AASHTO MBE</li>
+        <li>บทความบอกว่า W ตาม Blakelock (1998) และ Ryall (2001) · ค่าสัมประสิทธิ์ calibrate จากแนวปฏิบัติของหน่วยงานอิตาลี</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ตัวอย่างคำนวณ <span class="chip y">ค่าสมมติ · ผู้จัดทำคำนวณ · รันสคริปต์ตรวจ 25 พ.ย.</span></h3>
+    <table>
+      <tr><th style="width:11%">ตัวอย่าง</th><th style="width:44%">ข้อมูล</th><th>ผล</th></tr>
+      <tr><td><b>เสา</b></td><td>100,000 px: Crack ระดับ 3 = 2,000 · Spalling ระดับ 4 = 1,000 · ที่เหลือระดับ 5 (97,000)</td><td>EHI = 100×(97,000×1 + 2,000×0.67 + 1,000×0.83)/100,000 = <b>99.17</b></td></tr>
+      <tr><td><b>คาน</b></td><td>270,000 px: ระดับ 2 = 7,000 (เหล็กโผล่ ≈2.6%) · ระดับ 5 = 263,000</td><td>EHI = <b>98.26</b> → เหล็กโผล่ระดับ 2 แต่ EHI ลดแค่ ~1.7 (เจือจาง)</td></tr>
+      <tr><td><b>ผสม</b></td><td>90% ระดับ 5 + 10% ระดับ 3</td><td>EHI = <b>96.7</b></td></tr>
+      <tr class="hl"><td><b>ทั้งสะพาน</b></td><td>เสา q .30 EHI 99.6 · หัวเสา q .20 EHI 83 · ราว q .10 EHI 67 · W = 10 / 9 / 5</td><td>T-BHI = (3.0×99.6 + 1.8×83 + 0.5×67)/5.3 = <b>90.89 ≈ 90.9</b> → "ดีพอใช้" (ช่วงเดิม)</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>9 · สูตร · เทียบ AASHTO MBE 2018 PDF หน้า 28–29, เอกสาร T-BHI หน้า 55–57, Pellegrino 2011</span><span>12</span></div>
+</div>
+
+<!-- ============ หน้า 13 สถานะ ============ -->
+<div class="page">
+  <div class="head"><div class="num">10</div><div class="title">สถานะสะพาน · กฎบังคับ · ความมั่นใจ</div><div class="sub">เล่ม 3.7.6 · ตาราง 2.7, 3.4 · ⚠ ช่วงคะแนนกำลังปรับ</div></div>
+
+  <div class="card mb">
+    <h3>ช่วงคะแนน T-BHI → สถานะ (ฉบับเดิม = เอกสาร T-BHI ตาราง 4.10 ที่เล่ม v11 ใช้)</h3>
+    <div class="lvls">
+      <div class="lv l5"><b>= 100</b>ดีมาก</div><div class="lv l4"><b>90 – &lt;100</b>ดีพอใช้</div><div class="lv l3"><b>70 – &lt;90</b>พอใช้</div><div class="lv l2"><b>50 – &lt;70</b>ชำรุด</div><div class="lv l1"><b>30 – &lt;50</b>วิกฤต</div><div class="lv l0"><b>&lt; 30</b>วิบัติ</div>
+    </div>
+    <p class="note">ชื่อสถานะตาม BMMS · ช่วง 90/70 เอกสารอ้างว่ามาจาก FHWA แต่ยืนยันต้นทางไม่ได้ → <b>อ้างเอกสาร T-BHI ไม่อ้าง FHWA</b> · ช่วง 50/30 ผู้เขียนเอกสารเพิ่มเอง · ช่วงคะแนน<u>ไม่ใช้จำแนกย้อนกลับเป็นระดับสภาพ</u> มีไว้บอกแนวซ่อมบำรุง</p>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card pink">
+      <span class="tag r">ปัญหาตาราง 2.7 (ต้นเหตุ: เอกสาร T-BHI เอง)</span>
+      <p>ถ้าทั้งชิ้นส่วนอยู่ระดับเดียว สถานะที่ได้ <b>ต่ำกว่าชื่อระดับ 1 ขั้นทุกระดับ</b></p>
+      <table>
+        <tr><th class="c">ระดับ (ชื่อ)</th><th class="c">EHI</th><th class="c">สถานะที่ได้</th></tr>
+        <tr><td class="c">5 ดีมาก</td><td class="c">100</td><td class="c">ดีมาก</td></tr>
+        <tr class="bad"><td class="c">4 ดีพอใช้</td><td class="c">83</td><td class="c">พอใช้</td></tr>
+        <tr class="bad"><td class="c">3 พอใช้</td><td class="c">67</td><td class="c">ชำรุด</td></tr>
+        <tr class="bad"><td class="c">2 ชำรุด</td><td class="c">33</td><td class="c">วิกฤต</td></tr>
+        <tr class="bad"><td class="c">1 วิกฤต</td><td class="c">17</td><td class="c">วิบัติ</td></tr>
+        <tr><td class="c">0 วิบัติ</td><td class="c">0</td><td class="c">วิบัติ</td></tr>
+      </table>
+      <p class="note">และ "ดีมาก" ต้อง = 100 เป๊ะ (อาจารย์ท้วง 30 ต.ค.) · ระดับ 1 ทั้งชิ้นได้ "วิบัติ" ทั้งที่เล่มไม่ตัดสินระดับ 0 จากภาพ</p>
+    </div>
+    <div class="card gray">
+      <span class="tag r">ทางเลือก — รออาจารย์เลือก · ผู้ใช้กำลังปรับอยู่</span>
+      <table>
+        <tr><th style="width:12%">ข้อ</th><th>ค่า C</th><th>เส้นแบ่งคะแนน</th></tr>
+        <tr><td class="c">เดิม</td><td>เดิม</td><td>100/90/70/50/30 (อาจารย์สั่งให้แก้)</td></tr>
+        <tr><td class="c"><b>ก</b></td><td>เดิม</td><td>100/75/50/25/10 · อยู่ในเล่ม v11</td></tr>
+        <tr><td class="c"><b>ข</b></td><td>1 / .95 / .80 / .60 / .40 / 0</td><td>เดิม · อยู่ในเล่ม v11</td></tr>
+        <tr><td class="c"><b>ง</b></td><td>เดิม</td><td><b>99.15 / 82.20 / 65.30 / 32.20 / 16.15</b> · Claude เสนอ 10 พ.ย. (ยังไม่ผ่านทีม/อาจารย์) · ห้ามปัดเลข</td></tr>
+        <tr><td class="c"><b>จ</b></td><td>เดิม</td><td>เดิม แต่เปลี่ยนชื่อสถานะเป็นแนวซ่อม (ทางสำรอง)</td></tr>
+      </table>
+      <p class="note">ข: เทียบ AASHTO ไม่ได้แล้ว · ก: "ดีมาก" ยังต้อง 100 เป๊ะ · สูตรของ ง: T<sub>k</sub> = 100·[C<sub>k</sub> − 0.05·(C<sub>k</sub> − C<sub>k−1</sub>)] <span class="chip y">ผู้จัดทำคำนวณ ตรวจแล้ว</span> · ค่าเผื่อ 5% ผูกกับนิยาม "บริเวณกว้าง ≥ ร้อยละ 5" ที่ยังรอยืนยัน · <b>ยังไม่ได้ทดสอบระดับทั้งสะพานร่วมกับกฎบังคับ</b></p>
+    </div>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card yellow">
+      <span class="tag">กฎบังคับสถานะ (เหตุผล: ดัชนีถูกเจือจางด้วยพื้นที่)</span>
+      <table>
+        <tr><th>พบในคาน/เสา/หัวเสา <u>ภาพใดภาพหนึ่ง</u></th><th>สถานะสะพาน</th></tr>
+        <tr><td>ระดับ <b>2</b></td><td>ไม่ดีกว่า <b>ชำรุด</b></td></tr>
+        <tr><td>ระดับ <b>1</b></td><td>ไม่ดีกว่า <b>วิกฤต</b></td></tr>
+        <tr><td>ระดับ <b>0</b></td><td>ไม่ดีกว่า <b>วิบัติ</b></td></tr>
+      </table>
+      <ul style="margin-top:4px">
+        <li>มาจากเอกสาร T-BHI (ตาราง 4.11) ตามหลัก "ค่าต่ำสุดเป็นตัวกำหนด" ของ BMMS · ตัวกฎรายระดับไม่มีใน BMMS/AASHTO โดยตรง</li>
+        <li>รวมระดับจากตัวบ่งชี้ทางอ้อม โดยรายงานแยกว่ามาจากความมั่นใจต่ำ + แนะนำให้วิศวกรตรวจ</li>
+        <li>ใช้การ "พบในภาพใดภาพหนึ่ง" → ไม่ได้รับผลจากการนับภาพซ้ำ</li>
+        <li>รอย PC วัดไม่ได้ = ระดับ 2 → ทำให้สถานะ<b>ไม่ดีกว่า ชำรุด</b> + รายงานไม่น่าเชื่อถือ</li>
+        <li>รอย RC วัดไม่ได้ → สถานะ "<b>ตัดสินไม่ได้ ส่งวิศวกรตรวจ</b>" คู่ T-BHI ของส่วนที่ตัดสินได้</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <span class="tag g">ค่าความมั่นใจ (ตาราง 3.4 · ไม่เข้าสูตร)</span>
+      <table>
+        <tr><th style="width:15%">ค่า</th><th style="width:40%">เกณฑ์</th><th>ตัวอย่าง</th></tr>
+        <tr><td><b>สูง</b></td><td>ระดับมาจากค่าที่วัดได้ตรง/เห็นโดยตรง</td><td>ความกว้างรอย RC ที่มีสเกลและกว้าง ≥ 3 พิกเซล · เห็นเหล็กโผล่ชัด</td></tr>
+        <tr><td><b>ปานกลาง</b></td><td>วัดได้เพียงบางส่วน</td><td>ความกว้างใกล้ 3 พิกเซล · ภาพถ่ายเฉียงมาก</td></tr>
+        <tr><td><b>ต่ำ</b></td><td>ต้องใช้ตัวบ่งชี้ทางอ้อม</td><td>ความลึกกะเทาะ · การเสียหน้าตัดเหล็ก · รอยไม่มีสเกล/&lt;3 พิกเซล · รอยละเอียดของคาน PC</td></tr>
+      </table>
+      <p class="note">รายงานคู่กับทุกระดับ พร้อม<b>มุมก้มเงยของกล้อง</b> · รายการที่ต่ำถูกแนะนำให้ส่งตรวจละเอียด · ⚠ เอกสาร T-BHI จัดรอยที่วัดได้บางส่วนเป็น "ปานกลาง" แต่เล่มวางรอย RC ที่มีสเกล ≥3 พิกเซลเป็น "สูง" (ข้อ B รอพิจารณา)</p>
+    </div>
+  </div>
+
+  <div class="card gray">
+    <span class="tag">รายงานผลของระบบ ต้องมีครบ (ตามเล่ม 3.7)</span>
+    <ul class="two">
+      <li>T-BHI + <b>สถานะ</b> (หรือ "ตัดสินไม่ได้ ส่งวิศวกรตรวจ")</li>
+      <li><b>ระดับที่แย่สุด</b>ของชิ้นส่วนแต่ละชนิดคู่กับ EHI</li>
+      <li>ค่าความมั่นใจ สูง/กลาง/ต่ำ ของแต่ละระดับ + มุมกล้อง</li>
+      <li>รายการชิ้นส่วนที่<b>พบ / ไม่พบ</b> ("ไม่ครบชิ้นส่วนหลัก")</li>
+      <li>ส่วนที่ตัดสินไม่ได้ (รอย RC) และส่วนที่ได้ระดับจากตัวบ่งชี้ทางอ้อม</li>
+      <li>สถิติรายการ JSON ที่ถูกทิ้ง · ความเสียหาย "ไม่สังกัดชิ้นส่วน"</li>
+    </ul>
+  </div>
+  <div class="foot"><span>10 · สถานะและกฎบังคับ · ตัวเลขช่วงคะแนนรอบนี้ยังไม่ใช่ข้อสรุป</span><span>13</span></div>
+</div>
+
+<!-- ============ หน้า 14 เทียบวิศวกร ============ -->
+<div class="page">
+  <div class="head"><div class="num">11</div><div class="title">ขั้น 6: เทียบกับวิศวกรหลายท่าน</div><div class="sub">เล่ม 3.8 · วัดว่าระบบ "ใช้ได้จริง" แค่ไหน</div></div>
+
+  <div class="say"><div class="who"><div class="av s">🧑‍🏫</div>กรรมการ</div><div class="bub p">ตัวเลขความแม่นของงานก่อนหน้า เอามาเทียบกับงานคุณได้ไหม?</div></div>
+  <div class="say r"><div class="who"><div class="av s">🙋</div>เรา</div><div class="bub g">เทียบตรงไม่ได้ เพราะชุดข้อมูลต่างกัน · เรารายงานค่าที่วัดจริงบนสะพานของเราเอง และเทียบกับ<b>วิศวกรหลายท่าน</b>ที่ให้ระดับแยกกัน</div></div>
+
+  <div class="card mb" style="margin-top:8px">
+    <h3>วิธีเทียบ</h3>
+    <ul>
+      <li>วิศวกรโยธาที่มีประสบการณ์ตรวจสะพาน <b>"หลายท่าน"</b> ให้ระดับ 0–5 <b>รายชิ้นส่วน ~15–20 ชิ้นส่วน</b> จากภาพชุดเดียวกัน · <b>แยกกัน ไม่เห็นผลระบบ</b></li>
+      <li><b>ตรวจความเห็นตรงกันของวิศวกรเอง</b>ก่อน · เลือกชิ้นส่วนให้มีทั้งสภาพดีและเสียหาย</li>
+      <li><b>ชุดทดสอบใช้ครั้งเดียวตอนท้าย</b> · <b>ไม่ตั้งเกณฑ์ผ่าน/ไม่ผ่านล่วงหน้า</b> รายงานตามค่าจริง · ไม่ใช้ QWK</li>
+    </ul>
+  </div>
+
+  <div class="grid3 mb">
+    <div class="card blue">
+      <span class="tag">ระดับ 1: ขั้น AI</span>
+      <p><b>ชนิดชิ้นส่วน / ชนิดและมาสก์ความเสียหาย</b> แยกเป็นขั้น</p>
+      <ul>
+        <li>ชนิดชิ้นส่วนรายประเภท + IoU กรอบ</li>
+        <li>ความเสียหาย: mAP@0.5 และ 0.5–0.95</li>
+        <li><b>recall รายประเภท (ผลลบเท็จ)</b> ไม่ใช่แค่ mAP (Sony 2021)</li>
+        <li>IoU ของมาสก์</li>
+      </ul>
+    </div>
+    <div class="card yellow">
+      <span class="tag">ระดับ 2: ระดับรายชิ้นส่วน</span>
+      <p>เทียบระดับ 0–5 ที่ระบบให้กับวิศวกร</p>
+      <ul>
+        <li><b>ตารางสับสน</b> (confusion matrix)</li>
+        <li>ชุดทดสอบหน่วย (unit test) ของกฎแปลงระดับ — เขียนเป็นหลักตรวจด้วยตรรกะ</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <span class="tag g">ระดับ 3: T-BHI / สถานะ</span>
+      <ul>
+        <li><b>ตกช่องเดียวกันไหม</b></li>
+        <li><b>ระบบให้สถานะดีกว่าวิศวกรไหม</b> = <u>ทิศอันตราย</u> (ปล่อยสะพานเสียผ่าน)</li>
+        <li>ผลเป็นรายงานคัดกรอง + จุดที่ควรส่งตรวจ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <h3>ผลที่เล่มคาดว่าจะรายงาน 7 ข้อ (ตามค่าจริง)</h3>
+    <ol class="two">
+      <li>ผลชิ้นส่วนรายประเภท</li>
+      <li>VLM ให้กรอบเทียบตัวตรวจจับได้ไหม + มาสก์แม่นเพียงใด</li>
+      <li>ช่วงเงื่อนไขที่วัดขนาดได้ + ความคลาด + รายการที่วัดไม่ได้</li>
+      <li>โปรแกรมประเมินที่ตรวจย้อนได้</li>
+      <li>ตารางเทียบกับวิศวกร + พลาดทางอันตรายบ่อยแค่ไหน</li>
+      <li>รายงานคัดกรองสะพาน + จุดที่ควรส่งตรวจ</li>
+      <li>ชุดภาพติดป้าย + กติกาติดป้าย</li>
+    </ol>
+  </div>
+
+  <div class="grid2">
+    <div class="card pink">
+      <span class="tag r">ข้อเสนอ 10 พ.ย. เรื่องเทียบวิศวกร (ยังไม่ผ่านอาจารย์)</span>
+      <ul>
+        <li>ระดับ 2 เทียบ "ระดับแย่สุดรายชิ้นส่วน"</li>
+        <li>วิศวกรมีตัวเลือก "ตัดสินไม่ได้"</li>
+        <li>รันกฎด้วยป้ายเฉลยเพื่อแยกว่าผิดที่ AI หรือที่กฎ</li>
+        <li>เลือก ~18 ชิ้นก่อนเห็นผลระบบ (จาก BMMS 2567 / สำรวจ 13 ต.ค.)</li>
+        <li>ค่าอ้างอิง = ค่ากลางของ 3 ท่าน · 2 ท่านเห็นต่าง = ค่าที่แย่กว่า</li>
+        <li>รายงานทิศอันตรายเป็น "จำนวนชิ้น"</li>
+      </ul>
+    </div>
+    <div class="card gray">
+      <span class="tag">ที่กรรมการน่าถามเรื่องนี้</span>
+      <ul>
+        <li><b>ทำไมไม่มี human-in-the-loop?</b> ทีมเลิก เพราะระบบคัดกรองแล้วส่งวิศวกรตรวจต่อ · การเทียบวิศวกรเป็นการ<u>ประเมินผล</u> ไม่ใช่ขั้นใน pipeline (แต่ วช.68 / รุ่นพี่ / Çelik ใช้ จึงน่าถาม)</li>
+        <li>T-BHI เทียบ OCR ของกรมทางหลวง: แต่ละหน่วยงานใช้เกณฑ์ต่างกัน → ตาราง mapping เป็นงานต่อยอด</li>
+        <li>ชื่อหน่วยงานในอภิปราย (ทช., การทางพิเศษฯ, ดอนเมืองโทลเวย์) ยังไม่ตัดสิน</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>11 · เทียบวิศวกร · เล่ม v11 หัวข้อ 3.8 (ยังไม่ได้นัดวิศวกร · แผนอยู่เดือนมีนาคม)</span><span>14</span></div>
+</div>
+
+<!-- ============ หน้า 15 ที่ยังรอ + แผนงาน ============ -->
+<div class="page">
+  <div class="head"><div class="num">12</div><div class="title">สิ่งที่ยังรอ · แผนงาน · ที่ต้องระวัง</div><div class="sub">สถานะ 25 พ.ย. 2569</div></div>
+
+  <div class="card mb">
+    <h3>แผนงาน 12 งาน (ตาราง 3.5: ต.ค. 2569 – เม.ย. 2570)</h3>
+    <table>
+      <tr><th style="width:4%">#</th><th style="width:50%">งาน</th><th style="width:16%">ช่วง</th><th>สถานะ</th></tr>
+      <tr><td class="c">1</td><td>จัดทำเล่ม Pre-project และสอบหัวข้อ</td><td>ต.ค.–พ.ย.</td><td>✅ ส่งแล้ว พรีเซนต์ 2 พ.ย. แล้ว</td></tr>
+      <tr><td class="c">2</td><td>ติดตั้งและสอบเทียบชุดเลเซอร์ 4 จุด</td><td>พ.ย.–ธ.ค.</td><td>ยังไม่เริ่ม</td></tr>
+      <tr><td class="c">3</td><td>บินนำร่อง (ระยะ มุม แสง) ปรับแผนบิน</td><td>ธ.ค.</td><td>ยังไม่ได้บิน</td></tr>
+      <tr><td class="c">4</td><td>เก็บข้อมูลภาคสนามรอบหลัก + crack scale</td><td>ม.ค.</td><td></td></tr>
+      <tr><td class="c">5</td><td>คัดภาพ ติดป้ายชนิด/กรอบชิ้นส่วน และโพลิกอนความเสียหาย</td><td>พ.ย.–ก.พ.</td><td></td></tr>
+      <tr><td class="c">6</td><td>ฝึกตัวตรวจจับสำรอง YOLO26 แบบกรอบ เลือกขนาด</td><td>ธ.ค.–ก.พ.</td><td></td></tr>
+      <tr class="hl"><td class="c">7</td><td>ปรับแต่ง VLM และ SAM ทดสอบการให้กรอบ — <b>จุดตัดสินใจสิ้น ม.ค. 2570</b></td><td>ม.ค.–ก.พ.</td><td></td></tr>
+      <tr><td class="c">8</td><td>ทดสอบความแม่นของการวัดขนาด (3.6.4)</td><td>ม.ค.–ก.พ.</td><td></td></tr>
+      <tr><td class="c">9</td><td>เขียนโปรแกรม T-BHI และชุดทดสอบกฎ</td><td>ธ.ค.–ก.พ.</td><td>ยังไม่เริ่ม (⚠ รอช่วงคะแนนนิ่ง)</td></tr>
+      <tr><td class="c">10</td><td>นัดวิศวกรหลายท่านให้ระดับแยกกัน เทียบ 3 ระดับ</td><td>มี.ค.</td><td></td></tr>
+      <tr><td class="c">11</td><td>วิเคราะห์ผลและเขียนเล่มสมบูรณ์</td><td>มี.ค.–เม.ย.</td><td></td></tr>
+      <tr><td class="c">12</td><td>นำเสนอผลงาน · ไกด์ไลน์ <b>7 นาที + ถาม 3 นาที</b></td><td>ปลาย มี.ค.</td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="grid2 mb">
+    <div class="card pink">
+      <span class="tag r">รออาจารย์ / ยังไม่ตัดสิน (ห้ามตัดสินแทน)</span>
+      <ol>
+        <li><b>ตาราง 2.7 / ช่วงคะแนนสถานะ</b> (ก ข ง) — ผู้ใช้กำลังปรับ</li>
+        <li>ตัวหาร = กรอบชิ้นส่วนจาก VLM</li>
+        <li>ชื่อหน่วยงานใน 3.8 · ชื่อหัวข้อ 2.4/3.4 ที่ต่างจากสารบัญอาจารย์</li>
+        <li>วัสดุเสา/หัวเสา RC หรือ PC</li>
+        <li>นิยาม "หลายจุด" (≥3 จุด / ≥ร้อยละ 5)</li>
+        <li>วิธีรวมผลหลายภาพ และ q จากปริมาณจริง</li>
+        <li>ปี BMMS (เมทาดาตา PDF = พ.ศ. 2555 · หน้าปกยืนยันไม่ได้)</li>
+        <li>กฎบังคับสถานะรวม<b>พื้นสะพาน</b>หรือไม่</li>
+        <li>ประเด็น human-in-the-loop (เตรียมคำตอบ)</li>
+      </ol>
+      <p class="note">⚠ ยังไม่พบบันทึกผลประชุมอาจารย์ (นัด 10 พ.ย.) ในไฟล์ใด → ไม่รู้ว่าเลือกอะไรไปแล้ว ถามก่อนถือว่าเรื่องใดตัดสินแล้ว</p>
+    </div>
+    <div class="card yellow">
+      <span class="tag">งานที่เขียนเป็น "แผน" ไว้ตามคำสั่งอาจารย์ (ไม่ใช่ความบกพร่อง)</span>
+      <p>ข้อความ "(ลงรายละเอียดหลังนำเสนอ)" <b>7 จุด</b>ในเล่ม: 2.2.3 (ตาราง 2.7) · 3.3.3 · 3.5.2 · 3.6.4 ×2 · 3.7.5 · 3.8 · ค้น "นำเสนอ)" ใน Word (5 จุดมีช่องว่างกว้างศูนย์ซ่อน)</p>
+      <span class="tag" style="margin-top:4px">ค้างแก้ในเล่ม v11 (ผู้ใช้สั่ง "จำไว้ ยังไม่ให้แก้")</span>
+      <ul>
+        <li>Zheng 2022 ใน 2.5.4 — ถอด หรือแก้เป็น "2 จาก 10 รอย"</li>
+        <li>ตาราง 2.8 แถว W=9 (ไม่มี "หัวเสา" ในต้นฉบับ)</li>
+        <li>3.5.2 กำกวมเรื่องข้อมูลฝึก (ไม่ระบุว่าเป็นชุดเดิม · ไม่พูดถึง Roboflow ตอนแบ่งชุด)</li>
+        <li>ข้อ B: ตัวอย่างความมั่นใจตาราง 3.4 · กฎบังคับไม่รวมพื้น · รุ่นโดรนชุดเดิม (EXIF M3M vs เล่ม M3E) · เลือกขนาด VLM ที่รันบนเครื่อง ยังไม่พบว่าทดสอบ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card gray">
+    <span class="tag r">ข้อเสนอ 10 พ.ย. ของ Claude (6 ไฟล์) — ยังไม่ผ่านทีม/อาจารย์ ห้ามลงเล่ม · ตัวเลขทั้งหมดผู้จัดทำคำนวณ ยังไม่ทดลอง</span>
+    <table>
+      <tr><td style="width:23%"><b>แก้ช่วงคะแนน</b></td><td>ทางเลือก ง: คงค่า C เดิม เส้นแบ่ง 99.15/82.20/65.30/32.20/16.15</td></tr>
+      <tr><td><b>ตัวหารและการรวมภาพ</b></td><td>ลอง 3 วิธี (กรอบตรงๆ · r เฉลี่ย · ขนาดจริง×ความยาว) บนภาพบินนำร่อง แล้วเลือกจากผล · ถ้าคลาดมากค่อยเสนอให้ SAM วาดขอบชิ้นส่วน</td></tr>
+      <tr><td><b>รวมผลหลายภาพและ q</b></td><td>แปลงเป็น ตร.ม. ด้วยสเกลเลเซอร์แล้ว<b>รวมพื้นที่ก่อนหาร</b> · ใช้เฉพาะภาพถ่ายตามจังหวะ · q = พื้นที่ผิวจริง · รายงานความครอบคลุม</td></tr>
+      <tr><td><b>กฎตีระดับ</b></td><td>4 จุด (เหล็กโผล่ ≥2 · รอย &lt;3 px · คูณความคลาด · หาร cos θ) — หน้า 9</td></tr>
+      <tr><td><b>การใช้กล้องโดรน</b></td><td>2 กล้อง 2 รอบ: มุมกว้างตามจังหวะ → เทเลซูมเฉพาะรอยคาน PC คู่ภาพมุมกว้าง 1 ภาพ</td></tr>
+      <tr><td><b>เทียบผลกับวิศวกร</b></td><td>หน้า 14</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>12 · ที่ยังรอ · สรุปจากเล่ม v11, specs/09 และบันทึกรายวันถึง 25 พ.ย. 2569</span><span>15</span></div>
+</div>
+<!-- ============ หน้า 16 ข้อกำหนดทั้งหมด A ============ -->
+<div class="page">
+  <div class="head"><div class="num">13</div><div class="title">ข้อกำหนดทั้งหมด + เหตุผล (1/7)</div><div class="sub">A. ขอบเขต หลักการ กลไกกันพลาด · เล่ม 1.2–1.3, 2.1.4, 2.3.1, 2.3.7</div></div>
+
+  <div class="card yellow mb">
+    <span class="tag">วิธีอ่านหน้า 16–22 (ไว้ตอบเวลาถูกถาม)</span>
+    <p>แต่ละข้อมี <b>ข้อกำหนด · เหตุผลที่เล่มเขียนไว้เอง · ใครกำหนด</b> · เหตุผลคัดจากเล่ม v11 (เปิด PDF อ่านตรง) · <span class="chip r">⚠ เล่มไม่ได้ให้เหตุผล</span> = ต้องเตรียมคำตอบเอง ผมใส่ "ข้อสังเกตของผม" ไว้ให้ แต่<u>ไม่ใช่ข้อความในเล่ม</u></p>
+    <p class="note">ป้ายที่มา: <b>BMMS</b> กรมทางหลวง · <b>AASHTO</b> MBE 2018 · <b>Pell</b> Pellegrino 2011 · <b>T-BHI</b> เอกสาร T-BHI ของโครงการดิจิทัลแฝด · <b>ผจท.</b> ผู้จัดทำโครงงานกำหนดเอง · <b>อจ.</b> อาจารย์สั่ง/ท้วง</p>
+  </div>
+
+  <div class="card mb">
+    <table class="cases">
+      <tr class="cat"><td colspan="4">A. ขอบเขต หลักการ และกลไกกันพลาด</td></tr>
+      <tr><th style="width:4%">#</th><th style="width:30%">ข้อกำหนด</th><th style="width:46%">เหตุผลที่เล่มเขียนไว้</th><th>ที่มา</th></tr>
+      <tr><td class="c">A1</td><td>ใช้สะพานเดียว (PC คานตัวไอ ฉะเชิงเทรา)</td><td>"สรุปผลให้เป็นกรณีทั่วไปไม่ได้" (1.3 ข้อ 1)</td><td>ผจท.</td></tr>
+      <tr><td class="c">A2</td><td>ระบบเป็นการคัดกรองขั้นแรก (Tier 1) ไม่ตัดสินสภาพขั้นสุดท้าย ไม่ประเมินกำลังรับน้ำหนัก ไม่รวม NDT <b>ไม่มีขั้นให้ผู้ใช้แก้ผลก่อนคำนวณ</b></td><td>ทำงานอัตโนมัติเต็มรูปแบบ "เพราะเป็นการคัดกรองขั้นแรกที่รันกับภาพจำนวนมาก และชดเชยด้วยกลไกกันพลาด" (2.3.7) · งานก่อนหน้า (Çelik 2025, วช.68) ยังพึ่งผู้ตรวจในวงจร</td><td>ผจท.<br>กรรมการน่าถาม</td></tr>
+      <tr><td class="c">A3</td><td><b>กลไกกันพลาด 3 อย่าง</b>: ค่าความมั่นใจ · กฎบังคับสถานะ · การวัดผลที่รายงานผลลบเท็จและทิศของความผิดพลาด</td><td>งานตรวจหลายประเภทบนสะพานคอนกรีต "ยังไม่แม่นพอที่จะวางใจแบบจำลองเดียวโดยไม่มีกลไกกันพลาด" (2.3.1 อ้าง Çelik 2025 IoU เฉลี่ย 20.6% · Chou 2026 mAP50 50.5% · Zhang &amp; Chen 2026 mAP50 72.51%) · ตัวเลขเทียบกันตรงไม่ได้</td><td>ผจท.</td></tr>
+      <tr><td class="c">A4</td><td>ชิ้นส่วน 5 ประเภทเป็นป้ายระดับภาพ + กรอบ <b>ไม่แบ่งส่วนชิ้นส่วนเป็นมาสก์</b></td><td>"ต้องติดป้ายโพลิกอนของชิ้นส่วนจำนวนมากซึ่งเกินกรอบเวลาของโครงงาน" (2.3.2) · ชิ้นส่วนเป้าหมายเกือบเต็มภาพเพราะบินแยกชิ้นส่วน (3.5.1)</td><td>ผจท. (ตัดทิ้ง 31 ต.ค.)</td></tr>
+      <tr><td class="c">A5</td><td>ชิ้นส่วนที่อากาศยานมองไม่เห็น/อยู่นอก 5 ประเภท (ฐานราก แผ่นรองรับ รอยต่อ ผิวทาง) <b>ไม่อยู่ใน T-BHI</b></td><td>"มองไม่เห็นหรืออยู่นอก 5 ประเภทนี้" (1.3 ข้อ 3) · ผลคือ T-BHI คิดเฉพาะส่วนที่ตรวจพบ จึงต้องรายงานรายการพบ/ไม่พบ</td><td>ผจท.</td></tr>
+      <tr><td class="c">A6</td><td>ใช้เกณฑ์: ระดับ 0–5 + เกณฑ์รอยของ <b>BMMS</b> · รูปสมการ <b>AASHTO</b> · W ของ <b>Pell</b> · ค่า C ช่วงคะแนน กฎบังคับ ระดับความมั่นใจ ตาม <b>T-BHI</b></td><td>T-BHI เป็นการสังเคราะห์จากสามแหล่ง ส่วนที่แหล่งเหล่านี้ไม่ได้กำหนด <b>เป็นข้อกำหนดของผู้จัดทำ</b> (2.2.5, ตาราง 2.9)</td><td>ตาม 4 แหล่ง</td></tr>
+      <tr><td class="c">A7</td><td>ความลึกกะเทาะ/การเสียหน้าตัดเหล็ก ภาพตัดสินไม่ได้ → <b>ตัวบ่งชี้ทางอ้อม + ความมั่นใจต่ำ</b></td><td>คราบเกลือและเศษซากอาจบังเหล็กที่เป็นสนิม · BMMS เขียนสำหรับผู้ตรวจหน้างานและผูกระดับ 2/1 กับดุลยพินิจ → "แยกสิ่งที่ภาพตัดสินได้ออกจากสิ่งที่ต้องใช้ตัวบ่งชี้ทางอ้อม" (2.1.4)</td><td>ผจท.</td></tr>
+      <tr><td class="c">A8</td><td>ถ้าปรับแต่ง/รัน VLM ไม่ได้ ระบบหลักยังทำงานต่อด้วยกรอบจาก YOLO26 + ป้ายชิ้นส่วนจากบันทึกการบิน</td><td>(1.3 ข้อ 7) · อาจารย์สั่ง 30 ต.ค. ว่าระบบหลักต้องเดินจนจบโดยไม่พึ่ง VLM</td><td>อจ.</td></tr>
+      <tr><td class="c">A9</td><td>รายงานผล<b>รายประเภทและค่าความครอบคลุม</b>ควบคู่เสมอ</td><td>ตัวเลขสูงสุดรายประเภทไม่ใช่ค่าเฉลี่ย เช่น F1 ร้อยละ 99 ในบทคัดย่อ Çelik 2025 เทียบกับค่าเฉลี่ยของการให้ระดับ 72.0 · ชุดข้อมูลและวิธีประเมินต่างกัน (2.3.6)</td><td>ผจท.</td></tr>
+      <tr><td class="c">A10</td><td>ผลทั้งหมด <b>รายงานตามค่าที่วัดได้จริง ไม่ตั้งเกณฑ์ผ่าน/ไม่ผ่านล่วงหน้า</b></td><td><span class="chip r">⚠ เล่มไม่ได้ให้เหตุผล</span> <span class="note">ข้อสังเกตของผม: ยังไม่มีงานเทียบวิศวกรกับระบบแบบนี้บนสะพานนี้ จึงไม่มีค่าอ้างอิงให้ตั้งเกณฑ์</span></td><td>ผจท. (3.8)</td></tr>
+      <tr><td class="c">A11</td><td>งานใช้ภาษา "สมมติฐานที่ต้องทดสอบ" กับ VLM ให้กรอบความเสียหาย ไม่เขียนว่าพิสูจน์แล้ว</td><td>"ยังไม่พบงานที่รายงานความแม่นของ VLM ที่ปรับแต่งแล้วกับความเสียหายคอนกรีต" (3.5.3, 2.6)</td><td>ผจท.</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>13 · ข้อกำหนด (A) · เหตุผลคัดจากเล่ม v11 PDF</span><span>16</span></div>
+</div>
+
+<!-- ============ หน้า 17 B ข้อมูลและการบิน ============ -->
+<div class="page">
+  <div class="head"><div class="num">13</div><div class="title">ข้อกำหนดทั้งหมด + เหตุผล (2/7)</div><div class="sub">B. ข้อมูล การแบ่งชุด การบิน · เล่ม 3.3–3.4, 3.5.2</div></div>
+  <div class="card mb">
+    <table class="cases">
+      <tr class="cat"><td colspan="4">B. ข้อมูล การแบ่งชุด การบิน การจัดการข้อมูล</td></tr>
+      <tr><th style="width:4%">#</th><th style="width:30%">ข้อกำหนด</th><th style="width:46%">เหตุผลที่เล่มเขียนไว้</th><th>ที่มา</th></tr>
+      <tr><td class="c">B1</td><td>ชุดเดิม: ฝึก + ตรวจสอบ <b>ไม่ใช้เป็นชุดทดสอบ</b></td><td>ภาพไม่มีจุดเลเซอร์/crack scale และไม่มีภาพใดเห็นชิ้นส่วนครบทั้งชิ้น → "คิดได้เฉพาะสัดส่วนต่อภาพ" (3.3.2) · ถ่ายไกล 20–40 ม.</td><td>อจ. (3 และ 6 พ.ย.)</td></tr>
+      <tr><td class="c">B2</td><td>ชุดใหม่: <b>ทดสอบทั้งชุด ไม่ฝึก</b> แยกไว้ตั้งแต่ก่อนฝึก ไม่นำมาปรับค่าใดๆ ใช้ครั้งเดียวตอนรายงานผลสุดท้าย</td><td>ภาพสองชุดต่างกันมากทั้งขนาดรอยในภาพและมุมมอง → ชุดฝึกมาจากชุดเดิมทั้งหมด ภาพระยะใกล้ของชุดใหม่ใช้ทดสอบเท่านั้น (3.3.3) · เพื่อให้เป็นชุดทดสอบ "อิสระ"</td><td>อจ.</td></tr>
+      <tr><td class="c">B3</td><td>รายงานผลบนชุดตรวจสอบ (เดิม) กับชุดทดสอบ (ใหม่) <b>แยกกัน</b> · ระบุความต่างของชุดเป็นข้อจำกัด · นับตัวอย่างต่อประเภทก่อนสรุปผลรายประเภท</td><td>เพราะสองชุดถ่ายต่างระยะ (3.3.3, 3.5.2)</td><td>ผจท.</td></tr>
+      <tr><td class="c">B4</td><td>ภาพบินนำร่อง (ธ.ค.) ปรับ<b>แผนบินและเกณฑ์เท่านั้น</b> (ระยะ อัตราซ้อน เกณฑ์คมชัด ระยะทดสอบเลเซอร์) แยกจากชุดทดสอบ ไม่นับเป็นส่วนของชุดทดสอบ</td><td>กันไม่ให้ชุดทดสอบถูกใช้ปรับค่า (3.3.3)</td><td>ผจท./อจ.</td></tr>
+      <tr><td class="c">B5</td><td>ชุดตรวจสอบ ≈ <b>ร้อยละ 20 ของชุดเดิม</b> แบ่งตามรอบบิน · ไม่กำหนดอัตราตายตัว · <b>ห้ามย้ายภาพ</b>ออกจากชุดตรวจสอบและชุดทดสอบ · 1 รอบบินอยู่ชุดเดียว</td><td>"เพื่อกันข้อมูลรั่ว" (3.3.5, 3.5.2) · สัดส่วนขึ้นกับจำนวนรอบบินที่แบ่งได้จริง</td><td>ผจท.</td></tr>
+      <tr><td class="c">B6</td><td>augmentation เฉพาะชุดฝึก: พลิกแนวนอน หมุน ≤ ±15° ปรับสว่าง/เบลอ <b>ไม่พลิกแนวตั้ง</b></td><td><span class="chip r">⚠ เล่มไม่ได้ให้เหตุผล</span> ของค่า ±15° และการไม่พลิกแนวตั้ง · ส่วน "เฉพาะชุดฝึก" ตรงกับหลักกันข้อมูลรั่ว</td><td>ผจท.</td></tr>
+      <tr><td class="c">B7</td><td>ติดป้ายเฉพาะ <b>"สิ่งที่ตาเห็น" ไม่ติดระดับ</b> ให้โปรแกรมแปลงตาม 3.7</td><td>แยกการมองเห็น (AI) ออกจากการตัดสินระดับ (กฎใน Python) เพื่อทำซ้ำและตรวจย้อนได้ (3.5.2, 1.2)</td><td>ผจท.</td></tr>
+      <tr><td class="c">B8</td><td>บินแยกตามชิ้นส่วน ตามลำดับ <b>คาน → หัวเสา → ตอม่อ → คานยาว → พื้น</b> ใช้ลำดับเดียวกันทุกช่วงสะพาน</td><td>ภาพแต่ละกลุ่มจึงมีชิ้นส่วนเป้าหมายที่ทราบจากบันทึกการบิน (3.3.4) · พื้นสะพานถ่ายสุดท้ายเพราะต้องประสานกรมทางหลวงเรื่องจราจร (ตาราง 3.2)</td><td>ผจท.</td></tr>
+      <tr><td class="c">B9</td><td>คานถ่ายจากใต้สะพาน กล้องเงย<b>ไม่เกิน 35°</b> ต้องเห็นเลเซอร์ครบ 4 จุด · พื้นก้ม −90°</td><td>ข้อจำกัดกล้อง Matrice 4E (DJI 2026) · แสงน้อยใต้สะพาน ให้ระบบมองภาพช่วยลอยตัว (ตาราง 3.2)</td><td>DJI 2026</td></tr>
+      <tr><td class="c">B10</td><td>ระยะถ่าย <b>≥ 1 ม.</b> · บันทึกมุมก้มเงย (GimbalPitchDegree) <b>ทุกภาพ</b> · ถ่ายให้ผิวเอียงน้อยที่สุด</td><td>โฟกัสใกล้สุดของกล้อง 1 ม. · มุมเฉียงทำให้เกิดความบิดเบี้ยวเชิงทัศนมิติ (2.4.3, 2.5.2) · ช่วงระยะที่ใช้จริงกำหนดจากบินนำร่อง</td><td>ผจท.</td></tr>
+      <tr><td class="c">B11</td><td>ซ้อนภาพให้<b>น้อยที่สุดที่ยังครอบคลุม</b> (เป้าเริ่มต้นไม่เกินร้อยละ 50 ตามแนวบิน · ช่วงถ่ายไม่ต่ำกว่า 0.5 วินาที) ปรับตามบินนำร่อง</td><td>"เพื่อลดการนับความเสียหายเดียวกันซ้ำข้ามภาพ" (3.3.4 ข้อ ข) · ภาพที่ซ้อนกันมากทำให้นับซ้ำได้ (2.4.3)</td><td>ผจท. (ค่าเริ่มต้น)</td></tr>
+      <tr><td class="c">B12</td><td>เห็นจุดเลเซอร์ครบ 4 จุดและไม่ถูกแดดกลบ ไม่เห็นให้ถ่ายซ้ำ · วาง crack scale ติดข้างรอยที่เลือกเป็นชุดทดสอบ</td><td>งานก่อนหน้าพบว่าแดดตรงและแสงสะท้อนทำให้หาจุดเลเซอร์ล้มเหลว (Zhang 2026, 2.4.1) · Liu 2020 เลือกถ่ายช่วงเช้า/วันมีเมฆ</td><td>ผจท.</td></tr>
+      <tr><td class="c">B13</td><td>บันทึกเวลา แสง ลมทุกรอบ · ไม่บินเมื่อสภาพอากาศเกินข้อกำหนดผู้ผลิต · ขออนุญาตกรมทางหลวง · <b>ไม่บินเหนือช่องจราจรที่มีรถสัญจร</b></td><td>ความปลอดภัยและข้อกำหนดของผู้ผลิต (3.3.4 ข้อ ง)</td><td>ผจท.</td></tr>
+      <tr><td class="c">B14</td><td>ข้อมูลดิบ (ภาพ + EXIF) <b>ไม่แก้ไข</b> ทำบนสำเนา · สำรองภายในวันเดียวกัน ≥ 2 ที่ · แยกโฟลเดอร์ตามรอบบิน · บันทึกรายการแต่ละรอบ</td><td><span class="chip r">⚠ เล่มไม่ได้ให้เหตุผล</span> <span class="note">ข้อสังเกตของผม: กันข้อมูลหายและตรวจย้อนที่มาได้</span> · ส่วนแยกโฟลเดอร์ตามรอบบิน "เพื่อกันข้อมูลรั่ว"</td><td>ผจท.</td></tr>
+      <tr><td class="c">B15</td><td>คัดภาพ 3 เกณฑ์ (คมชัด · แสง · จุดเลเซอร์) <b>ไม่ลบภาพต้นฉบับ</b> · ภาพที่หาจุดไม่ครบยังใช้หาความเสียหายได้ แต่ไม่มีสเกล</td><td>เกณฑ์คมชัดอ้างจากบินนำร่อง (3.4.1) · ป้ายชิ้นส่วนระดับภาพมี 2 ทาง ไม่ตรงกัน → แจ้งตรวจ (3.4.2)</td><td>ผจท.</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>13 · ข้อกำหนด (B)</span><span>17</span></div>
+</div>
+
+<!-- ============ หน้า 18 C AI + D เลเซอร์ ============ -->
+<div class="page">
+  <div class="head"><div class="num">13</div><div class="title">ข้อกำหนดทั้งหมด + เหตุผล (3/7)</div><div class="sub">C. แบบจำลอง AI · D. เลเซอร์และการวัดขนาด · เล่ม 3.5–3.6</div></div>
+  <div class="card mb">
+    <table class="cases tight">
+      <tr class="cat"><td colspan="4">C. แบบจำลอง AI (VLM · SAM · YOLO26)</td></tr>
+      <tr><th style="width:4%">#</th><th style="width:30%">ข้อกำหนด</th><th style="width:46%">เหตุผลที่เล่มเขียนไว้</th><th>ที่มา</th></tr>
+      <tr><td class="c">C1</td><td>VLM ตอบ <b>JSON ชนิด + กรอบพิกเซลเท่านั้น ไม่ตอบขนาดหรือระดับ</b> · ตรวจโครงสร้างทุกรายการ ไม่ผ่านทิ้งและนับเป็นสถิติ</td><td>VLM อาจสร้างข้อมูลที่ไม่สอดคล้องกับภาพ (ภาพหลอน, Chen 2025) · การให้เหตุผลเชิงพื้นที่ยังอ่อน (Çelik 2026) · Zhang &amp; Liu 2025: VLM ทั่วไปหาตำแหน่งรอยร้าวเล็กไม่แม่นและเขียนความยาวเป็นพิกเซลไม่ถูก (2.3.4)</td><td>ผจท.</td></tr>
+      <tr><td class="c">C2</td><td>ใช้ VLM แบบ<b>เปิดน้ำหนักที่ระบุกรอบได้</b> ปรับด้วย <b>LoRA</b> บนเครื่องที่มี (RTX 5070 Ti 16 GB) · รุ่นและขนาดยืนยันหลังทดสอบ</td><td>เลือกรุ่นที่ปรับแต่งบนเครื่องนี้ได้ (1.3, 3.5.3) · <span class="note">ไม่ใช้ QLoRA เพราะบีบตัวรับภาพ 4 บิตแล้ว recall ตก — กติกาทีม ไม่ได้เขียนไว้ในเล่ม v11</span></td><td>ผจท.</td></tr>
+      <tr><td class="c">C3</td><td>ตั้ง<b>สมมติฐาน</b>: VLM ให้กรอบความเสียหายที่ recall ที่ IoU 0.5 ไม่ต่ำกว่า YOLO26 · <b>ทดสอบบนชุดตรวจสอบ</b> ไม่ใช่ชุดทดสอบ</td><td>ยังไม่พบงานที่รายงานความแม่นของ VLM ที่ปรับแล้วกับความเสียหายคอนกรีต (3.5.3) · ชุดทดสอบต้องไม่ถูกใช้เลือกแบบจำลอง</td><td>ผจท.</td></tr>
+      <tr><td class="c">C4</td><td>ประเภทไหน VLM ต่ำกว่า → ใช้กรอบ YOLO26 สำหรับประเภทนั้น · รันไม่ได้เลย → YOLO26 ทุกประเภท · เทียบ YOLO26s/m/l เลือกภายในขีด GPU</td><td>ฝึกเองบนข้อมูลของงานได้ (2.3.2) · <b>จุดตัดสินใจสิ้นเดือน ม.ค. 2570</b> หลังรอบฝึกแรกบนชุดตรวจสอบ ส่วนที่เหลือของแผนไม่เปลี่ยน (3.9)</td><td>ผจท./อจ.</td></tr>
+      <tr><td class="c">C5</td><td>SAM รับ<b>กรอบจาก VLM</b>เป็นพรอมต์ 1 กรอบ → 1 มาสก์ · ปรับด้วย LoRA โดยสร้างกรอบฝึกจากโพลิกอน + <b>เติมความคลาดเคลื่อนสุ่ม</b> · วัด IoU และ Dice (กรอบจริง และกรอบจาก VLM)</td><td>"เพื่อให้ทนต่อกรอบที่ VLM ให้ไม่แม่น" (3.5.3)</td><td>ผจท.</td></tr>
+      <tr><td class="c">C6</td><td>ความเสียหายใช้ <b>มาสก์</b> · ชิ้นส่วนใช้ <b>กรอบ</b></td><td>กรอบให้พื้นที่เกินจริงโดยเฉพาะรอยคดโค้ง (ศุภศิษฏ์ 2569ก) · ส่วนชิ้นส่วนมีเป้าหมายเกือบเต็มภาพ · ข้อจำกัด: กรอบอาจรวมพื้นหลัง ทำให้สัดส่วนต่ำกว่าจริงเล็กน้อย → จึงรายงานระดับแย่สุดคู่ EHI และกฎบังคับไม่ขึ้นกับสัดส่วน (3.5.1)</td><td>ผจท.</td></tr>
+      <tr><td class="c">C7</td><td>จับคู่ความเสียหายกับชิ้นส่วนด้วย<b>กรอบในภาพเดียวกัน</b> ไม่ข้ามภาพ <b>ไม่ใช้พิกัด GPS</b></td><td>GNSS ใต้สะพานคลาดตั้งแต่ระดับเดซิเมตรถึงมากกว่า 1 ม. ใหญ่กว่าความกว้างรอยหลายเท่า (Gou 2026, 2.4.2)</td><td>ผจท.</td></tr>
+      <tr><td class="c">C8</td><td>ตัวชี้วัด: ชนิดชิ้นส่วนรายประเภท + IoU กรอบ · ความเสียหาย mAP@0.5 และ 0.5–0.95 · <b>recall รายประเภท</b> · IoU มาสก์</td><td>Sony 2021 แนะนำให้รายงานอัตราผลลบเท็จควบคู่ความแม่นยำ (2.3.1) · <span class="note">ข้อสังเกตของผม: งานนี้เป็นการคัดกรอง ผลลบเท็จ (พลาดความเสียหายจริง) คือทิศที่อันตราย</span></td><td>ผจท.</td></tr>
+
+      <tr class="cat"><td colspan="4">D. เลเซอร์และการวัดขนาด</td></tr>
+      <tr><td class="c">D1</td><td>หาขนาดจริงด้วย<b>เลเซอร์ 4 จุดนับพิกเซล</b> (s = d/p) <b>ไม่ใช้ GSD</b></td><td>GSD ต้องรู้ระยะกล้องถึงผิวซึ่งไม่ได้บันทึก · เครื่องวัดระยะในตัวคลาด 0.3 ม. → สเกลคลาด ~10% ที่ 3 ม. และ ~30% ที่ 1 ม. (ผู้จัดทำคำนวณ, 2.5.1)</td><td>ผจท.</td></tr>
+      <tr><td class="c">D2</td><td>ชุดเลเซอร์: 4 ตัวขนาน ด้าน d ทดสอบ <b>≥ 2 ค่า</b> (100 มม. ตาม Li 2022 + ค่าที่มากกว่า) · สีแยกจากคอนกรีต · กำลังต่ำสุดที่เห็นจุด · ปลอดภัยต่อดวงตา · <b>≤ 200 ก.</b> · ขนานแกนกล้อง ไม่บังเซนเซอร์</td><td>น้ำหนักอุปกรณ์เสริมสูงสุด 200 ก. (DJI 2026) · สอบเทียบความขนานที่ 1, 2, 3, 5 ม.: ถ้าระยะระหว่างจุดเปลี่ยนตามระยะ แสดงว่าลำแสงไม่ขนาน ต้องปรับหรือชดเชย (3.6.2)</td><td>DJI / Li 2022</td></tr>
+      <tr><td class="c">D3</td><td>หาจุด: HSV → blob วงกลมใหญ่สุด 4 ก้อน → ศูนย์กลางระดับย่อยพิกเซล → <b>ต้องได้ 4 จุดพอดีเป็นสี่เหลี่ยมนูน</b> ไม่ผ่าน = ไม่มีสเกล ความมั่นใจต่ำ</td><td>(3.6.3) · ภาพที่ไม่ผ่านยังใช้หาความเสียหายและกฎบังคับสถานะได้</td><td>ผจท.</td></tr>
+      <tr><td class="c">D4</td><td>สเกล: โฮโมกราฟี 4 จุด → จัตุรัสด้าน d · <b>สมมติผิวอยู่ในระนาบเดียวกัน</b> · ผิวโค้ง/ขรุขระลดความมั่นใจ · <b>สเกลใช้ในภาพนั้นเท่านั้น</b></td><td>ระยะถ่ายต่างกันมาตราส่วนจึงต่างกัน จึงไม่นำสเกลข้ามภาพ (3.2, 3.6.3)</td><td>ผจท.</td></tr>
+      <tr><td class="c">D5</td><td>ความกว้างรอย: เส้นกึ่งกลางมาสก์ SAM · ใช้ <b>เปอร์เซ็นไทล์ที่ 95</b> เป็นค่าตัวแทน และรายงานค่าสูงสุดควบคู่</td><td><span class="chip r">⚠ เล่มไม่ได้ให้เหตุผล</span> ว่าทำไมใช้ P95 <span class="note">ข้อสังเกตของผม: น่าจะลดผลของพิกเซลขอบที่ผิดปกติ แต่ไม่ใช่ข้อความในเล่ม</span></td><td>ผจท.</td></tr>
+      <tr><td class="c">D6</td><td>ความกว้าง <b>&lt; 3 พิกเซล = วัดไม่ได้</b> ความมั่นใจต่ำ ไม่ใช้ตัวเลขนั้นตัดสินระดับโดยตรง</td><td>ขีดจำกัดของความละเอียด (2.5.4) · Liu 2020 ใช้เกณฑ์ 1 หรือ 3 พิกเซล เล่มเลือก 3</td><td>ผจท.</td></tr>
+      <tr><td class="c">D7</td><td>ทดสอบความแม่น (ตาราง 3.3) ด้วย crack scale · ผลใช้<b>กำหนดช่วงเงื่อนไข</b>ที่วัดได้เชื่อถือ และกติกาค่าความมั่นใจ · เทียบรอยจริงกับเกจเพิ่มบางจุด</td><td>crack scale ขอบคมกว่ารอยจริง (3.6.4) · ทดสอบเต็มในที่คุมเงื่อนไขก่อน แล้วยืนยันใต้สะพาน · พิจารณามุมลำแสงเอียง · <span class="chip r">ลงรายละเอียดหลังนำเสนอ</span></td><td>ผจท.</td></tr>
+      <tr><td class="c">D8</td><td>รอยละเอียดของคาน PC: ทดลองภาพตัดบริเวณความละเอียดเต็ม/กล้องเทเลก่อนสรุปว่าตัดสินด้วยความกว้างไม่ได้</td><td>(3.6.4 "แผนสำหรับรอยร้าวบนคานอัดแรง") · <span class="chip r">ลงรายละเอียดหลังนำเสนอ</span></td><td>ผจท.</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>13 · ข้อกำหนด (C, D)</span><span>18</span></div>
+</div>
+<!-- ============ หน้า 19 E ระดับและดัชนี ============ -->
+<div class="page">
+  <div class="head"><div class="num">13</div><div class="title">ข้อกำหนดทั้งหมด + เหตุผล (4/7)</div><div class="sub">E. ระดับความเสียหาย และดัชนี EHI / T-BHI · เล่ม 2.2, 3.7</div></div>
+  <div class="card mb">
+    <table class="cases">
+      <tr class="cat"><td colspan="4">E. การแปลงเป็นระดับ และการคำนวณดัชนี (เหตุผลของกฎ — ตัวกฎรายประเภทอยู่หน้า 9–11)</td></tr>
+      <tr><th style="width:4%">#</th><th style="width:28%">ข้อกำหนด</th><th style="width:48%">เหตุผลที่เล่มเขียนไว้</th><th>ที่มา</th></tr>
+      <tr><td class="c">E1</td><td>ค่าที่ตกพอดีขอบเขตของระดับ → จัดเป็น<b>ระดับที่แย่กว่า</b></td><td><span class="chip r">⚠ เล่มไม่ได้ให้เหตุผล</span> <span class="note">ข้อสังเกตของผม: เป็นหลักไว้ก่อนด้านปลอดภัย สอดคล้องกับวัตถุประสงค์คัดกรอง</span></td><td>ผจท. (3.7.1)</td></tr>
+      <tr><td class="c">E2</td><td>ความกว้างของ PC ในช่อง 0.23–0.25 มม. → <b>ระดับ 2</b></td><td>ต้นฉบับ BMMS ไม่มีค่าในช่องนี้ → ใช้กฎ "ระดับที่แย่กว่า" (3.7.1)</td><td>ผจท.</td></tr>
+      <tr><td class="c">E3</td><td>รอยที่ตรวจพบแต่วัดไม่ได้บน<b>คาน PC = ระดับ 2</b> · <b>ไม่ให้ระดับ 3 เป็นค่าตั้งต้น</b></td><td>"ที่ระยะ 1 เมตรวัดความกว้างได้น้อยสุดราว 0.8 มม. ขณะที่ระดับ 2 ของ PC เริ่มที่ 0.25 มม. รอยที่วัดไม่ได้จึงอาจเป็นระดับ 2 หรือ 1 อยู่แล้ว" (3.7.1) · อาจารย์ท้วงว่าตั้งต้น 3 ไม่ปลอดภัย (6 พ.ย.)</td><td>อจ.</td></tr>
+      <tr><td class="c">E4</td><td>รอยที่วัดไม่ได้บน<b>ชิ้นส่วน RC</b> → ไม่ให้ระดับ แต่รายงาน "ตัดสินไม่ได้ ส่งวิศวกรตรวจ"</td><td><span class="chip r">⚠ เล่มไม่อธิบาย</span> ว่าทำไม PC ได้ระดับ 2 แต่ RC ได้ "ตัดสินไม่ได้" (3.7.1 บอกแค่ว่าไม่ให้ระดับตั้งต้นแก่รอยนั้น) → <b>ควรเตรียมคำตอบ</b></td><td>ผจท.</td></tr>
+      <tr><td class="c">E5</td><td>รอยเฉือน/ดัดที่กระทบกำลัง (BMMS: ทุกขนาด = ระดับ 1) → <b>ไม่กำหนดระดับ 1</b> จากเหตุนี้</td><td>ภาพตัดสินไม่ได้ (ตาราง 2.6)</td><td>ผจท.</td></tr>
+      <tr><td class="c">E6</td><td>พิกเซลที่ถูกมาสก์ครอบหลายอัน → นับ<b>ระดับที่แย่ที่สุดเพียงระดับเดียว</b> · พื้นที่ไม่เสียหาย = ระดับ 5 = กรอบชิ้นส่วน − มาสก์รวม</td><td>"เพื่อไม่นับซ้ำ" (3.7.2) · ข้อ "ระดับที่แย่สุดต่อพื้นที่" อ้าง VDOT 2026 แต่เล่มระบุเป็นข้อกำหนดของผู้จัดทำ (ตาราง 2.9)</td><td>ผจท.</td></tr>
+      <tr><td class="c">E7</td><td>y = <b>สัดส่วนพื้นที่</b>ต่อภาพ แล้วรวมที่ระดับสัดส่วน <b>ไม่บวกพิกเซลข้ามภาพ</b></td><td>"ภาพที่ถ่ายต่างระยะมีมาตราส่วนต่างกัน" (3.2) · AASHTO เขียนแค่ "percentage of element" ไม่ระบุว่าเป็นพื้นที่ (ผมตรวจต้นฉบับแล้ว) → การเลือก "พื้นที่" เป็นของผู้จัดทำ</td><td>ผจท.</td></tr>
+      <tr><td class="c">E8</td><td>ข้ามภาพ: เฉลี่ยน้ำหนักเท่ากัน (สมการ 3.2) · ลดซ้อนภาพที่ต้นทาง + ทดสอบความไว</td><td>ภาพซ้อนอาจนับซ้ำ จึง "ลดความซ้อนที่ต้นทาง (3.3.4) และทดสอบความไวโดยคำนวณซ้ำด้วยภาพที่คัดให้ห่างกัน" (3.7.3) · <span class="chip r">อาจารย์ท้วง</span> ผลเปลี่ยนตามจำนวนภาพ → จะหาวิธีที่ไม่ขึ้นกับจำนวนภาพ (หลังนำเสนอ)</td><td>ผจท./อจ.</td></tr>
+      <tr><td class="c">E9</td><td>q = Σ(A/G) สัดส่วนพื้นที่กรอบที่ตรวจพบเป็นตัวแทนปริมาณ</td><td>"งานนี้ไม่มีแบบก่อสร้างจึงใช้สัดส่วนพื้นที่กรอบชิ้นส่วนที่ตรวจพบเป็นตัวแทนของปริมาณ q" (3.7.5) · <span class="chip r">อาจารย์ท้วง</span> q ควรมาจากปริมาณจริง</td><td>ผจท.</td></tr>
+      <tr><td class="c">E10</td><td>ใช้ <b>W ตาม Pellegrino</b> (ตาราง 2.8) ใช้เฉพาะน้ำหนัก <b>ไม่ใช้สเกลสภาพ</b>ของเปเปอร์นั้น</td><td>สเกลสภาพของ Pellegrino ทิศต่างจาก BMMS (2.2.4) · BMMS และ AASHTO ไม่ให้ W เป็นตัวเลข · เอกสาร T-BHI เลือก W แทน failure cost เพราะ failure cost ต้องใช้ข้อมูลเศรษฐศาสตร์ซับซ้อน (ประวัติซ่อม ปริมาณจราจร ผลกระทบเศรษฐกิจท้องถิ่น) ที่ไทยอาจไม่ครบ (T-BHI หน้า 32)</td><td>Pell / T-BHI</td></tr>
+      <tr><td class="c">E11</td><td>การจัดชิ้นส่วนไทยเข้ากลุ่ม W: คาน/เสา 10 · หัวเสา/พื้น 9 · ราว 5 · คานทุกชนิดใช้ค่าคานหลัก</td><td><span class="chip r">⚠ ผจท. จัดเอง</span> ต้นฉบับ Pellegrino <b>ไม่มีคำว่า "หัวเสา"</b> (แถว W=9 รอทีมตัดสิน) · ตาราง 2.8 ของเล่มแยก "ราวกันตก" (W=6) กับ "กำแพงราวสะพาน" (W=5) แต่เล่มใช้ "ราว" = 5</td><td>ผจท.</td></tr>
+      <tr><td class="c">E12</td><td>ค่า C: 1.00 / 0.83 / 0.67 / 0.33 / 0.17 / 0.00</td><td>AASHTO กำหนดเฉพาะค่าปลายทาง (1 และ 0) "และเปิดให้เจ้าของระบบกำหนดค่าระหว่างกลางเอง" (2.2.3) · เอกสาร T-BHI ประมาณค่าเชิงเส้นระหว่างค่าของ AASHTO · <span class="chip r">⚠</span> ไม่มีเหตุผลทางวิศวกรรมแยกต่างหากสำหรับการเลือกเส้นตรง</td><td>T-BHI</td></tr>
+      <tr><td class="c">E13</td><td>T-BHI คิดจาก<b>ชิ้นส่วนทุกชนิดที่ตรวจพบ</b> · รายงานระดับแย่สุดของชิ้นส่วนคู่กับ EHI เสมอ</td><td>"ดัชนีแบบถ่วงน้ำหนักทำให้ความเสียหายรุนแรงเฉพาะจุดถูกเจือจางด้วยส่วนที่ไม่เสียหาย ขณะที่หลักค่าต่ำสุดของ BMMS ไม่เจือจาง" (2.2.3)</td><td>ผจท.</td></tr>
+      <tr><td class="c">E14</td><td>ค่าความมั่นใจ <b>ไม่เข้าสูตรคำนวณ</b> แต่รายการที่ต่ำถูกแนะนำให้ส่งตรวจละเอียด</td><td>(3.7.6) · ระดับ สูง/ปานกลาง/ต่ำ ตามเอกสาร T-BHI · ตัวอย่างในตาราง 3.4 ผู้จัดทำยกให้ตรงกับงานนี้</td><td>T-BHI / ผจท.</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>13 · ข้อกำหนด (E)</span><span>19</span></div>
+</div>
+
+<!-- ============ หน้า 20 F สถานะ + G การประเมินผล ============ -->
+<div class="page">
+  <div class="head"><div class="num">13</div><div class="title">ข้อกำหนดทั้งหมด + เหตุผล (5/7)</div><div class="sub">F. สถานะ กฎบังคับ รายงานผล · G. การประเมินผลและแผน · เล่ม 3.7.6, 3.8, 3.9</div></div>
+  <div class="card mb">
+    <table class="cases">
+      <tr class="cat"><td colspan="4">F. สถานะสะพาน กฎบังคับ และการรายงาน</td></tr>
+      <tr><th style="width:4%">#</th><th style="width:28%">ข้อกำหนด</th><th style="width:48%">เหตุผลที่เล่มเขียนไว้</th><th>ที่มา</th></tr>
+      <tr><td class="c">F1</td><td>สถานะ 6 ระดับตามช่วง T-BHI: 100 / 90 / 70 / 50 / 30 (ชื่อตาม BMMS)</td><td>ช่วงตามเอกสาร T-BHI · เอกสารอ้างว่า 90/70 มาจาก FHWA แต่<b>ยืนยันต้นทางไม่ได้</b> → เล่มอ้างเอกสาร T-BHI ไม่อ้าง FHWA · 50/30 ผู้เขียนเอกสารเพิ่มเอง · <span class="chip r">ตาราง 2.7 กำลังปรับ</span></td><td>T-BHI</td></tr>
+      <tr><td class="c">F2</td><td><b>กฎบังคับ</b>: พบระดับ 2 / 1 / 0 ในชิ้นส่วนหลัก → สถานะสะพาน<b>ไม่ดีกว่า</b> ชำรุด / วิกฤต / วิบัติ ตามลำดับ</td><td>"เพราะดัชนีถูกเจือจางด้วยพื้นที่" · "ตามหลักค่าต่ำสุดเป็นตัวกำหนดของ BMMS" (3.7.6) · ในเอกสาร T-BHI เขียนเป็น min(สถานะจากช่วงคะแนน, เพดาน)</td><td>T-BHI</td></tr>
+      <tr><td class="c">F3</td><td>ชิ้นส่วนหลักของกฎ = <b>คาน เสา หัวเสา</b></td><td><span class="chip r">⚠ ยังไม่ตรงกับเอกสาร T-BHI</span> ที่นับ "Primary" รวมพื้นสะพาน (ตาราง 4.9: Decks = Primary; ราว = Secondary) · รออาจารย์ (ข้อ B)</td><td>ผจท.</td></tr>
+      <tr><td class="c">F4</td><td>กฎใช้การ<b>พบในภาพใดภาพหนึ่ง</b></td><td>จึง "ไม่ได้รับผลจากการนับซ้ำ" ของภาพที่ซ้อนกัน (3.7.3)</td><td>ผจท.</td></tr>
+      <tr><td class="c">F5</td><td>รวมระดับที่ได้จาก<b>ตัวบ่งชี้ทางอ้อม</b>ในกฎด้วย โดยรายงานแยกว่ามาจากความมั่นใจต่ำ + แนะนำวิศวกรตรวจ</td><td>(3.7.6) · <span class="note">ข้อสังเกตของผม: ภาพตัดสินความลึก/การเสียหน้าตัดไม่ได้ (2.1.4) จึงไม่ให้ความไม่แน่ใจทำให้สถานะดีขึ้น</span></td><td>ผจท.</td></tr>
+      <tr><td class="c">F6</td><td>รอย RC วัดไม่ได้ → สถานะ "<b>ตัดสินไม่ได้ ส่งวิศวกรตรวจ</b>" คู่กับ T-BHI ของส่วนที่ตัดสินได้ · <b>ใช้เป็นสถานะสุดท้ายไม่ได้</b></td><td>T-BHI ส่วนนั้นยังไม่รวมรอยที่วัดไม่ได้ (3.7.6)</td><td>ผจท.</td></tr>
+      <tr><td class="c">F7</td><td>รายงาน<b>รายการชิ้นส่วนที่พบ/ไม่พบ</b> · "ไม่ครบชิ้นส่วนหลัก" เมื่อไม่พบ คาน เสา หรือหัวเสาชนิดใดเลย · แสดงมุมก้มเงยของกล้องกับค่าความมั่นใจ</td><td>เล่มระบุให้รายงานรายการพบ/ไม่พบ (3.7.5) · <span class="note">ข้อสังเกตของผม: ชิ้นส่วนที่ไม่พบหายไปจากตัวหารของ T-BHI โดยปริยาย</span></td><td>ผจท.</td></tr>
+      <tr><td class="c">F8</td><td>ช่วงคะแนน<b>ไม่ใช้จำแนกย้อนกลับเป็นระดับสภาพ</b> ใช้สื่อสารแนวซ่อมบำรุง</td><td>เอกสาร T-BHI หน้า 57 (ผมอ่านจากไฟล์ต้นฉบับ)</td><td>T-BHI</td></tr>
+
+      <tr class="cat"><td colspan="4">G. การประเมินผลและแผนงาน</td></tr>
+      <tr><td class="c">G1</td><td>วิศวกรโยธา<b>หลายท่าน</b>ให้ระดับ 0–5 รายชิ้นส่วน ~15–20 ชิ้น จากภาพชุดเดียวกัน <b>แยกกัน ไม่เห็นผลระบบ</b> · ตรวจความเห็นตรงกันเองก่อน</td><td>เพื่อรู้ว่าวิศวกรเห็นตรงกันแค่ไหนก่อนใช้เป็นเกณฑ์เทียบ (1.2, 3.8)</td><td>ผจท.</td></tr>
+      <tr><td class="c">G2</td><td>ระบบออกผลหน่วยเดียวกับวิศวกร (0–5 ต่อชิ้นส่วน + สถานะ) · เลือกชิ้นส่วนให้มีทั้ง<b>สภาพดีและเสียหาย</b></td><td>"เพื่อให้ตอบได้ว่าระบบพลาดไปในทางอันตรายหรือไม่" (3.8) · ระดับ 3 วัดว่าระบบให้สถานะ<b>ดีกว่า</b>วิศวกรหรือไม่</td><td>ผจท.</td></tr>
+      <tr><td class="c">G3</td><td>ชุดทดสอบของแบบจำลอง<b>ใช้ครั้งเดียว</b>ตอนรายงานผลสุดท้าย</td><td>ไม่ให้ชุดทดสอบถูกใช้ปรับค่าหรือเลือกแบบจำลอง (3.3.3, 3.8)</td><td>อจ.</td></tr>
+      <tr><td class="c">G4</td><td>ผลรายงาน<b>ตามค่าที่วัดได้จริง ไม่ตั้งเกณฑ์ผ่าน/ไม่ผ่านล่วงหน้า</b></td><td><span class="chip r">⚠ เล่มไม่ได้ให้เหตุผล</span> (ดู A10)</td><td>ผจท.</td></tr>
+      <tr><td class="c">G5</td><td>จุดตัดสินใจ VLM <b>สิ้น ม.ค. 2570</b>: ถ้าปรับ/รันไม่ได้ หรือต่ำกว่าตัวตรวจจับแบบกรอบในประเภทที่กำหนด → <b>หยุดส่วนนี้</b> ใช้กรอบ YOLO26 + ป้ายจากบันทึกการบิน ส่วนที่เหลือของแผนไม่เปลี่ยน</td><td>(3.9) · <span class="note">ข้อสังเกตของผม: ทำให้โครงงานไม่ล้มทั้งชุดถ้า VLM ไม่สำเร็จ</span></td><td>อจ./ผจท.</td></tr>
+      <tr><td class="c">G6</td><td>T-BHI เทียบกับเกณฑ์ของหน่วยงานอื่น (ทช., การทางพิเศษฯ, ดอนเมืองโทลเวย์) ตรงๆ <b>ไม่ได้</b> · ตาราง mapping เป็นงานต่อยอด<b>นอกขอบเขต</b></td><td>แต่ละหน่วยงานใช้มาตราส่วนต่างกัน เช่น ตัวอักษร (3.8) · เทียบได้แบบคะแนนข้ามแบบทดสอบภาษา</td><td>ผจท.</td></tr>
+      <tr><td class="c">G7</td><td>ผลที่คาดจะได้ <b>7 ข้อ</b> (ชิ้นส่วนรายประเภท · VLM เทียบตัวตรวจจับ · ช่วงเงื่อนไขวัดขนาด · โปรแกรมตรวจย้อน · ตารางเทียบวิศวกร · รายงานคัดกรองสะพาน · ชุดภาพติดป้าย)</td><td>เล่ม 3.8 · ทั้งหมดรายงานตามค่าที่วัดได้จริง</td><td>ผจท.</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>13 · ข้อกำหนด (F, G)</span><span>20</span></div>
+</div>
+
+<!-- ============ หน้า 21 ตรรกะ "ไม่ควรดีกว่า" ============ -->
+<div class="page">
+  <div class="head"><div class="num">14</div><div class="title">ตรรกะ "ถ้ามีระดับ 2 ไม่ควรดีกว่า…"</div><div class="sub">ตัวอย่างคำนวณ + ช่องที่ยังเหลือ (ข้อกำหนดข้อ F2 ทำงานยังไง)</div></div>
+
+  <div class="grid2 mb">
+    <div class="card yellow">
+      <span class="tag">ความสัมพันธ์ที่เล่มกำหนดไว้</span>
+      <ol>
+        <li><b>สถานะสุดท้าย = ที่แย่กว่า</b>ระหว่าง (สถานะจากช่วงคะแนน T-BHI) กับ (เพดานจากกฎบังคับ) — เอกสาร T-BHI เขียนเป็น min(สถานะ, เพดาน)</li>
+        <li>เพดาน: พบระดับ <b>2 → ชำรุด · 1 → วิกฤต · 0 → วิบัติ</b> (เฉพาะ คาน เสา หัวเสา · ภาพใดภาพหนึ่ง)</li>
+        <li>ระดับ 0 <b>ไม่ถูกกำหนดจากภาพ</b> → เพดาน "วิบัติ" จึงไม่ถูกใช้จากภาพ</li>
+        <li>ไม่พบความเสียหาย = ระดับ 5 · ชิ้นส่วนไม่พบ = หายจากตัวหาร (ต้องรายงาน)</li>
+      </ol>
+      <p class="note">คุณสมบัติทางคณิตศาสตร์ (ผู้จัดทำคำนวณ ไม่ใช่ข้อความในเล่ม): ค่า C ลดลงตามระดับ (1.00 &gt; 0.83 &gt; 0.67 &gt; 0.33 &gt; 0.17 &gt; 0) จึงยิ่งพื้นที่ย้ายไประดับแย่ EHI ยิ่งลด · T-BHI อยู่ระหว่าง EHI ต่ำสุดและสูงสุดของชนิดที่ตรวจพบ</p>
+    </div>
+    <div class="card blue">
+      <span class="tag">สมมติฐานของตัวอย่างทางขวา</span>
+      <p>สะพานสมมติมี 4 ชนิด: คาน <b>q 0.40</b> · เสา <b>q 0.30</b> · หัวเสา <b>q 0.20</b> · ราว <b>q 0.10</b> · W = 10 / 10 / 9 / 5 · ชิ้นส่วนที่ไม่ได้กล่าวถึง = สมบูรณ์ (EHI 100) · ค่า C และช่วงคะแนน<b>ฉบับเดิม</b> (ยังไม่ใช่ข้อก/ข/ง)</p>
+      <p class="note">ตัวเลขทั้งหมดเป็นค่าสมมติ <span class="chip y">ผู้จัดทำคำนวณ ด้วยสคริปต์</span> ไม่ใช่ผลจากภาพจริง</p>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <table>
+      <tr><th style="width:4%">#</th><th style="width:30%">สถานการณ์สมมติ</th><th class="c" style="width:10%">EHI ที่เปลี่ยน</th><th class="c" style="width:8%">T-BHI</th><th class="c" style="width:11%">สถานะจากช่วงคะแนน</th><th style="width:18%">กฎบังคับ</th><th>สถานะสุดท้าย / ข้อสังเกต</th></tr>
+      <tr><td class="c">1</td><td>ทุกชิ้นส่วนสมบูรณ์</td><td class="c">—</td><td class="c">100</td><td class="c">ดีมาก</td><td>—</td><td><b>ดีมาก</b></td></tr>
+      <tr class="hl"><td class="c">2</td><td>คานมีระดับ 2 (เหล็กโผล่) กิน 2.6% ของคาน</td><td class="c">คาน 98.26</td><td class="c">99.25</td><td class="c">ดีพอใช้</td><td>ระดับ 2 ในคาน → ไม่ดีกว่า ชำรุด</td><td><b>ชำรุด</b> · เหตุผลของกฎ: ดัชนีบอก "เกือบดีมาก" ทั้งที่มีชิ้นส่วนระดับ 2</td></tr>
+      <tr class="bad"><td class="c">3</td><td>คานมีระดับ 3 กิน 30% ของคาน</td><td class="c">คาน 90.10</td><td class="c">95.74</td><td class="c">ดีพอใช้</td><td>ไม่มี (ไม่ใช่ระดับ 2/1/0)</td><td><b>ดีพอใช้</b> ← ระดับ 3 ไม่มีเพดาน ทั้งที่ชื่อระดับ 3 คือ "พอใช้"</td></tr>
+      <tr class="bad"><td class="c">4</td><td>ทุกชิ้นส่วนอยู่ระดับ 3 ทั้งชิ้น</td><td class="c">ทุกชนิด 67</td><td class="c">67.00</td><td class="c">ชำรุด</td><td>—</td><td><b>ชำรุด</b> ← ชื่อสถานะต่ำกว่าชื่อระดับ 1 ขั้น (ปัญหาตาราง 2.7)</td></tr>
+      <tr class="bad"><td class="c">5</td><td>ทุกชิ้นส่วนอยู่ระดับ 4 ทั้งชิ้น</td><td class="c">ทุกชนิด 83</td><td class="c">83.00</td><td class="c">พอใช้</td><td>—</td><td><b>พอใช้</b> ← ชื่อระดับ 4 คือ "ดีพอใช้"</td></tr>
+      <tr class="hl"><td class="c">6</td><td>เสามีระดับ 1 เพียง 0.5% ของเสา</td><td class="c">เสา 99.59</td><td class="c">99.87</td><td class="c">ดีพอใช้</td><td>ระดับ 1 ในเสา → ไม่ดีกว่า วิกฤต</td><td><b>วิกฤต</b> ← จุดเล็กมากลดสถานะลง 2 ขั้น (ดู Q2 หน้า 22)</td></tr>
+      <tr class="hl"><td class="c">7</td><td>คาน PC พบรอยแต่วัดไม่ได้ (ตีเป็นระดับ 2) กิน 1%</td><td class="c">คาน 99.33</td><td class="c">99.71</td><td class="c">ดีพอใช้</td><td>ระดับ 2 ในคาน</td><td><b>ชำรุด</b> + ความมั่นใจต่ำ + รายงาน "ไม่น่าเชื่อถือเพราะวัดขนาดไม่ได้" + แนะนำส่งวิศวกร</td></tr>
+      <tr class="bad"><td class="c">8</td><td>ราวอยู่ระดับ 2 ทั้งชิ้น</td><td class="c">ราว 33</td><td class="c">96.40</td><td class="c">ดีพอใช้</td><td>ราวไม่อยู่ในกฎบังคับ</td><td><b>ดีพอใช้</b> ← ราวชำรุดทั้งชิ้นไม่ทำให้สถานะเปลี่ยน</td></tr>
+    </table>
+    <p class="note">แถวสีแดง = ผลที่อาจถูกถามว่าสมเหตุสมผลไหม · แถวสีเขียว = กฎบังคับทำงาน</p>
+  </div>
+
+  <div class="card pink">
+    <span class="tag r">ข้อสังเกตจากการคำนวณ — ไม่ใช่ข้อความในเล่ม ควรเตรียมคำตอบ</span>
+    <ul>
+      <li><b>ระดับ 3 และ 4 ไม่มีเพดาน</b> (แถว 3) — เล่มออกแบบกฎบังคับเฉพาะระดับ 2 ลงไป ผลคือกะเทาะเล็กน้อยหลายจุดที่คานยังได้ "ดีพอใช้"</li>
+      <li><b>ชิ้นส่วนที่อยู่นอกกฎ (พื้น ราว)</b> เสียหายหนักแค่ไหนก็ไม่ลดสถานะ (แถว 8) — พื้นสะพานรออาจารย์ตัดสิน (ข้อ F3) ส่วนราวเล่มจัดเป็น W=5</li>
+      <li><b>จุดเล็กๆ ลดสถานะได้มาก</b> (แถว 6) — เป็นเจตนาตามหลักค่าต่ำสุดของ BMMS แต่ถ้า VLM/SAM ตรวจผิดแม้จุดเดียว ก็ลดสถานะทั้งสะพาน และเล่มยังไม่ระบุเกณฑ์ขั้นต่ำ (ขนาดพื้นที่ หรือค่าความมั่นใจ) ก่อนนับว่า "พบ" · ยิ่งถ่ายภาพมาก โอกาสพลาดสักภาพยิ่งสูง</li>
+      <li><b>แถว 4–5</b> คือปัญหาชื่อสถานะของตาราง 2.7 ที่รออาจารย์เลือกข้อก/ข/ง (ผู้ใช้กำลังปรับ)</li>
+    </ul>
+  </div>
+  <div class="foot"><span>14 · ตรรกะของกฎบังคับ · ตัวเลขทั้งหมดสมมติ ผู้จัดทำคำนวณ</span><span>21</span></div>
+</div>
+
+<!-- ============ หน้า 22 Q&A ============ -->
+<div class="page">
+  <div class="head"><div class="num">15</div><div class="title">คำถามที่น่าโดนถามเรื่องข้อกำหนด</div><div class="sub">คำตอบยึดตามเล่ม v11 · ⚠ = เล่มยังไม่มีคำตอบ ต้องเตรียมเอง</div></div>
+  <div class="card mb">
+    <table class="cases">
+      <tr><th style="width:4%">Q</th><th style="width:25%">คำถาม</th><th style="width:55%">ตอบได้ว่า</th><th>อ้างอิง</th></tr>
+      <tr><td class="c">1</td><td>ทำไมถ้ามีชิ้นส่วนระดับ 2 สถานะสะพานต้องไม่ดีกว่า "ชำรุด"?</td><td>ดัชนีถ่วงน้ำหนักเฉลี่ยกับส่วนที่ไม่เสียหาย ความเสียหายรุนแรงเฉพาะจุดจึงถูกเจือจาง (ตัวอย่าง: เหล็กโผล่ 2.6% ของคาน ได้ EHI 98.26) ขณะที่ BMMS ใช้ค่าต่ำสุดซึ่งไม่เจือจาง · กฎบังคับจึงยึดหลักค่าต่ำสุดของ BMMS</td><td>2.2.3, 3.7.6</td></tr>
+      <tr><td class="c">2</td><td>จุดเล็กๆ จุดเดียวทำให้ทั้งสะพานเป็น "ชำรุด/วิกฤต" มันเกินไปไหม?</td><td>ตามเล่ม กฎนี้มีไว้ไม่ให้ความเสียหายรุนแรงเฉพาะจุดถูกเจือจาง (เป็นกลไกกันพลาดของการคัดกรองขั้นแรก) และรายงานแยกว่ามาจากค่าความมั่นใจต่ำ + แนะนำให้วิศวกรตรวจ · 3.8 วัดว่าระบบพลาดทางอันตรายบ่อยแค่ไหน · <span class="chip r">⚠ เล่มยังไม่มีเกณฑ์ขั้นต่ำก่อนนับว่าพบ</span></td><td>2.3.7, 3.8</td></tr>
+      <tr><td class="c">3</td><td>ทำไมกฎบังคับไม่รวมพื้นสะพานและราว?</td><td>เล่มกำหนดชิ้นส่วนหลักเป็น คาน เสา หัวเสา · เอกสาร T-BHI นับ Primary รวมพื้นสะพาน ซึ่งยังไม่ตรงกับเล่ม จึงเป็นเรื่องที่รออาจารย์ · <span class="chip r">⚠ เหตุผลที่ไม่รวมพื้นยังไม่มีในเล่ม</span></td><td>3.7.6, ข้อ B</td></tr>
+      <tr><td class="c">4</td><td>รอยร้าวคาน PC ที่วัดไม่ได้ ทำไมเป็นระดับ 2 ไม่ใช่ 3?</td><td>ที่ 1 ม. วัดได้น้อยสุดราว 0.8 มม. แต่ระดับ 2 ของ PC เริ่ม 0.25 มม. รอยที่วัดไม่ได้จึงอาจเป็นระดับ 2 หรือ 1 อยู่แล้ว · อาจารย์ท้วงว่าตั้งต้นที่ 3 ไม่ปลอดภัย · รายงานว่าไม่น่าเชื่อถือ + ความมั่นใจต่ำ</td><td>3.7.1</td></tr>
+      <tr><td class="c">5</td><td>แล้วรอย RC ที่วัดไม่ได้ ทำไมเป็น "ตัดสินไม่ได้" ไม่ใช่ระดับ?</td><td><span class="chip r">⚠ เล่มไม่อธิบายความต่างนี้</span> ตามเล่ม: ไม่ให้ระดับตั้งต้นแก่รอยนั้น แต่รายงานสถานะ "ตัดสินไม่ได้ ส่งวิศวกรตรวจ" ควบคู่ T-BHI ของส่วนที่ตัดสินได้ <span class="note">(ข้อสังเกตของผม ไม่ใช่ในเล่ม: เกณฑ์ RC ระดับ 4/3 อยู่ที่ 1.6 มม. ใกล้ขีดจำกัดพิกเซลที่ ~2 ม. จึงยังเป็นไปได้ที่จะวัดได้เมื่อถ่ายใกล้)</span></td><td>3.7.1, 3.7.6</td></tr>
+      <tr><td class="c">6</td><td>ทำไมใช้สัดส่วนพื้นที่แล้วเฉลี่ยข้ามภาพ? ผลเปลี่ยนตามจำนวนภาพหรือไม่?</td><td>ไม่บวกพิกเซลข้ามภาพเพราะมาตราส่วนต่างกัน จึงคิดต่อภาพแล้วรวมที่ระดับสัดส่วน · อาจารย์ท้วงว่าผลเปลี่ยนตามจำนวนภาพ เล่มระบุจะหาวิธีที่ไม่ขึ้นกับจำนวนภาพ (หลังนำเสนอ) และมีแผนทดสอบความไวด้วยภาพที่คัดให้ห่างกัน</td><td>3.2, 3.7.3, 3.7.5</td></tr>
+      <tr><td class="c">7</td><td>ตัวหารเป็นกรอบของ VLM ใหญ่กว่าชิ้นส่วนจริง ค่าจะต่ำเกินไหม?</td><td>ใช่ เล่มยอมรับเป็นข้อจำกัด จึงรายงานระดับแย่สุดของชิ้นส่วนคู่กับ EHI และกฎบังคับสถานะไม่ขึ้นกับสัดส่วน · ยังไม่มีเปเปอร์วัดว่ากรอบให้พื้นที่เกินกี่ % ต้องวัดเอง · <span class="chip r">ตัวหาร = กรอบ ยังไม่ได้ถามอาจารย์</span></td><td>3.5.1</td></tr>
+      <tr><td class="c">8</td><td>ค่า C 0.83, 0.67, 0.33, 0.17 มาจากไหน? ทำไมเป็นเส้นตรง?</td><td>เอกสาร T-BHI ประมาณค่าเชิงเส้นจากค่าปลายทางของ AASHTO (1 และ 0) ซึ่งเปิดให้เจ้าของระบบกำหนดค่ากลางเอง · <span class="chip r">⚠ ไม่มีเหตุผลทางวิศวกรรมแยกต่างหาก</span> · ผลคือชื่อสถานะไม่ตรงชื่อระดับ (ตาราง 2.7) กำลังหารือข้อก/ข/ง</td><td>2.2.3</td></tr>
+      <tr><td class="c">9</td><td>ช่วงคะแนน 90/70 มาจาก FHWA ใช่ไหม?</td><td>เอกสาร T-BHI อ้างอย่างนั้น แต่ยืนยันต้นทางไม่ได้ เล่มจึงอ้างเอกสาร T-BHI ไม่อ้าง FHWA · 50/30 ผู้เขียนเอกสารเพิ่มเอง</td><td>3.7.6</td></tr>
+      <tr><td class="c">10</td><td>ทำไมใช้น้ำหนักของ Pellegrino ไม่ใช้ failure cost ของ AASHTO?</td><td>เอกสาร T-BHI ให้เหตุผลว่า failure cost ต้องใช้ข้อมูลเศรษฐศาสตร์ซับซ้อน (ประวัติซ่อม ปริมาณจราจร ผลกระทบเศรษฐกิจท้องถิ่น) ที่ไทยอาจไม่ครบ · BMMS และ AASHTO ไม่ให้ W เป็นตัวเลข · ใช้เฉพาะ W ไม่ใช้สเกลสภาพของ Pellegrino เพราะทิศต่างจาก BMMS</td><td>2.2.4</td></tr>
+      <tr><td class="c">11</td><td>ทำไมไม่มี human-in-the-loop ทั้งที่งานอื่นใช้?</td><td>เป็นการคัดกรองขั้นแรกที่รันกับภาพจำนวนมาก ชดเชยด้วยกลไกกันพลาด 3 อย่าง (ค่าความมั่นใจ กฎบังคับ การวัดผลลบเท็จ) แล้วส่งวิศวกรตรวจต่อ · การเทียบวิศวกรเป็นการประเมินผล ไม่ใช่ขั้นใน pipeline</td><td>2.3.7, 1.3</td></tr>
+      <tr><td class="c">12</td><td>ถ้า VLM ใช้ไม่ได้ จะเป็นอย่างไร?</td><td>ระบบหลักเดินต่อด้วยกรอบจาก YOLO26 + ป้ายชิ้นส่วนจากบันทึกการบิน · ตัดสินใจสิ้น ม.ค. 2570 หลังรอบฝึกแรกบนชุดตรวจสอบ · ส่วนที่เหลือของแผนไม่เปลี่ยน</td><td>3.5.3, 3.9</td></tr>
+      <tr><td class="c">13</td><td>ทำไมไม่ตั้งเกณฑ์ผ่าน/ไม่ผ่านของระบบล่วงหน้า?</td><td><span class="chip r">⚠ เล่มไม่ให้เหตุผล</span> ตามเล่ม: รายงานตามค่าที่วัดได้จริง · เตรียมตอบเอง เช่น ยังไม่มีค่าอ้างอิงจากงานก่อนหน้าให้ตั้งเกณฑ์ <span class="note">(ข้อสังเกตของผม)</span></td><td>3.8</td></tr>
+      <tr><td class="c">14</td><td>ใช้สะพานเดียว สรุปได้แค่ไหน?</td><td>"สรุปผลให้เป็นกรณีทั่วไปไม่ได้" · ตัวเลขของงานอื่นเทียบกับงานนี้ตรงๆ ไม่ได้เพราะชุดข้อมูลต่างกัน · รายงานผลชุดตรวจสอบกับชุดทดสอบแยกกัน</td><td>1.3, 2.3.1</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>15 · Q&amp;A เรื่องข้อกำหนด · เหตุผลคัดจากเล่ม v11 PDF · ข้อสังเกตผมระบุไว้ชัดเจน</span><span>22</span></div>
+</div>
+</body></html>
