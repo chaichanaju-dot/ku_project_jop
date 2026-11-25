@@ -1,0 +1,39 @@
+[
+ {
+  "names": [
+   "DJI_0342.JPG",
+   "DJI_0341.JPG",
+   "DJI_0340.JPG",
+   "DJI_0339.JPG",
+   "DJI_0338.JPG",
+   "DJI_0337.JPG",
+   "DJI_0336.JPG",
+   "DJI_0335.JPG",
+   "DJI_0334.JPG",
+   "DJI_0333.JPG",
+   "DJI_0332.JPG",
+   "DJI_0331.JPG",
+   "DJI_0329.JPG",
+   "DJI_0328.JPG",
+   "DJI_0327.JPG",
+   "DJI_0326.JPG",
+   "DJI_0325.JPG",
+   "DJI_0324.JPG",
+   "DJI_0323.JPG",
+   "DJI_0322.JPG",
+   "DJI_0320.JPG"
+  ],
+  "check": {
+   "time_agree": 1.0,
+   "sessions": 1,
+   "gps_n": 21,
+   "gsd_mm": 1.543687994193307,
+   "gps_rms_m": 0.0969712317739817,
+   "gps_span_m": 22.851403965946538,
+   "gsd_orig_mm": 0.30628730043517993,
+   "gps_status": [
+    "Invalid"
+   ]
+  }
+ }
+]

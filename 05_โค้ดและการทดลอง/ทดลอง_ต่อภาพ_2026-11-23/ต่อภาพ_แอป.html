@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ต่อภาพโดรน</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --bg: #f3f4f6; --card: #ffffff; --ink: #15181d; --ink-2: #5a6270; --ink-3: #8a92a0;
+    --line: #e2e5ea; --line-2: #eef0f3;
+    --accent: #1d5fd6; --accent-soft: #e8effc; --accent-ink: #ffffff;
+    --ok: #17803a; --ok-soft: #e4f4e9; --bad: #c4321f; --bad-soft: #fceae7; --warn-soft: #fff6dc; --warn: #8a5a00;
+    --r: 14px; --r-sm: 9px;
+    --shadow: 0 1px 2px rgba(16,24,40,.04), 0 2px 8px rgba(16,24,40,.05);
+    font-family: "Leelawadee UI", "Sarabun", "Noto Sans Thai", "Segoe UI", system-ui, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1115; --card: #171a20; --ink: #e9ecf1; --ink-2: #a5adba; --ink-3: #7c8594;
+      --line: #2a2f38; --line-2: #20242c;
+      --accent: #5b8ff0; --accent-soft: #1d2a44; --accent-ink: #0b1020;
+      --ok: #4cc27a; --ok-soft: #15301f; --bad: #f07563; --bad-soft: #3a1b17; --warn-soft: #33290f; --warn: #e8c060;
+      --shadow: none; color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.55; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 28px 24px 64px; }
+
+  header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+  h1 { font-size: 26px; margin: 0; letter-spacing: -.01em; }
+  .sub { color: var(--ink-2); margin: 2px 0 0; }
+  .lock { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ok);
+          background: var(--ok-soft); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); padding: 20px; margin-bottom: 18px; }
+  .card-h { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+  .step { width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+          display: grid; place-items: center; font-weight: 700; font-size: 13px; flex: none; }
+  .card-h h2 { font-size: 17px; margin: 0; }
+  .card-h .right { margin-left: auto; display: flex; gap: 8px; align-items: center; color: var(--ink-2); font-size: 13.5px; }
+
+  .drop { border: 2px dashed var(--line); border-radius: var(--r); padding: 40px 20px; text-align: center; cursor: pointer;
+          transition: border-color .15s, background .15s; background: var(--line-2); }
+  .drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+  .drop svg { color: var(--accent); }
+  .drop b { display: block; font-size: 17px; margin: 8px 0 2px; }
+  .drop span { color: var(--ink-2); font-size: 14px; }
+  .drop.compact { padding: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .drop.compact b { display: inline; font-size: 15px; margin: 0; }
+  .drop.compact span, .drop.compact svg { display: none; }
+
+  .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; margin-top: 14px; }
+  .thumb { position: relative; border-radius: var(--r-sm); overflow: hidden; background: var(--line-2); border: 1px solid var(--line); }
+  .thumb img, .thumb .ph { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .thumb .ph { display: grid; place-items: center; color: var(--ink-3); font-size: 12px; }
+  .thumb.err .ph { color: var(--bad); }
+  .thumb .nm { font-size: 12px; padding: 5px 8px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .thumb .x { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; border: 0; cursor: pointer;
+              background: rgba(0,0,0,.55); color: #fff; font-size: 15px; line-height: 1; opacity: 0; transition: opacity .12s; }
+  .thumb:hover .x, .thumb .x:focus-visible { opacity: 1; }
+
+  .runrow { display: flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: wrap; }
+  .status { color: var(--ink-2); font-size: 14px; display: flex; align-items: center; gap: 8px; min-height: 22px; }
+  .progress { flex: 1; min-width: 160px; height: 6px; border-radius: 3px; background: var(--line-2); overflow: hidden; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s; }
+  .spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); animation: sp .8s linear infinite; flex: none; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation-duration: 3s; } .progress i { transition: none; } }
+
+  details.card > summary { cursor: pointer; font-weight: 600; font-size: 15px; list-style: none; display: flex; align-items: center; gap: 8px; }
+  details.card > summary::-webkit-details-marker { display: none; }
+  details.card > summary::before { content: "▸"; color: var(--ink-3); transition: transform .15s; }
+  details.card[open] > summary::before { transform: rotate(90deg); }
+  details.card > summary .muted { font-weight: 400; }
+  details.card[open] > summary { margin-bottom: 14px; }
+  .settings { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: flex-end; }
+  .field label { display: block; font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
+  input[type=number] { width: 90px; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--r-sm); font: inherit; background: var(--card); color: var(--ink); }
+  .hint { font-size: 12.5px; color: var(--ink-3); margin-top: 5px; max-width: 300px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; }
+  .seg button { border: 0; background: var(--card); color: var(--ink); padding: 8px 14px; cursor: pointer; font: inherit; font-size: 14px; }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+  .btn { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: var(--r-sm); padding: 8px 14px;
+         font: inherit; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; text-decoration: none; }
+  .btn:hover { border-color: var(--ink-3); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.ghost { border-color: transparent; color: var(--ink-2); }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow); }
+  .stat .k { font-size: 13px; color: var(--ink-2); }
+  .stat .v { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .stat .v small { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+  .stat .d { font-size: 12.5px; color: var(--ink-3); }
+
+  .banner { border-radius: var(--r-sm); padding: 11px 14px; margin-bottom: 12px; font-size: 14px; }
+  .banner.warn { background: var(--warn-soft); color: var(--warn); }
+  .banner.bad { background: var(--bad-soft); color: var(--bad); }
+  .banner.info { background: var(--accent-soft); color: var(--accent); }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .toolbar .sp { flex: 1; }
+  .toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; cursor: pointer; user-select: none;
+            padding: 7px 12px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--card); }
+  .toggle input { accent-color: var(--accent); margin: 0; }
+  .viewer { overflow: auto; border: 1px solid var(--line); border-radius: var(--r-sm); background: #0d0f12; max-height: 72vh; cursor: grab; touch-action: none; }
+  .viewer.dragging { cursor: grabbing; }
+  .viewer img { -webkit-user-drag: none; user-select: none; }
+  .stage { position: relative; width: 100%; margin: 0 auto; }
+  .stage > img { display: block; width: 100%; height: auto; }
+  .stage .heat, .stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .stage .heat { pointer-events: none; }
+  .stage svg polygon { fill: transparent; stroke: rgba(255,255,255,.85); vector-effect: non-scaling-stroke; stroke-width: 1.4; }
+  .stage svg polygon:hover { fill: rgba(91,143,240,.22); stroke: #8fb4ff; stroke-width: 2.4; }
+  .stage svg polygon.hl { fill: rgba(255,200,40,.12); stroke: #ffc828; stroke-width: 3; }
+  .stage svg text { fill: #fff; paint-order: stroke; stroke: rgba(0,0,0,.75); font-weight: 700; pointer-events: none; }
+  .stage.no-outline svg { display: none; }
+  .stage.no-heat .heat { display: none; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--ink-2); margin-top: 10px; }
+  .legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 5px; }
+  .legend .note { color: var(--ink-3); }
+
+  .order-h { font-weight: 600; margin: 16px 0 8px; font-size: 14.5px; }
+  .order-h .muted { font-weight: 400; }
+  .strip { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 10px; margin: 0; list-style: none; }
+  .strip li { flex: none; width: 92px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--line-2); cursor: pointer; position: relative; }
+  .strip li:hover, .strip li.sel { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .strip img, .strip .ph { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .strip .no { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,.66); color: #fff; font-size: 11.5px; font-weight: 700;
+               padding: 0 7px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+  .strip .nm { font-size: 11px; padding: 3px 6px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .check { font-size: 13.5px; color: var(--ink-2); background: var(--line-2); border-radius: var(--r-sm); padding: 10px 14px; margin-top: 4px; }
+  .check b { color: var(--ink); font-weight: 600; }
+  .check ul { margin: 4px 0 0; padding-left: 18px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th { text-align: left; font-weight: 600; color: var(--ink-2); font-size: 13px; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+  td.num, th.num { text-align: right; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: var(--line-2); }
+  tbody tr.sel { background: var(--accent-soft); }
+  tbody tr.cut td { color: var(--ink-3); }
+  .bar { display: inline-block; height: 7px; border-radius: 4px; background: var(--accent); opacity: .75; vertical-align: middle; margin-right: 8px; }
+  .chip { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; }
+  .chip.ok { background: var(--ok-soft); color: var(--ok); }
+  .chip.ok2 { background: var(--accent-soft); color: var(--accent); }
+  .chip.bad { background: var(--bad-soft); color: var(--bad); }
+  .chip.weak { background: var(--warn-soft); color: var(--warn); margin-left: 6px; }
+  .table-wrap { overflow-x: auto; }
+  .funnel { font-size: 14px; color: var(--ink-2); margin: 0 0 12px; }
+  .funnel b { color: var(--ink); }
+  .muted { color: var(--ink-3); }
+  [hidden] { display: none !important; }
+  footer { color: var(--ink-3); font-size: 12.5px; margin-top: 26px; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>ต่อภาพโดรน</h1>
+      <p class="sub">ใส่ภาพที่ถ่ายชิ้นส่วนเดียวกัน ลำดับไหนก็ได้ ชื่อไฟล์อะไรก็ได้ — โปรแกรมหาเองว่าภาพไหนต่อกับภาพไหน แล้วต่อเป็นผืนเดียวให้</p>
+    </div>
+    <span class="lock">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      ทำงานในเครื่องนี้ ภาพไม่ออกนอกเครื่อง
+    </span>
+  </header>
+
+  <section class="card">
+    <div class="card-h">
+      <span class="step">1</span><h2>ใส่ภาพ</h2>
+      <div class="right" id="countInfo" hidden>
+        <span id="countText"></span>
+        <button class="btn ghost" id="clearBtn" type="button">ล้างทั้งหมด</button>
+      </div>
+    </div>
+    <div class="drop" id="drop" role="button" tabindex="0" aria-label="เลือกภาพ">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+      <b>ลากภาพทั้งหมดมาวางตรงนี้ หรือคลิกเพื่อเลือก</b>
+      <span>ไม่ต้องเรียงภาพ ไม่ต้องตั้งชื่อ · ใส่แล้วโปรแกรมเริ่มต่อให้เอง</span>
+    </div>
+    <input type="file" id="file" accept="image/*" multiple hidden>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="runrow" id="runrow" hidden>
+      <span class="status" id="status"></span>
+      <div class="progress" id="progress" hidden><i></i></div>
+    </div>
+  </section>
+
+  <details class="card" id="adv">
+    <summary>ตั้งค่า <span class="muted">(ปกติไม่ต้องแตะ)</span></summary>
+    <div class="settings">
+      <div class="field">
+        <label class="toggle"><input type="checkbox" id="auto" checked> ต่อภาพทันทีเมื่อใส่ภาพ</label>
+      </div>
+      <div class="field">
+        <label for="minInl">จุดที่ตรงกันขั้นต่ำต่อคู่</label>
+        <input type="number" id="minInl" value="30" min="8" max="2000" step="1">
+        <div class="hint">สองภาพต้องมีจุดเด่นตรงกันอย่างน้อยเท่านี้จึงนับว่าต่อกันได้ ลดลงถ้าภาพซ้อนกันจริงแต่โปรแกรมไม่ต่อให้</div>
+      </div>
+      <div class="field">
+        <button class="btn primary" id="runBtn" type="button" disabled>ต่อภาพใหม่</button>
+      </div>
+    </div>
+  </details>
+
+  <div id="results" hidden>
+    <div class="stats" id="stats"></div>
+    <div id="banners"></div>
+    <div id="segs"></div>
+    <details class="card" id="detail">
+      <summary>โปรแกรมหาลำดับได้อย่างไร <span class="muted">— รายละเอียดทีละคู่ สำหรับตรวจสอบ</span></summary>
+      <p class="funnel" id="funnel"></p>
+      <div class="toolbar"><span class="sp"></span><button class="btn" id="csvBtn" type="button">ดาวน์โหลดตาราง (CSV)</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>คู่ภาพ</th><th class="num">จุดที่ตรงกัน</th><th class="num">ความมั่นใจ</th><th class="num">คลาดบนผืน (px)</th>
+            <th class="num">ซ้อนทับ</th><th class="num">ต่างจาก GPS (ม.)</th><th>สถานะ</th>
+          </tr></thead>
+          <tbody id="pairBody"></tbody>
+        </table>
+      </div>
+      <p class="muted" style="font-size:13px;margin:10px 0 0">คลิกแถวเพื่อดูคู่นั้นบนผืน · ความมั่นใจ = จุดที่ตรงกัน ÷ (8 + 0.3 × จุดที่จับคู่ได้) ตาม Brown &amp; Lowe (2007) มากกว่า 1 ถือว่ามั่นใจ ·
+        คลาดบนผืน = หลังวางทุกภาพแล้ว จุดคู่กันของสองภาพนี้ห่างกันเฉลี่ยกี่พิกเซล · ต่างจาก GPS = ระยะที่ GPS บอก ลบ ระยะที่ภาพบอก (เทียบเฉพาะภาพในรอบบินเดียวกัน)</p>
+    </details>
+  </div>
+
+  <footer>
+    วิธี: หาจุดเด่นในทุกภาพ (SIFT) → ลองจับคู่ทุกคู่ → ตรวจคู่ที่น่าจะซ้อนกันด้วย RANSAC → ถ้าภาพมี GPS ใช้ตัดคู่ที่ระยะขัดกัน → วางภาพจากคู่ที่แข็งแรงที่สุดแล้วปรับทุกภาพพร้อมกัน ·
+    ข้อจำกัด: ถือว่าผิวที่ถ่ายเป็นระนาบและกล้องหันทิศเดิม · สเกลที่รายงานมาจาก GPS ของโดรนซึ่งเป็นค่าประมาณ ยังใช้แทนการวัดด้วยเลเซอร์ไม่ได้ ·
+    ตัวเลข "ถ่ายซ้ำเฉลี่ย" นับทั้งภาพ รวมพื้นหลังที่ไม่ใช่ชิ้นส่วน
+  </footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const WORK_W = 1600, HEAD = 262144;
+const files = [];            // {file, name, el, thumb, data, head, origW, ready, error, busy}
+let busy = false, needRun = false, lastResult = null, runTimer = null, pollTimer = null, active = 0;
+const collator = new Intl.Collator('th', { numeric: true, sensitivity: 'base' });
+const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function shortName(n) { return n.replace(/\.[^.]+$/, ''); }
+function fmtMB(b) { return (b / 1048576).toFixed(b > 104857600 ? 0 : 1) + ' MB'; }
+function blobToB64(blob) {
+  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(blob); });
+}
+
+// ---------- ใส่ภาพ ----------
+const drop = $('#drop'), fileInput = $('#file');
+drop.addEventListener('click', () => fileInput.click());
+drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+fileInput.addEventListener('change', () => { addFiles(fileInput.files); fileInput.value = ''; });
+['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => { e.preventDefault(); if (!drop.contains(e.target)) addFiles(e.dataTransfer.files); });
+
+function addFiles(list) {
+  const have = new Set(files.map(f => f.name + ':' + f.file.size));
+  let added = 0;
+  for (const file of list) {
+    if (!file.type.startsWith('image/') || have.has(file.name + ':' + file.size)) continue;
+    const el = document.createElement('div');
+    el.className = 'thumb';
+    el.innerHTML = `<div class="ph">กำลังเตรียม…</div><button class="x" type="button" aria-label="เอาภาพ ${esc(file.name)} ออก">×</button><div class="nm" title="${esc(file.name)}">${esc(file.name)}</div>`;
+    files.push({ file, name: file.name, el });
+    added++;
+  }
+  if (!added) return;
+  files.sort((a, b) => collator.compare(a.name, b.name));
+  renderThumbs();
+  needRun = true;
+  for (let w = active; w < 2; w++) prepWorker();       // เตรียมทีละ 2 ภาพ
+}
+
+// เตรียมภาพ: อ่านหัวไฟล์ (เวลา/GPS อยู่ในนั้น) + ย่อภาพครั้งเดียว ใช้ทั้งส่งคำนวณและทำภาพเล็ก
+async function prepare(f) {
+  f.head = await blobToB64(f.file.slice(0, HEAD));
+  const bmp = await createImageBitmap(f.file);
+  f.origW = bmp.width;
+  const s = Math.min(1, WORK_W / bmp.width);
+  const c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+  const g = c.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(bmp, 0, 0, c.width, c.height); bmp.close();
+  f.data = await blobToB64(await new Promise(r => c.toBlob(r, 'image/jpeg', 0.92)));
+  const t = document.createElement('canvas');
+  t.width = 240; t.height = Math.round(240 * c.height / c.width);
+  t.getContext('2d').drawImage(c, 0, 0, t.width, t.height);
+  f.thumb = t.toDataURL('image/jpeg', 0.8);
+}
+
+async function prepWorker() {
+  active++;
+  for (;;) {
+    const f = files.find(x => !x.ready && !x.error && !x.busy);
+    if (!f) break;
+    f.busy = true;
+    try {
+      await prepare(f); f.ready = true;
+      f.el.querySelector('.ph').outerHTML = `<img src="${f.thumb}" alt="">`;
+    } catch {
+      f.error = true; f.el.classList.add('err'); f.el.querySelector('.ph').textContent = 'อ่านภาพไม่ได้';
+    }
+    f.busy = false;
+    showPrep();
+  }
+  active--;
+  if (!active) { showPrep(); schedule(); }
+}
+
+function showPrep() {
+  if (busy) return;
+  const done = files.filter(f => f.ready || f.error).length;
+  if (done < files.length) setStatus(`กำลังเตรียมภาพ ${done}/${files.length}`, true, done / files.length);
+  else setStatus(files.filter(f => f.ready).length < 2 ? 'ต้องมีอย่างน้อย 2 ภาพ' : '');
+}
+
+function renderThumbs() {
+  const box = $('#thumbs');
+  files.forEach(f => box.appendChild(f.el));           // จัดลำดับ element ตามชื่อ (ไม่สร้างใหม่)
+  [...box.children].forEach(el => { if (!files.some(f => f.el === el)) el.remove(); });
+  const total = files.reduce((s, f) => s + f.file.size, 0);
+  $('#countInfo').hidden = !files.length;
+  $('#runrow').hidden = !files.length;
+  $('#countText').textContent = `${files.length} ภาพ · ${fmtMB(total)}`;
+  drop.classList.toggle('compact', files.length > 0);
+  drop.querySelector('b').textContent = files.length ? '+ เพิ่มภาพ' : 'ลากภาพทั้งหมดมาวางตรงนี้ หรือคลิกเพื่อเลือก';
+  $('#runBtn').disabled = busy || files.filter(f => f.ready).length < 2;
+}
+$('#thumbs').addEventListener('click', e => {
+  const b = e.target.closest('.x'); if (!b) return;
+  const i = files.findIndex(f => f.el === b.parentElement); if (i < 0) return;
+  files.splice(i, 1); renderThumbs(); needRun = true; showPrep(); schedule();
+});
+$('#clearBtn').addEventListener('click', () => {
+  files.length = 0; renderThumbs(); needRun = false; lastResult = null;
+  $('#results').hidden = true; setStatus('');
+});
+
+function setStatus(text, spinning, frac) {
+  $('#status').innerHTML = (spinning ? '<span class="spin"></span>' : '') + esc(text);
+  const p = $('#progress');
+  p.hidden = frac == null;
+  if (frac != null) p.firstElementChild.style.width = Math.round(100 * Math.min(1, Math.max(0, frac))) + '%';
+}
+
+// ---------- ต่อภาพ ----------
+function schedule() {
+  clearTimeout(runTimer);
+  renderThumbs();
+  if (!$('#auto').checked || busy || active || !needRun || files.filter(f => f.ready).length < 2) return;
+  runTimer = setTimeout(run, 400);
+}
+$('#runBtn').addEventListener('click', () => { needRun = true; run(); });
+$('#auto').addEventListener('change', schedule);
+
+async function run() {
+  const use = files.filter(f => f.ready);
+  if (busy || use.length < 2) return;
+  busy = true; needRun = false; $('#runBtn').disabled = true;
+  setStatus('กำลังส่งภาพให้ตัวคำนวณ…', true, 0);
+  pollTimer = setInterval(async () => {
+    try {
+      const p = await (await fetch('/progress')).json();
+      if (busy && p.stage) setStatus(`${p.stage}${p.total > 1 ? ` ${Math.min(p.done, p.total)}/${p.total}` : ''}…`, true, p.total ? p.done / p.total : 0);
+    } catch { /* เซิร์ฟเวอร์ไม่ตอบชั่วคราว ไม่เป็นไร */ }
+  }, 300);
+  try {
+    const r = await fetch('/stitch', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ images: use.map(f => ({ name: f.name, data: f.data, head: f.head, orig_w: f.origW })), min_inliers: +$('#minInl').value || 30 }) });
+    const j = await r.json().catch(() => ({ error: `เซิร์ฟเวอร์ตอบ ${r.status}` }));
+    if (!r.ok) throw new Error(j.error || `เซิร์ฟเวอร์ตอบ ${r.status}`);
+    lastResult = j;
+    renderResult(j);
+    setStatus(`เสร็จใน ${j.seconds} วินาที`);
+    $('#results').scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth', block: 'start' });
+  } catch (err) {
+    setStatus('');
+    $('#results').hidden = false;
+    $('#stats').innerHTML = ''; $('#segs').innerHTML = ''; $('#detail').hidden = true;
+    $('#banners').innerHTML = `<div class="banner bad">ต่อภาพไม่สำเร็จ: ${esc(err.message || err)}
+      ${String(err).includes('Failed to fetch') ? '<br>โปรแกรมด้านหลังอาจถูกปิดไปแล้ว ลองเปิด เปิดโปรแกรมต่อภาพ.bat ใหม่' : ''}</div>`;
+  } finally {
+    clearInterval(pollTimer); busy = false; renderThumbs();
+    if (needRun) schedule();
+  }
+}
+
+// ---------- ผลลัพธ์ ----------
+const thumbOf = name => (files.find(f => f.name === name) || {}).thumb;
+
+function renderResult(j) {
+  const st = j.stats, segs = j.segments;
+  $('#results').hidden = false; $('#detail').hidden = false;
+  const main = segs[0], multi = segs.filter(g => g.names.length > 1), singles = segs.filter(g => g.names.length === 1).length;
+  const dupAvg = segs.reduce((s, g) => s + g.dup * g.names.length, 0) / st.images;
+  const cut = st.gps_rejected + st.conflicts;
+  $('#stats').innerHTML = `
+    <div class="stat"><div class="k">ภาพทั้งหมด</div><div class="v">${st.images}</div>
+      <div class="d">${segs.length === 1 ? 'ต่อได้เป็นผืนเดียว' : `ต่อได้ ${multi.length} ผืน${singles ? ` · ต่อไม่ได้ ${singles} ภาพ` : ''}`}</div></div>
+    <div class="stat"><div class="k">คู่ภาพที่ต่อกัน</div><div class="v">${st.used}<small> คู่</small></div>
+      <div class="d">จากที่ลอง ${st.pairs_total.toLocaleString()} คู่${cut ? ` · ตัดคู่หลอก ${cut}` : ''}</div></div>
+    <div class="stat"><div class="k">ขนาดผืนใหญ่สุด</div><div class="v">${main.w.toLocaleString()}<small> × ${main.h.toLocaleString()} px</small></div><div class="d">${main.names.length} ภาพ</div></div>
+    <div class="stat"><div class="k">ถ่ายซ้ำเฉลี่ย</div><div class="v">${dupAvg.toFixed(2)}<small> เท่า</small></div><div class="d">ถ้าไม่รวมภาพ ความเสียหายจะถูกนับราวนี้</div></div>`;
+
+  const b = [];
+  if (segs.length > 1) b.push(`<div class="banner warn">ภาพทั้งหมดต่อเป็นผืนเดียวไม่ได้ — ได้ ${multi.length} ผืน (${multi.map(g => g.names.length + ' ภาพ').join(', ')})${singles ? ` และมี ${singles} ภาพที่ต่อกับภาพไหนไม่ได้เลย` : ''}
+    เพราะบางภาพซ้อนกับภาพอื่นไม่พอ ภาพที่ต่อได้ดีควรซ้อนกับภาพข้างเคียงราวครึ่งภาพ</div>`);
+  if (st.gps_rejected) b.push(`<div class="banner info">โปรแกรมตัดคู่ภาพ ${st.gps_rejected} คู่ที่หน้าตาเหมือนต่อกันได้ แต่ระยะขัดกับ GPS ที่ฝังในภาพ (ลายซ้ำบนผิวคอนกรีตหลอกได้) ดูรายละเอียดในตารางด้านล่าง</div>`);
+  if (st.fragile && st.gps_use !== 'ok') b.push(`<div class="banner warn">มี ${st.fragile} รอยต่อที่ผืนพึ่งคู่ภาพคู่เดียวซึ่งมั่นใจต่ำ และไม่มี GPS ให้ตรวจซ้ำ — ควรดูรอยต่อนั้นด้วยตา (เปิดรายละเอียดด้านล่าง แล้วคลิกแถวที่มีป้าย "รอยต่อเปราะ")</div>`);
+  $('#banners').innerHTML = b.join('');
+
+  // ผืนที่ต่อได้ (≥2 ภาพ) แสดงเต็ม · ภาพที่ต่อไม่ได้รวมไว้การ์ดเดียว
+  const lone = segs.filter(g => g.names.length === 1).map(g => g.names[0]);
+  $('#segs').innerHTML = segs.map((g, k) => g.names.length > 1 ? segmentHtml(g, k, multi.length) : '').join('') + (lone.length ? `
+  <section class="card" id="lone">
+    <div class="card-h"><span class="step">!</span><h2>ภาพที่ต่อกับภาพอื่นไม่ได้ · ${lone.length} ภาพ</h2></div>
+    <ol class="strip">${lone.map(n => { const t = thumbOf(n); return `<li title="${esc(n)}">${t ? `<img src="${t}" alt="">` : '<div class="ph"></div>'}<div class="nm">${esc(shortName(n))}</div></li>`; }).join('')}</ol>
+    <p class="muted" style="font-size:13px;margin:6px 0 0">ภาพเหล่านี้มีจุดเด่นตรงกับภาพอื่นไม่ถึงเกณฑ์ (ซ้อนกันน้อยเกินไป เป็นคนละชิ้นส่วน หรือผิวเรียบจนหาจุดเด่นไม่ได้)</p>
+  </section>` : '');
+  segs.forEach((g, k) => { if (g.names.length > 1) wireSegment(k); });
+
+  const gpsText = { ok: `ใช้ GPS ที่ฝังในภาพตรวจซ้ำ${st.gps_rejected ? ` และตัดคู่หลอกได้ ${st.gps_rejected} คู่` : ' ไม่พบคู่ที่ขัดกัน'}`,
+    noisy: 'GPS ในภาพไม่นิ่งพอ จึงไม่ได้ใช้ตรวจ', few: 'คู่ภาพที่มี GPS เทียบกันได้มีน้อยเกินไป จึงไม่ได้ใช้ตรวจ',
+    no: 'ภาพไม่มี GPS ที่อ่านได้ โปรแกรมต่อจากเนื้อภาพอย่างเดียว' }[st.gps_use] || '';
+  $('#funnel').innerHTML = `โปรแกรมไม่ใช้ชื่อไฟล์ในการเรียง: ลองจับคู่ <b>ทุกคู่</b> ${st.pairs_total.toLocaleString()} คู่ → พบคู่ที่น่าจะซ้อนกัน <b>${st.candidates}</b> →
+    ผ่านการตรวจละเอียด <b>${st.verified}</b> → ใช้วางภาพ <b>${st.used}</b>${st.conflicts ? ` (ตัด ${st.conflicts} คู่ที่ขัดกับคู่อื่น)` : ''} · ${gpsText} ·
+    อ่านเวลาถ่ายได้ ${st.has_time}/${st.images} ภาพ พิกัดได้ ${st.has_gps}/${st.images} ภาพ`;
+
+  const maxInl = Math.max(1, ...j.pairs.map(p => p.inliers));
+  const chip = { tree: '<span class="chip ok">ใช้วางภาพ</span>', extra: '<span class="chip ok2">ยืนยันซ้ำ</span>',
+    gps: '<span class="chip bad">ตัด: ขัดกับ GPS</span>', conflict: '<span class="chip bad">ตัด: ขัดกับคู่อื่น</span>' };
+  $('#pairBody').innerHTML = j.pairs.map((p, i) => `
+    <tr data-a="${esc(p.a)}" data-b="${esc(p.b)}" class="${p.ok ? '' : 'cut'}">
+      <td class="muted">${i + 1}</td>
+      <td>${esc(shortName(p.a))} ↔ ${esc(shortName(p.b))}</td>
+      <td class="num"><span class="bar" style="width:${Math.max(3, 70 * p.inliers / maxInl)}px"></span>${p.inliers} <span class="muted">/ ${p.good}</span></td>
+      <td class="num">${p.conf.toFixed(2)}</td>
+      <td class="num">${p.resid == null ? '–' : p.resid.toFixed(1)}</td>
+      <td class="num">${p.overlap == null ? '–' : Math.round(p.overlap * 100) + '%'}</td>
+      <td class="num">${p.gps_diff == null ? '–' : p.gps_diff.toFixed(2)}</td>
+      <td>${chip[p.status] || ''}${p.ok && p.fragile ? '<span class="chip weak">รอยต่อเปราะ</span>' : p.ok && p.weak ? '<span class="chip weak">มั่นใจต่ำ</span>' : ''}</td>
+    </tr>`).join('');
+}
+
+function checkHtml(c) {
+  if (!c || (c.time_agree == null && c.gps_n == null)) return '';
+  const li = [];
+  if (c.time_agree != null) li.push(`ลำดับบนผืน <b>ตรงกับลำดับเวลาที่ถ่าย ${Math.round(c.time_agree * 100)}%</b>${c.sessions > 1 ? ` (ภาพมาจาก ${c.sessions} รอบบิน เทียบภายในรอบเดียวกัน)` : ''}`);
+  if (c.gps_n != null) {
+    li.push(`ตำแหน่งบนผืน <b>ตรงกับ GPS ของโดรน คลาดเฉลี่ย ${c.gps_rms_m.toFixed(2)} ม.</b> ตลอดแนว ${c.gps_span_m.toFixed(1)} ม. (${c.gps_n} ภาพ)`);
+    li.push(`สเกลโดยประมาณจาก GPS: <b>${c.gsd_orig_mm.toFixed(2)} มม. ต่อพิกเซลของภาพต้นฉบับ</b> (${c.gsd_mm.toFixed(2)} มม. ต่อพิกเซลของผืน)
+      ${c.gps_status && c.gps_status.length ? ` — กล้องบันทึกสถานะ GPS ว่า "${esc(c.gps_status.join(', '))}"` : ''} ใช้เป็นค่าประมาณเท่านั้น`);
+  }
+  return `<div class="check"><b>เทียบกับข้อมูลที่ฝังในภาพ</b> (ใช้ตรวจ ไม่ได้ใช้วางภาพ)<ul>${li.map(x => `<li>${x}</li>`).join('')}</ul></div>`;
+}
+
+function segmentHtml(g, k, total) {
+  const fs = Math.max(16, g.h * 0.05);
+  const polys = g.polys.map((pts, i) => {
+    const cx = pts.reduce((s, p) => s + p[0], 0) / 4, ty = Math.min(...pts.map(p => p[1])) + fs * 1.25;
+    return `<polygon data-name="${esc(g.names[i])}" points="${pts.map(p => p.join(',')).join(' ')}"><title>${i + 1}. ${esc(g.names[i])}</title></polygon>
+            <text x="${cx}" y="${ty}" font-size="${fs}" stroke-width="${fs / 6}" text-anchor="middle">${i + 1}</text>`;
+  }).join('');
+  const strip = g.names.map((n, i) => {
+    const t = thumbOf(n);
+    return `<li data-name="${esc(n)}" title="${esc(n)}">${t ? `<img src="${t}" alt="">` : '<div class="ph"></div>'}<span class="no">${i + 1}</span><div class="nm">${esc(shortName(n))}</div></li>`;
+  }).join('');
+  return `
+  <section class="card" id="seg${k}">
+    <div class="card-h">
+      <span class="step">${total > 1 ? k + 1 : '✓'}</span>
+      <h2>${total > 1 ? `ผืนที่ ${k + 1}` : 'ผืนภาพที่ต่อได้'} · ${g.names.length} ภาพ</h2>
+    </div>
+    <div class="toolbar">
+      <label class="toggle"><input type="checkbox" data-t="outline" checked> ขอบและลำดับภาพ</label>
+      <label class="toggle"><input type="checkbox" data-t="heat"> แผนที่ภาพที่ทับกัน</label>
+      <div class="seg" data-zoom>
+        <button type="button" data-z="fit" aria-pressed="false">ทั้งผืน</button>
+        <button type="button" data-z="height" aria-pressed="true">พอดีความสูง</button>
+        <button type="button" data-z="full" aria-pressed="false">ขนาดจริง</button>
+      </div>
+      <span class="sp"></span>
+      <a class="btn primary" href="${g.mosaic}" download="ผืนภาพ${total > 1 ? '_' + (k + 1) : ''}_${g.names.length}ภาพ.jpg">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        ดาวน์โหลดภาพ (.jpg)</a>
+    </div>
+    <div class="viewer"><div class="stage no-heat">
+      <img src="${g.mosaic}" alt="ผืนภาพที่ต่อแล้ว ${g.names.length} ภาพ">
+      <img class="heat" src="${g.heat}" alt="">
+      <svg viewBox="0 0 ${g.w} ${g.h}" preserveAspectRatio="none">${polys}</svg>
+    </div></div>
+    <div class="legend" data-legend hidden>
+      <span><i style="background:#22c55e"></i>ภาพเดียว</span>
+      <span><i style="background:#facc08"></i>2 ภาพ</span>
+      <span><i style="background:#f9730c"></i>3 ภาพ</span>
+      <span><i style="background:#dc263c"></i>4 ภาพขึ้นไป</span>
+      <span class="note">จุดเดียวกันที่อยู่หลายภาพ = ความเสียหายตรงนั้นจะถูกนับหลายครั้งถ้าไม่รวมภาพ · ถ่ายซ้ำเฉลี่ยของผืนนี้ ${g.dup.toFixed(2)} เท่า</span>
+    </div>
+    <div class="order-h">ลำดับที่โปรแกรมหาได้ <span class="muted">— เรียงตามตำแหน่งบนผืน คลิกเพื่อดูภาพนั้นบนผืน</span></div>
+    <ol class="strip">${strip}</ol>
+    ${checkHtml(g.check)}
+  </section>`;
+}
+
+function focusNames(names) {
+  document.querySelectorAll('polygon.hl').forEach(p => p.classList.remove('hl'));
+  document.querySelectorAll('.strip li.sel').forEach(p => p.classList.remove('sel'));
+  let target = null;
+  for (const n of names) {
+    document.querySelectorAll('polygon').forEach(p => { if (p.dataset.name === n) { p.classList.add('hl'); target = target || p; } });
+    document.querySelectorAll('.strip li').forEach(p => { if (p.dataset.name === n) p.classList.add('sel'); });
+  }
+  if (!target) return;
+  const sec = target.closest('section'), viewer = sec.querySelector('.viewer'), svg = target.ownerSVGElement;
+  sec.querySelector('[data-t="outline"]').checked = true; sec.querySelector('.stage').classList.remove('no-outline');
+  const vb = svg.viewBox.baseVal, box = target.getBBox(), k = svg.clientWidth / vb.width;
+  viewer.scrollLeft = Math.max(0, (box.x + box.width / 2) * k - viewer.clientWidth / 2);
+  viewer.scrollTop = Math.max(0, box.y * (svg.clientHeight / vb.height) - 20);
+  return sec;
+}
+
+function wireSegment(k) {
+  const sec = $('#seg' + k), stage = sec.querySelector('.stage'), viewer = sec.querySelector('.viewer'), g = lastResult.segments[k];
+  sec.querySelectorAll('[data-t]').forEach(cb => cb.addEventListener('change', () => {
+    stage.classList.toggle(cb.dataset.t === 'outline' ? 'no-outline' : 'no-heat', !cb.checked);
+    if (cb.dataset.t === 'heat') sec.querySelector('[data-legend]').hidden = !cb.checked;
+  }));
+  const setZoom = z => {
+    // คงจุดกึ่งกลางที่ดูอยู่ไว้ตอนเปลี่ยนซูม
+    const cx = (viewer.scrollLeft + viewer.clientWidth / 2) / (stage.offsetWidth || 1);
+    const cy = (viewer.scrollTop + viewer.clientHeight / 2) / (stage.offsetHeight || 1);
+    const fitH = Math.min(560, window.innerHeight * 0.62);
+    stage.style.width = z === 'fit' ? '100%' : z === 'full' ? g.w + 'px' : Math.round(g.w * fitH / g.h) + 'px';
+    viewer.scrollLeft = cx * stage.offsetWidth - viewer.clientWidth / 2;
+    viewer.scrollTop = cy * stage.offsetHeight - viewer.clientHeight / 2;
+  };
+  sec.querySelector('[data-zoom]').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    sec.querySelectorAll('[data-zoom] button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    setZoom(b.dataset.z);
+  });
+  setZoom('height');
+  const strip = sec.querySelector('.strip');
+  if (strip) strip.addEventListener('click', e => { const li = e.target.closest('li'); if (li) focusNames([li.dataset.name]); });
+  // ลากเพื่อเลื่อนดู
+  let drag = null;
+  viewer.addEventListener('pointerdown', e => {
+    const r = viewer.getBoundingClientRect();
+    if (e.button !== 0 || e.clientX - r.left >= viewer.clientWidth || e.clientY - r.top >= viewer.clientHeight) return; // ไม่แย่งแถบเลื่อน
+    drag = { x: e.clientX, y: e.clientY, l: viewer.scrollLeft, t: viewer.scrollTop };
+    viewer.setPointerCapture(e.pointerId); viewer.classList.add('dragging');
+  });
+  viewer.addEventListener('pointermove', e => {
+    if (!drag) return;
+    viewer.scrollLeft = drag.l - (e.clientX - drag.x);
+    viewer.scrollTop = drag.t - (e.clientY - drag.y);
+  });
+  const end = () => { drag = null; viewer.classList.remove('dragging'); };
+  viewer.addEventListener('pointerup', end);
+  viewer.addEventListener('pointercancel', end);
+}
+
+// คลิกแถวตาราง → ไฮไลต์สองภาพบนผืนแล้วเลื่อนไปหา
+$('#pairBody').addEventListener('click', e => {
+  const tr = e.target.closest('tr'); if (!tr) return;
+  document.querySelectorAll('#pairBody tr').forEach(x => x.classList.toggle('sel', x === tr));
+  const sec = focusNames([tr.dataset.a, tr.dataset.b]);
+  if (sec) sec.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth', block: 'center' });
+});
+
+$('#csvBtn').addEventListener('click', () => {
+  if (!lastResult) return;
+  const rows = [['ภาพ ก', 'ภาพ ข', 'จุดที่ตรงกัน', 'คู่ที่ผ่าน ratio test', 'ความมั่นใจ', 'คลาดตอนจับคู่_px', 'คลาดบนผืน_px', 'ซ้อนทับ_ร้อยละ', 'ย่อขยาย', 'หมุน_องศา', 'ต่างจากGPS_ม', 'สถานะ']];
+  const fx = (v, d) => v == null ? '' : v.toFixed(d);
+  lastResult.pairs.forEach(p => rows.push([p.a, p.b, p.inliers, p.good, p.conf, fx(p.rmse, 3), fx(p.resid, 2),
+    p.overlap == null ? '' : (p.overlap * 100).toFixed(1), fx(p.scale, 4), fx(p.rot, 2), fx(p.gps_diff, 2), p.status]));
+  const csv = '﻿' + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'ผลต่อภาพ_รายคู่.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+</script>
+</body>
+</html>
